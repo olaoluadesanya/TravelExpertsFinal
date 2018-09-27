@@ -14,4 +14,10 @@
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
+    <string name="welcome_msg">Welcome to Travel Experts</string>
+    <string name="current_package_deals">Current Package Deals:</string>
+    <string name="package_details">Package Details</string>
+    <string name="number_of_travellers">Number of Travellers:</string>
+    <string name="log_in_out">Log In/Out</string>
+    <string name="my_account">My Account</string>
 </resources>
