@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+
+
+<BorderPane prefHeight="500.0" prefWidth="500.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/10.0.1">
+   <center>
+      <SplitPane dividerPositions="0.5983935742971888" orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0" BorderPane.alignment="CENTER">
+        <items>
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
+               <children>
+                  <Label layoutX="57.0" layoutY="38.0" text="Package Name" />
+                  <TextField fx:id="tfPkgName" layoutX="213.0" layoutY="34.0" prefHeight="25.0" prefWidth="210.0" />
+               </children>
+            </AnchorPane>
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
+               <children>
+                  <ListView layoutX="360.0" layoutY="-1.0" prefHeight="200.0" prefWidth="131.0" />
+                  <ListView layoutX="176.0" layoutY="-1.0" prefHeight="200.0" prefWidth="146.0" />
+                  <ListView layoutY="-1.0" prefHeight="200.0" prefWidth="131.0" />
+                  <Label layoutX="143.0" layoutY="82.0" text="+" />
+                  <Label layoutX="333.0" layoutY="82.0" text="&gt;&gt;" />
+               </children>
+            </AnchorPane>
+        </items>
+      </SplitPane>
+   </center>
+</BorderPane>
