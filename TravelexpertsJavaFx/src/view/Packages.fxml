@@ -2,7 +2,9 @@
 
 <?import com.jfoenix.controls.JFXButton?>
 <?import com.jfoenix.controls.JFXDatePicker?>
+<?import com.jfoenix.controls.JFXListView?>
 <?import com.jfoenix.controls.JFXTabPane?>
+<?import com.jfoenix.controls.JFXTextArea?>
 <?import com.jfoenix.controls.JFXTextField?>
 <?import com.jfoenix.controls.JFXTreeTableView?>
 <?import javafx.scene.control.Label?>
@@ -24,31 +26,30 @@
                         <JFXButton layoutX="416.0" layoutY="406.0" style="-fx-background-color: skyblue;" />
                         <VBox layoutX="340.0" layoutY="7.0" prefHeight="351.0" prefWidth="153.0">
                            <children>
-                              <JFXTextField fx:id="tfId" />
-                              <JFXTextField />
-                              <JFXDatePicker />
-                              <JFXDatePicker />
-                              <JFXTextField />
-                              <JFXTextField />
-                              <JFXTextField />
+                              <JFXTextField fx:id="tfPackageId" />
+                              <JFXTextField fx:id="tfPkgName" />
+                              <JFXDatePicker fx:id="dpPkgStartDate" />
+                              <JFXDatePicker fx:id="dpPkgStartDate" />
+                              <JFXTextArea prefHeight="78.0" prefWidth="153.0" />
                               <JFXTextField />
                               <JFXTextField />
+                              <JFXListView prefHeight="144.0" prefWidth="153.0" />
                               <JFXButton prefHeight="25.0" prefWidth="155.0" style="-fx-background-color: skyblue;" text="Add a New Product" />
                            </children>
                         </VBox>
-                        <VBox layoutX="229.0" layoutY="7.0" prefHeight="352.0" prefWidth="107.0">
+                        <VBox layoutX="219.0" layoutY="7.0" prefHeight="352.0" prefWidth="117.0">
                            <children>
                               <Label prefHeight="28.0" prefWidth="106.0" text="ID" />
                               <Label prefHeight="24.0" prefWidth="107.0" text="Name" />
                               <Label prefHeight="25.0" prefWidth="109.0" text="Start Date" />
                               <Label prefHeight="26.0" prefWidth="111.0" text="End Date" />
-                              <Label prefHeight="30.0" prefWidth="108.0" text="Description" />
+                              <Label prefHeight="57.0" prefWidth="107.0" text="Description" />
                               <Label prefHeight="25.0" prefWidth="109.0" text="Base Price" />
                               <Label prefHeight="26.0" prefWidth="109.0" text="Agency Commission" />
                               <Label prefHeight="25.0" prefWidth="113.0" text="Products" />
                            </children>
                         </VBox>
-                        <JFXTreeTableView fx:id="tvPackages" layoutY="-3.0" prefHeight="470.0" prefWidth="217.0" style="-fx-background-color: #F3D8A3;" />
+                        <JFXTreeTableView fx:id="tvPackages" layoutY="-3.0" prefHeight="470.0" prefWidth="200.0" style="-fx-background-color: #F3D8A3;" />
                      </children>
                   </AnchorPane>
               </content>
