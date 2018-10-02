@@ -14,13 +14,15 @@ import javax.ws.rs.core.MediaType;
 import org.apache.log4j.Logger;
 
 
-@Path("/<add your restful service class name here>")
-public class SimpleRestService {
+@Path("/package")
+public class PackageRestService {
 
-	private static final Logger logger = Logger.getLogger(SimpleRestService.class);
+	private static final Logger logger = Logger.getLogger(PackageRestService.class);
 
+	// http://localhost:8080/TravelExperts/rs/package/getallpackages
+	
 	@GET
-	@Path("/<add method name here>")
+	@Path("/getallpackages")
     @Produces(MediaType.TEXT_PLAIN)
 	public String getSomething(@QueryParam("request") String request ,
 			 @DefaultValue("1") @QueryParam("version") int version) {
