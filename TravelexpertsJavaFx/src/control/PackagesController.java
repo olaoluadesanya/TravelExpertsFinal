@@ -30,7 +30,6 @@ public class PackagesController {
 	@FXML
     private Label lblPackageId;
 
-
     @FXML
     private JFXTextField tfPkgName;
 
@@ -71,16 +70,11 @@ public class PackagesController {
     private JFXListView<Product> lvProductsInPackage;
 
     @FXML
-    private JFXListView<?> lvDbProducts;
+    private JFXTreeTableView<?> tvProductsSuppliers;
 
     @FXML
-    private JFXListView<?> lvDbSuppliers;
+    private Label lblProductsSuppliers;
 
-    @FXML
-    private Label lblProducts;
-
-    @FXML
-    private Label lblSuppliers;
     
     @FXML
     private JFXButton btnInsertProductIntoPkg;
@@ -91,6 +85,9 @@ public class PackagesController {
     @FXML
     void initialize()
     {
+    	// hide elements
+    	enableInputs(false);
+    	
     	// manually creating list of products
     	ObservableList<Product> productsInPackage = FXCollections.observableArrayList();
     	productsInPackage.add(new Product(2, "Air Bus"));
@@ -158,10 +155,8 @@ public class PackagesController {
     	dpPkgStartDate.setDisable(!myBool);
     	dpPkgEndDate.setDisable(!myBool);
     	
-    	lblProducts.setVisible(myBool);
-    	lblSuppliers.setVisible(myBool);
-    	lvDbProducts.setVisible(myBool);
-    	lvDbSuppliers.setVisible(myBool);
+    	lblProductsSuppliers.setVisible(myBool);
+    	tvProductsSuppliers.setVisible(myBool);
     	
     	btnInsertProductIntoPkg.setVisible(myBool);
     	btnRemoveProductFromPkg.setVisible(myBool);

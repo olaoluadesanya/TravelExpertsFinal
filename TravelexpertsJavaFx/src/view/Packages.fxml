@@ -6,6 +6,7 @@
 <?import com.jfoenix.controls.JFXTabPane?>
 <?import com.jfoenix.controls.JFXTextArea?>
 <?import com.jfoenix.controls.JFXTextField?>
+<?import com.jfoenix.controls.JFXTreeTableView?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Tab?>
@@ -46,7 +47,7 @@
                               <Label prefHeight="30.0" prefWidth="109.0" text="Agency Commission" />
                            </children>
                         </VBox>
-                        <TableView fx:id="tvPackages" onMouseClicked="#displayPackageInfo" prefHeight="514.0" prefWidth="200.0">
+                        <TableView fx:id="tvPackages" onMouseClicked="#displayPackageInfo" prefHeight="514.0" prefWidth="200.0" style="-fx-background-color: #F3D8A3;">
                           <columns>
                             <TableColumn fx:id="tcPackageId" prefWidth="29.0" text="ID" />
                             <TableColumn fx:id="tcPackageName" prefWidth="170.0" text="Name" />
@@ -73,18 +74,16 @@
                         </HBox>
                         <HBox layoutX="233.0" layoutY="301.0" prefHeight="109.0" prefWidth="447.0">
                            <children>
-                              <JFXListView fx:id="lvProductsInPackage" prefHeight="94.0" prefWidth="128.0" />
-                              <JFXListView fx:id="lvDbProducts" prefHeight="94.0" prefWidth="128.0" visible="false">
+                              <JFXListView fx:id="lvProductsInPackage" prefHeight="94.0" prefWidth="128.0" style="-fx-background-color: #F3D8A3;" />
+                              <JFXTreeTableView fx:id="tvProductsSuppliers" prefHeight="109.0" prefWidth="292.0" style="-fx-background-color: #F3D8A3;">
                                  <HBox.margin>
-                                    <Insets left="30.0" right="30.0" />
+                                    <Insets left="30.0" />
                                  </HBox.margin>
-                              </JFXListView>
-                              <JFXListView fx:id="lvDbSuppliers" prefHeight="94.0" prefWidth="128.0" visible="false" />
+                              </JFXTreeTableView>
                            </children>
                         </HBox>
                         <Label layoutX="233.0" layoutY="275.0" text="Products In the Package" />
-                        <Label fx:id="lblProducts" layoutX="391.0" layoutY="275.0" text="Choose a Product" visible="false" />
-                        <Label fx:id="lblSuppliers" layoutX="550.0" layoutY="275.0" text="Choose a Supplier" visible="false" />
+                        <Label fx:id="lblProductsSuppliers" layoutX="391.0" layoutY="275.0" text="Choose a Product and a Supplier" visible="false" />
                         <JFXButton fx:id="btnInsertProductIntoPkg" layoutX="336.0" layoutY="429.0" style="-fx-background-color: skyblue;" text="Insert the Product" visible="false" />
                         <JFXButton fx:id="btnRemoveProductFromPkg" layoutX="459.0" layoutY="429.0" style="-fx-background-color: skyblue;" text="Remove the Product" visible="false" />
                      </children>
