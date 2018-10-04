@@ -17,12 +17,33 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+<<<<<<< HEAD
 import javafx.fxml.Initializable;
+=======
+import javafx.scene.control.Alert;
+>>>>>>> master
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
+<<<<<<< HEAD
+=======
+import model.Product;
+import model.Packag;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+>>>>>>> master
 
 
 public class PackagesController implements Initializable{
@@ -51,6 +72,7 @@ public class PackagesController implements Initializable{
     private JFXTextField tfPkgAgencyCommission;
 
     @FXML
+<<<<<<< HEAD
     private TableView<model.Package> tvPackages;
     
     @FXML
@@ -58,6 +80,15 @@ public class PackagesController implements Initializable{
 
     @FXML
     private TableColumn<model.Package, String> tcPackageName;
+=======
+    private TableView<Packag> tvPackages;
+    
+    @FXML
+    private TableColumn<Packag, Integer> tcPackageId;
+
+    @FXML
+    private TableColumn<Packag, String> tcPackageName;
+>>>>>>> master
 
     @FXML
     private JFXButton btnEdit;
@@ -84,7 +115,78 @@ public class PackagesController implements Initializable{
     @FXML
     private JFXButton btnRemoveProductFromPkg;
     
+<<<<<<< HEAD
   
+=======
+    private StringBuffer buffer = new StringBuffer();
+    
+    
+    ObservableList<Packag> packages;
+    @FXML
+    void initialize()
+    {
+    	// manually creating list of products
+    	ObservableList<Product> productsInPackage = FXCollections.observableArrayList();
+    	productsInPackage.add(new Product(2, "Air Bus"));
+    	productsInPackage.add(new Product(3, "Wow"));
+    	lvProductsInPackage.setItems(productsInPackage);
+    	
+    	// manually creating list of packages
+    	packages =FXCollections.observableArrayList();
+    	SimpleDateFormat ft = new SimpleDateFormat ("yyyy-MM-dd"); 
+        
+        
+    	try
+		{
+			packages.add(new Packag(1, 231.12, 231.21, "It is a good package!", ft.parse("2018-11-11"), "European Package", ft.parse("2018-11-15")));
+			packages.add(new Packag(2, 102.31, 167.38, "Wow! Nice!", ft.parse("2018-10-11"), "american Package", ft.parse("2018-11-130")));
+			tcPackageId.setCellValueFactory(new PropertyValueFactory<>("PackageId"));
+			tcPackageName.setCellValueFactory(new PropertyValueFactory<>("PkgName"));
+			tvPackages.setItems(packages);
+		
+		
+		} catch (ParseException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	// reading json
+    	try 
+    	{
+            URL url = new URL("http://10.163.101.59:8080/TravelExperts2/rs/db/getallpackages");
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestProperty("accept", "application/json");
+            BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            String line;
+            while ((line = br.readLine()) != null)
+            {
+                System.out.println("succes");
+            	buffer.append(line);
+            }
+
+            System.out.println(buffer);
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    	
+    	try 
+    	{
+            JSONArray jsonArray = new JSONArray(buffer.toString());
+            for (int i = 0; i < jsonArray.length(); i++)
+            {
+                JSONObject jsonPkg = (JSONObject) jsonArray.get(i);
+                //create customer object from json object
+                Packag pkg = new Packag(jsonPkg.getInt("packageId"), 231.21 ,123.213,"It is a good package!", ft.parse("2018-11-11"), jsonPkg.getString("pkgName"), ft.parse("2018-11-15"));
+                
+                packages.add(pkg);
+            }
+    	}
+    	catch (Exception e)
+    	{
+    		System.out.println(e);
+    	}
+    }
+>>>>>>> master
     
 
     @FXML
@@ -105,8 +207,13 @@ public class PackagesController implements Initializable{
     
     @FXML
     void displayPackageInfo(MouseEvent event) {
+<<<<<<< HEAD
     	model.Package selectedPackage= tvPackages.getSelectionModel().getSelectedItem();
     	lblPackageId.setText(""+selectedPackage.getPackageId());
+=======
+    	Packag selectedPackage= tvPackages.getSelectionModel().getSelectedItem();
+    	//lblPackageId.setText(""+selectedPackage.getPackageId());
+>>>>>>> master
     	tfPkgName.setText(""+selectedPackage.getPkgName());
     	dpPkgStartDate.setValue(selectedPackage.getPkgStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
     	dpPkgEndDate.setValue(selectedPackage.getPkgEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
@@ -166,6 +273,8 @@ public class PackagesController implements Initializable{
 			e.printStackTrace();
 		}
 	}
+    
+    
     
     // ==
 
