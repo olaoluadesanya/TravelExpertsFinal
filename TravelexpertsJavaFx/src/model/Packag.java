@@ -4,7 +4,7 @@ import java.util.Date;
 
 
 
-public class Package
+public class Packag
 {
 	private int packageId;
 
@@ -20,7 +20,7 @@ public class Package
 
 	private Date pkgStartDate;
 
-	public Package(int packageId, double pkgAgencyCommission, double pkgBasePrice, String pkgDesc, Date pkgEndDate,
+	public Packag(int packageId, double pkgAgencyCommission, double pkgBasePrice, String pkgDesc, Date pkgEndDate,
 			String pkgName, Date pkgStartDate)
 	{
 		super();

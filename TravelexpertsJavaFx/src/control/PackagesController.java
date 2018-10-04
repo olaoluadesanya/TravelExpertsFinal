@@ -15,13 +15,26 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import model.Product;
-import model.Package;
+import model.Packag;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 
 public class PackagesController {
 	
@@ -50,13 +63,13 @@ public class PackagesController {
     private JFXTextField tfPkgAgencyCommission;
 
     @FXML
-    private TableView<Package> tvPackages;
+    private TableView<Packag> tvPackages;
     
     @FXML
-    private TableColumn<Package, Integer> tcPackageId;
+    private TableColumn<Packag, Integer> tcPackageId;
 
     @FXML
-    private TableColumn<Package, String> tcPackageName;
+    private TableColumn<Packag, String> tcPackageName;
 
     @FXML
     private JFXButton btnEdit;
@@ -88,6 +101,10 @@ public class PackagesController {
     @FXML
     private JFXButton btnRemoveProductFromPkg;
     
+    private StringBuffer buffer = new StringBuffer();
+    
+    
+    ObservableList<Packag> packages;
     @FXML
     void initialize()
     {
@@ -98,14 +115,14 @@ public class PackagesController {
     	lvProductsInPackage.setItems(productsInPackage);
     	
     	// manually creating list of packages
-    	ObservableList<Package> packages =FXCollections.observableArrayList();
+    	packages =FXCollections.observableArrayList();
     	SimpleDateFormat ft = new SimpleDateFormat ("yyyy-MM-dd"); 
         
         
     	try
 		{
-			packages.add(new Package(1, 231.12, 231.21, "It is a good package!", ft.parse("2018-11-11"), "European Package", ft.parse("2018-11-15")));
-			packages.add(new Package(2, 102.31, 167.38, "Wow! Nice!", ft.parse("2018-10-11"), "american Package", ft.parse("2018-11-130")));
+			packages.add(new Packag(1, 231.12, 231.21, "It is a good package!", ft.parse("2018-11-11"), "European Package", ft.parse("2018-11-15")));
+			packages.add(new Packag(2, 102.31, 167.38, "Wow! Nice!", ft.parse("2018-10-11"), "american Package", ft.parse("2018-11-130")));
 			tcPackageId.setCellValueFactory(new PropertyValueFactory<>("PackageId"));
 			tcPackageName.setCellValueFactory(new PropertyValueFactory<>("PkgName"));
 			tvPackages.setItems(packages);
@@ -116,7 +133,41 @@ public class PackagesController {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+    	// reading json
+    	try 
+    	{
+            URL url = new URL("http://10.163.101.59:8080/TravelExperts2/rs/db/getallpackages");
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestProperty("accept", "application/json");
+            BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            String line;
+            while ((line = br.readLine()) != null)
+            {
+                System.out.println("succes");
+            	buffer.append(line);
+            }
+
+            System.out.println(buffer);
+        } catch (Exception e) {
+            System.out.println(e);
+        }
     	
+    	try 
+    	{
+            JSONArray jsonArray = new JSONArray(buffer.toString());
+            for (int i = 0; i < jsonArray.length(); i++)
+            {
+                JSONObject jsonPkg = (JSONObject) jsonArray.get(i);
+                //create customer object from json object
+                Packag pkg = new Packag(jsonPkg.getInt("packageId"), 231.21 ,123.213,"It is a good package!", ft.parse("2018-11-11"), jsonPkg.getString("pkgName"), ft.parse("2018-11-15"));
+                
+                packages.add(pkg);
+            }
+    	}
+    	catch (Exception e)
+    	{
+    		System.out.println(e);
+    	}
     }
     
 
@@ -138,8 +189,8 @@ public class PackagesController {
     
     @FXML
     void displayPackageInfo(MouseEvent event) {
-    	Package selectedPackage= tvPackages.getSelectionModel().getSelectedItem();
-    	lblPackageId.setText(""+selectedPackage.getPackageId());
+    	Packag selectedPackage= tvPackages.getSelectionModel().getSelectedItem();
+    	//lblPackageId.setText(""+selectedPackage.getPackageId());
     	tfPkgName.setText(""+selectedPackage.getPkgName());
     	dpPkgStartDate.setValue(selectedPackage.getPkgStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
     	dpPkgEndDate.setValue(selectedPackage.getPkgEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
@@ -166,6 +217,8 @@ public class PackagesController {
     	btnInsertProductIntoPkg.setVisible(myBool);
     	btnRemoveProductFromPkg.setVisible(myBool);
     }
+    
+    
     
     // ==
 
