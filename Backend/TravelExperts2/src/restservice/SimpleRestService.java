@@ -24,17 +24,19 @@ import org.apache.log4j.Logger;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import model.Agent;
 import model.Booking;
 import model.Customer;
 import model.Packag;
 import model.Product;
 
 
-@Path("/customers")
+@Path("/db")
 public class SimpleRestService {
 
 	private static final Logger logger = Logger.getLogger(SimpleRestService.class);
-	//http://localhost:8080/TravelExperts2/rs/customers/getallcustomers
+	
+	//http://localhost:8080/TravelExperts2/rs/db/getallcustomers
 
 	@GET
 	@Path("/getallcustomers")
@@ -80,6 +82,8 @@ public class SimpleRestService {
         return response;	
 	}
 	
+	//http://localhost:8080/TravelExperts2/rs/db/getallproducts
+	
 	@GET
 	@Path("/getallproducts")
     @Produces(MediaType.TEXT_PLAIN)
@@ -123,6 +127,9 @@ public class SimpleRestService {
         }
         return response;	
 	}
+	
+	
+	//http://localhost:8080/TravelExperts2/rs/db/getallpackages
 	
 	@GET
 	@Path("/getallpackages")
@@ -168,6 +175,8 @@ public class SimpleRestService {
         return response;	
 	}
 	
+	//http://localhost:8080/TravelExperts2/rs/db/getallbookings
+	
 	@GET
 	@Path("/getallbookings")
     @Produces(MediaType.TEXT_PLAIN)
@@ -211,6 +220,52 @@ public class SimpleRestService {
         }
         return response;	
 	}
+	
+	//http://localhost:8080/TravelExperts2/rs/db/getallagents
+	
+		@GET
+		@Path("/getallagents")
+	    @Produces(MediaType.TEXT_PLAIN)
+		public String getAllAgents(@QueryParam("request") String request ,
+				 @DefaultValue("1") @QueryParam("version") int version) {
+
+			if (logger.isDebugEnabled()) {
+				logger.debug("Start getSomething");
+				logger.debug("data: '" + request + "'");
+				logger.debug("version: '" + version + "'");
+			}
+
+			String response = null;
+
+	        try{			
+	            switch(version){
+		            case 1:
+		                if(logger.isDebugEnabled()) logger.debug("in version 1");
+		                
+		                EntityManagerFactory factory = Persistence.createEntityManagerFactory("TravelExperts2");
+		                EntityManager em = factory.createEntityManager();
+		                
+		                Query query = em.createQuery("select a from Agent a");
+		                List<Agent> list = query.getResultList();
+		                
+		                Gson gson = new Gson();
+		                Type type = new TypeToken<List<Agent>>() {}.getType();
+		                response = gson.toJson(list, type);
+		                
+	                    break;
+	                default: throw new Exception("Unsupported version: " + version);
+	            }
+	        }
+	        catch(Exception e){
+	        	response = e.getMessage().toString();
+	        }
+	        
+	        if(logger.isDebugEnabled()){
+	            logger.debug("result: '"+response+"'");
+	            logger.debug("End getSomething");
+	        }
+	        return response;	
+		}
 	
 	
 	@POST
