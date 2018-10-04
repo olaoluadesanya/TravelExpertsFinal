@@ -47,7 +47,7 @@
                               <Label prefHeight="30.0" prefWidth="109.0" text="Agency Commission" />
                            </children>
                         </VBox>
-                        <TableView fx:id="tvPackages" onMouseClicked="#displayPackageInfo" prefHeight="514.0" prefWidth="200.0" style="-fx-background-color: #F3D8A3;">
+                        <TableView fx:id="tvPackages" onMouseClicked="#displayPackageInfo" prefHeight="514.0" prefWidth="200.0">
                           <columns>
                             <TableColumn fx:id="tcPackageId" prefWidth="29.0" text="ID" />
                             <TableColumn fx:id="tcPackageName" prefWidth="170.0" text="Name" />
@@ -74,8 +74,8 @@
                         </HBox>
                         <HBox layoutX="233.0" layoutY="301.0" prefHeight="109.0" prefWidth="447.0">
                            <children>
-                              <JFXListView fx:id="lvProductsInPackage" prefHeight="94.0" prefWidth="128.0" style="-fx-background-color: #F3D8A3;" />
-                              <JFXTreeTableView fx:id="tvProductsSuppliers" prefHeight="109.0" prefWidth="292.0" style="-fx-background-color: #F3D8A3;">
+                              <JFXListView fx:id="lvProductsInPackage" prefHeight="94.0" prefWidth="128.0" />
+                              <JFXTreeTableView fx:id="tvProductsSuppliers" prefHeight="109.0" prefWidth="292.0">
                                  <HBox.margin>
                                     <Insets left="30.0" />
                                  </HBox.margin>

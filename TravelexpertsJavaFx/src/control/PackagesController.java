@@ -1,8 +1,10 @@
 package control;
 
+import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.ZoneId;
+import java.util.ResourceBundle;
 
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXDatePicker;
@@ -15,15 +17,15 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
-import model.Product;
-import model.Package;
 
-public class PackagesController {
+
+public class PackagesController implements Initializable{
 	
 	// ==Sunghyun Lee ==
 
@@ -49,13 +51,13 @@ public class PackagesController {
     private JFXTextField tfPkgAgencyCommission;
 
     @FXML
-    private TableView<Package> tvPackages;
+    private TableView<model.Package> tvPackages;
     
     @FXML
-    private TableColumn<Package, Integer> tcPackageId;
+    private TableColumn<model.Package, Integer> tcPackageId;
 
     @FXML
-    private TableColumn<Package, String> tcPackageName;
+    private TableColumn<model.Package, String> tcPackageName;
 
     @FXML
     private JFXButton btnEdit;
@@ -67,7 +69,7 @@ public class PackagesController {
     private JFXButton btnDelete;
 
     @FXML
-    private JFXListView<Product> lvProductsInPackage;
+    private JFXListView<model.Product> lvProductsInPackage;
 
     @FXML
     private JFXTreeTableView<?> tvProductsSuppliers;
@@ -82,39 +84,7 @@ public class PackagesController {
     @FXML
     private JFXButton btnRemoveProductFromPkg;
     
-    @FXML
-    void initialize()
-    {
-    	// hide elements
-    	enableInputs(false);
-    	
-    	// manually creating list of products
-    	ObservableList<Product> productsInPackage = FXCollections.observableArrayList();
-    	productsInPackage.add(new Product(2, "Air Bus"));
-    	productsInPackage.add(new Product(3, "Wow"));
-    	lvProductsInPackage.setItems(productsInPackage);
-    	
-    	// manually creating list of packages
-    	ObservableList<Package> packages =FXCollections.observableArrayList();
-    	SimpleDateFormat ft = new SimpleDateFormat ("yyyy-MM-dd"); 
-        
-        
-    	try
-		{
-			packages.add(new Package(1, 231.12, 231.21, "It is a good package!", ft.parse("2018-11-11"), "European Package", ft.parse("2018-11-15")));
-			packages.add(new Package(2, 102.31, 167.38, "Wow! Nice!", ft.parse("2018-10-11"), "american Package", ft.parse("2018-11-130")));
-			tcPackageId.setCellValueFactory(new PropertyValueFactory<>("PackageId"));
-			tcPackageName.setCellValueFactory(new PropertyValueFactory<>("PkgName"));
-			tvPackages.setItems(packages);
-		
-		
-		} catch (ParseException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-    	
-    }
+  
     
 
     @FXML
@@ -135,7 +105,7 @@ public class PackagesController {
     
     @FXML
     void displayPackageInfo(MouseEvent event) {
-    	Package selectedPackage= tvPackages.getSelectionModel().getSelectedItem();
+    	model.Package selectedPackage= tvPackages.getSelectionModel().getSelectedItem();
     	lblPackageId.setText(""+selectedPackage.getPackageId());
     	tfPkgName.setText(""+selectedPackage.getPkgName());
     	dpPkgStartDate.setValue(selectedPackage.getPkgStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
@@ -161,6 +131,41 @@ public class PackagesController {
     	btnInsertProductIntoPkg.setVisible(myBool);
     	btnRemoveProductFromPkg.setVisible(myBool);
     }
+
+
+	@Override
+	public void initialize(URL location, ResourceBundle resources)
+	{
+		// TODO Auto-generated method stub
+		// hide elements
+    	enableInputs(false);
+    	
+    	// manually creating list of products
+    	ObservableList<model.Product> productsInPackage = FXCollections.observableArrayList();
+    	productsInPackage.add(new model.Product(2, "Air Bus"));
+    	productsInPackage.add(new model.Product(3, "Wow"));
+    	lvProductsInPackage.setItems(productsInPackage);
+    	
+    	// manually creating list of packages
+    	ObservableList<model.Package> packages =FXCollections.observableArrayList();
+    	SimpleDateFormat ft = new SimpleDateFormat ("yyyy-MM-dd"); 
+        
+        
+    	try
+		{
+			packages.add(new model.Package(1, 231.12, 231.21, "It is a good package!", ft.parse("2018-11-11"), "European Package", ft.parse("2018-11-15")));
+			packages.add(new model.Package(2, 102.31, 167.38, "Wow! Nice!", ft.parse("2018-10-11"), "american Package", ft.parse("2018-11-130")));
+			tcPackageId.setCellValueFactory(new PropertyValueFactory<>("PackageId"));
+			tcPackageName.setCellValueFactory(new PropertyValueFactory<>("PkgName"));
+			tvPackages.setItems(packages);
+		
+		
+		} catch (ParseException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
     
     // ==
 
