@@ -34,7 +34,7 @@ import model.Product;
 @Path("/db")
 public class SimpleRestService {
 
-	private static final Logger logger = Logger.getLogger(SimpleRestService.class);
+	private final transient Logger logger = Logger.getLogger(SimpleRestService.class);
 	
 	//http://localhost:8080/TravelExperts2/rs/db/getallcustomers
 
