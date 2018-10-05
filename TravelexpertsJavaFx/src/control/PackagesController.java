@@ -1,6 +1,7 @@
 package control;
 
 import java.net.URL;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.ZoneId;
@@ -17,19 +18,18 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-<<<<<<< HEAD
 import javafx.fxml.Initializable;
-=======
 import javafx.scene.control.Alert;
->>>>>>> master
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TreeTableColumn;
+import javafx.scene.control.TreeTableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
-<<<<<<< HEAD
-=======
+
 import model.Product;
+import model.ProductsSupplier;
 import model.Packag;
 
 import java.io.BufferedReader;
@@ -38,12 +38,13 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
->>>>>>> master
 
 
 public class PackagesController implements Initializable{
@@ -72,23 +73,13 @@ public class PackagesController implements Initializable{
     private JFXTextField tfPkgAgencyCommission;
 
     @FXML
-<<<<<<< HEAD
-    private TableView<model.Package> tvPackages;
-    
-    @FXML
-    private TableColumn<model.Package, Integer> tcPackageId;
-
-    @FXML
-    private TableColumn<model.Package, String> tcPackageName;
-=======
     private TableView<Packag> tvPackages;
-    
-    @FXML
-    private TableColumn<Packag, Integer> tcPackageId;
 
     @FXML
-    private TableColumn<Packag, String> tcPackageName;
->>>>>>> master
+    private TableColumn<Packag, Integer> tcPkgId;
+
+    @FXML
+    private TableColumn<Packag, String> tcPkgName;
 
     @FXML
     private JFXButton btnEdit;
@@ -103,7 +94,7 @@ public class PackagesController implements Initializable{
     private JFXListView<model.Product> lvProductsInPackage;
 
     @FXML
-    private JFXTreeTableView<?> tvProductsSuppliers;
+    private TableView<ProductsSupplier> tvProductsSuppliers;
 
     @FXML
     private Label lblProductsSuppliers;
@@ -115,68 +106,63 @@ public class PackagesController implements Initializable{
     @FXML
     private JFXButton btnRemoveProductFromPkg;
     
-<<<<<<< HEAD
-  
-=======
+
     private StringBuffer buffer = new StringBuffer();
     
     
-    ObservableList<Packag> packages;
-    @FXML
-    void initialize()
-    {
+    private ObservableList<Packag> packages;
+  
+    @Override
+	public void initialize(URL location, ResourceBundle resources)
+	{
+		// TODO Auto-generated method stub
+		// hide elements
+    	enableInputs(false);
+    	
     	// manually creating list of products
-    	ObservableList<Product> productsInPackage = FXCollections.observableArrayList();
-    	productsInPackage.add(new Product(2, "Air Bus"));
-    	productsInPackage.add(new Product(3, "Wow"));
+    	ObservableList<model.Product> productsInPackage = FXCollections.observableArrayList();
+    	productsInPackage.add(new model.Product(2, "Air Bus"));
+    	productsInPackage.add(new model.Product(3, "Wow"));
     	lvProductsInPackage.setItems(productsInPackage);
     	
-    	// manually creating list of packages
+    	// create a list of packages
     	packages =FXCollections.observableArrayList();
+    	tcPkgId.setCellValueFactory(new PropertyValueFactory<>("PackageId"));
+		tcPkgName.setCellValueFactory(new PropertyValueFactory<>("PkgName"));
     	SimpleDateFormat ft = new SimpleDateFormat ("yyyy-MM-dd"); 
-        
-        
-    	try
-		{
-			packages.add(new Packag(1, 231.12, 231.21, "It is a good package!", ft.parse("2018-11-11"), "European Package", ft.parse("2018-11-15")));
-			packages.add(new Packag(2, 102.31, 167.38, "Wow! Nice!", ft.parse("2018-10-11"), "american Package", ft.parse("2018-11-130")));
-			tcPackageId.setCellValueFactory(new PropertyValueFactory<>("PackageId"));
-			tcPackageName.setCellValueFactory(new PropertyValueFactory<>("PkgName"));
-			tvPackages.setItems(packages);
-		
-		
-		} catch (ParseException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-    	// reading json
+    	
+    	
+    	
     	try 
     	{
-            URL url = new URL("http://10.163.101.59:8080/TravelExperts2/rs/db/getallpackages");
+    		// reading json
+            URL url = new URL("http://localhost:8080/TravelExperts2/rs/db/getallpackages");
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestProperty("accept", "application/json");
             BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
             String line;
             while ((line = br.readLine()) != null)
             {
-                System.out.println("succes");
             	buffer.append(line);
             }
 
-            System.out.println(buffer);
         } catch (Exception e) {
             System.out.println(e);
         }
     	
     	try 
     	{
+    		// read and create each package object from json
             JSONArray jsonArray = new JSONArray(buffer.toString());
             for (int i = 0; i < jsonArray.length(); i++)
             {
                 JSONObject jsonPkg = (JSONObject) jsonArray.get(i);
-                //create customer object from json object
-                Packag pkg = new Packag(jsonPkg.getInt("packageId"), 231.21 ,123.213,"It is a good package!", ft.parse("2018-11-11"), jsonPkg.getString("pkgName"), ft.parse("2018-11-15"));
+                //convert date string into date variable
+                String startDate = jsonPkg.getString("pkgStartDate");
+                String endDate = jsonPkg.getString("pkgEndDate");
+                DateFormat format = new SimpleDateFormat("MMM d, yyyy", Locale.ENGLISH);
+                
+                Packag pkg = new Packag(jsonPkg.getInt("packageId"), jsonPkg.getDouble("pkgAgencyCommission") ,jsonPkg.getDouble("pkgBasePrice"),jsonPkg.getString("pkgDesc"), format.parse(endDate), jsonPkg.getString("pkgName"), format.parse(startDate));
                 
                 packages.add(pkg);
             }
@@ -185,9 +171,14 @@ public class PackagesController implements Initializable{
     	{
     		System.out.println(e);
     	}
-    }
->>>>>>> master
-    
+    	
+		tvPackages.setItems(packages);
+    	
+			
+			
+		
+		
+	}
 
     @FXML
     void deletePackage(ActionEvent event) {
@@ -197,6 +188,9 @@ public class PackagesController implements Initializable{
     @FXML
     void editPackage(ActionEvent event) {
     	enableInputs(true);
+    	btnEdit.setDisable(true);
+    	
+    	
 
     }
 
@@ -207,13 +201,8 @@ public class PackagesController implements Initializable{
     
     @FXML
     void displayPackageInfo(MouseEvent event) {
-<<<<<<< HEAD
-    	model.Package selectedPackage= tvPackages.getSelectionModel().getSelectedItem();
+    	model.Packag selectedPackage= tvPackages.getSelectionModel().getSelectedItem();
     	lblPackageId.setText(""+selectedPackage.getPackageId());
-=======
-    	Packag selectedPackage= tvPackages.getSelectionModel().getSelectedItem();
-    	//lblPackageId.setText(""+selectedPackage.getPackageId());
->>>>>>> master
     	tfPkgName.setText(""+selectedPackage.getPkgName());
     	dpPkgStartDate.setValue(selectedPackage.getPkgStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
     	dpPkgEndDate.setValue(selectedPackage.getPkgEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
@@ -240,42 +229,8 @@ public class PackagesController implements Initializable{
     }
 
 
-	@Override
-	public void initialize(URL location, ResourceBundle resources)
-	{
-		// TODO Auto-generated method stub
-		// hide elements
-    	enableInputs(false);
-    	
-    	// manually creating list of products
-    	ObservableList<model.Product> productsInPackage = FXCollections.observableArrayList();
-    	productsInPackage.add(new model.Product(2, "Air Bus"));
-    	productsInPackage.add(new model.Product(3, "Wow"));
-    	lvProductsInPackage.setItems(productsInPackage);
-    	
-    	// manually creating list of packages
-    	ObservableList<model.Package> packages =FXCollections.observableArrayList();
-    	SimpleDateFormat ft = new SimpleDateFormat ("yyyy-MM-dd"); 
-        
-        
-    	try
-		{
-			packages.add(new model.Package(1, 231.12, 231.21, "It is a good package!", ft.parse("2018-11-11"), "European Package", ft.parse("2018-11-15")));
-			packages.add(new model.Package(2, 102.31, 167.38, "Wow! Nice!", ft.parse("2018-10-11"), "american Package", ft.parse("2018-11-130")));
-			tcPackageId.setCellValueFactory(new PropertyValueFactory<>("PackageId"));
-			tcPackageName.setCellValueFactory(new PropertyValueFactory<>("PkgName"));
-			tvPackages.setItems(packages);
-		
-		
-		} catch (ParseException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
+	
     
     
     
-    // ==
-
 }

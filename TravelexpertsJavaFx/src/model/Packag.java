@@ -1,6 +1,7 @@
 package model;
 
 import java.util.Date;
+import java.util.List;
 
 
 
@@ -19,6 +20,9 @@ public class Packag
 	private String pkgName;
 
 	private Date pkgStartDate;
+	
+	private List<Product> products;
+	private List<Integer> productSupplierIds;
 
 	public Packag(int packageId, double pkgAgencyCommission, double pkgBasePrice, String pkgDesc, Date pkgEndDate,
 			String pkgName, Date pkgStartDate)
@@ -101,6 +105,36 @@ public class Packag
 	public void setPkgStartDate(Date pkgStartDate)
 	{
 		this.pkgStartDate = pkgStartDate;
+	}
+	
+	
+
+	public List<Product> getProducts()
+	{
+		return products;
+	}
+
+	public void setProducts(List<Product> products)
+	{
+		this.products = products;
+	}
+
+	
+	
+	public List<Integer> getProductSupplierIds()
+	{
+		return productSupplierIds;
+	}
+
+	public void setProductSupplierIds(List<Integer> productSupplierIds)
+	{
+		this.productSupplierIds = productSupplierIds;
+	}
+
+	@Override
+	public String toString()
+	{
+		return  pkgName;
 	}
 	
 	

@@ -133,7 +133,7 @@ public class SimpleRestService {
 	
 	@GET
 	@Path("/getallpackages")
-    @Produces(MediaType.TEXT_PLAIN)
+    @Produces(MediaType.APPLICATION_JSON)
 	public String getAllPackages(@QueryParam("request") String request ,
 			 @DefaultValue("1") @QueryParam("version") int version) {
 
