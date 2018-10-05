@@ -20,6 +20,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -53,6 +54,9 @@ public class PackagesController implements Initializable{
 
 	@FXML
     private Label lblPackageId;
+	
+	@FXML
+    private Label lblProductsInPkg;
 
     @FXML
     private JFXTextField tfPkgName;
@@ -106,18 +110,29 @@ public class PackagesController implements Initializable{
     @FXML
     private JFXButton btnRemoveProductFromPkg;
     
+    @FXML
+    private JFXButton btnAddPackage;
+    
 
     private StringBuffer buffer = new StringBuffer();
     
     
     private ObservableList<Packag> packages;
+    
+    private String status;
   
     @Override
 	public void initialize(URL location, ResourceBundle resources)
 	{
 		// TODO Auto-generated method stub
-		// hide elements
+		// initialize ability of controls
     	enableInputs(false);
+    	btnAddPackage.setDisable(false);
+    	btnEdit.setDisable(false);
+    	btnSave.setDisable(true);
+    	tcPkgId.setSortable(false);
+    	tcPkgName.setSortable(false);
+    	
     	
     	// manually creating list of products
     	ObservableList<model.Product> productsInPackage = FXCollections.observableArrayList();
@@ -128,9 +143,7 @@ public class PackagesController implements Initializable{
     	// create a list of packages
     	packages =FXCollections.observableArrayList();
     	tcPkgId.setCellValueFactory(new PropertyValueFactory<>("PackageId"));
-		tcPkgName.setCellValueFactory(new PropertyValueFactory<>("PkgName"));
-    	SimpleDateFormat ft = new SimpleDateFormat ("yyyy-MM-dd"); 
-    	
+		tcPkgName.setCellValueFactory(new PropertyValueFactory<>("PkgName"));    	
     	
     	
     	try 
@@ -182,37 +195,183 @@ public class PackagesController implements Initializable{
 
     @FXML
     void deletePackage(ActionEvent event) {
-
+    	if (tvPackages.getSelectionModel().getSelectedItem()!=null)
+    	{
+    	}
+    	else
+    	{
+    		Alert alert = new Alert(AlertType.INFORMATION);
+    		alert.setTitle("Error");
+    		alert.setHeaderText(null);
+    		alert.setContentText("Please select a package to delete");
+    		alert.showAndWait();
+    	}
     }
 
     @FXML
     void editPackage(ActionEvent event) {
-    	enableInputs(true);
+    	if (tvPackages.getSelectionModel().getSelectedItem()!=null)
+    	{
+	    	enableInputs(true);
+	    	btnEdit.setDisable(true);
+	    	btnSave.setDisable(false);
+	    	btnAddPackage.setDisable(true);
+	    	tvPackages.setDisable(true);
+	    	status="edit";
+    	}
+    	else 
+    	{
+    		Alert alert = new Alert(AlertType.INFORMATION);
+    		alert.setTitle("Error");
+    		alert.setHeaderText(null);
+    		alert.setContentText("Please select a package to edit");
+    		alert.showAndWait();
+    	}
+    }
+    
+    @FXML
+    void AddPackage(ActionEvent event) {
     	btnEdit.setDisable(true);
+    	btnAddPackage.setDisable(true);
+    	btnDelete.setDisable(true);
+    	btnSave.setDisable(false);
+    	enableInputs(true);
+    	status="add";
+    	tvPackages.setDisable(true);
     	
+    	// hide products-related controls
+    	
+    	lvProductsInPackage.setVisible(false);
+    	lblProductsInPkg.setVisible(false);
+    	
+    	lblProductsSuppliers.setVisible(false);
+    	tvProductsSuppliers.setVisible(false);	
+    	btnInsertProductIntoPkg.setVisible(false);
+    	btnRemoveProductFromPkg.setVisible(false);
+    	
+    	
+    	eraseInputs();
     	
 
     }
 
-    @FXML
+    private void eraseInputs()
+	{
+		// TODO Auto-generated method stub
+		lblPackageId.setText("New");
+		tfPkgName.setText("");
+		tfPkgAgencyCommission.setText("");
+		tfPkgBasePrice.setText("");
+		taPkgDesc.setText("");
+		dpPkgEndDate.setValue(new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+		dpPkgStartDate.setValue(new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+	}
+
+	@FXML
     void savePackage(ActionEvent event) {
-    	enableInputs(false);
+		if (Validated())
+		{
+			enableInputs(false);
+	    	btnDelete.setDisable(false);
+	    	btnAddPackage.setDisable(false);
+	    	btnEdit.setDisable(false);
+	    	tvPackages.setDisable(false);
+	    	
+	    	if (status=="add")
+	    	{
+	    		
+	    			// refresh tvPackages
+	        		// 
+	        		
+	    		lvProductsInPackage.setVisible(true);
+	        	lblProductsInPkg.setVisible(true);
+	        	tvPackages.getSelectionModel().select(tvPackages.getItems().size()-1);
+	        	displayPackageInfo();
+	    		
+	        	
+	        	
+	    	}
+	    	else
+	    	{
+	    		
+	    	}
+		}
     }
     
-    @FXML
-    void displayPackageInfo(MouseEvent event) {
-    	model.Packag selectedPackage= tvPackages.getSelectionModel().getSelectedItem();
-    	lblPackageId.setText(""+selectedPackage.getPackageId());
-    	tfPkgName.setText(""+selectedPackage.getPkgName());
-    	dpPkgStartDate.setValue(selectedPackage.getPkgStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
-    	dpPkgEndDate.setValue(selectedPackage.getPkgEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
-    	taPkgDesc.setText(selectedPackage.getPkgDesc());
-    	tfPkgBasePrice.setText(selectedPackage.getPkgBasePrice()+"");
+    private boolean Validated()
+	{
+		
+    	boolean myBool=true; // return true or false
+    	Alert alert = new Alert(AlertType.INFORMATION);
+    	// agency commission and base price
+    	try 
+    	{
+    		// agency commission or base price less than 0
+			if (Double.parseDouble( tfPkgAgencyCommission.getText())<0 || Double.parseDouble( tfPkgBasePrice.getText()) <0)
+			{
+	    		alert.setTitle("Negative Value");
+	    		alert.setHeaderText(null);
+	    		alert.setContentText("Agency Commission and Base Price must be greater than zero");
+	    		alert.showAndWait();
+	    		myBool=false;
+			}
+    	} catch (Exception e) 
+    	{
+    		
+    		alert.setTitle("Wrong Format");
+    		alert.setHeaderText(null);
+    		alert.setContentText("Wrong format for Agency Commission or Base Price");
+    		alert.showAndWait();
+    		myBool= false;
+		}
+    	// empty inputs
+    	if (tfPkgName.getText().trim().isEmpty())
+    	{
+    		alert.setTitle("Emtpy Input");
+    		alert.setHeaderText(null);
+    		alert.setContentText("Please type in a package name");
+    		alert.showAndWait();
+    		myBool=false;
+    	}
+    	
+    	if (taPkgDesc.getText().trim().isEmpty())
+    	{
+    		alert.setTitle("Emtpy Input");
+    		alert.setHeaderText(null);
+    		alert.setContentText("Please type in description");
+    		alert.showAndWait();
+    		myBool=false;
+    	}
+    	
+
+    	return myBool;
+	}
+
+	@FXML
+    void selectPackage(MouseEvent event) {
+    	displayPackageInfo();
+    	
     }
-    
-    void enableInputs(boolean myBool)
+    // display properties of selected package on text fields
+    private void displayPackageInfo()
+	{
+    	
+    	if (tvPackages.getSelectionModel().getSelectedItem()!= null)
+    	{
+	    	model.Packag selectedPackage= tvPackages.getSelectionModel().getSelectedItem();
+	    	lblPackageId.setText(""+selectedPackage.getPackageId());
+	    	tfPkgName.setText(""+selectedPackage.getPkgName());
+	    	dpPkgStartDate.setValue(selectedPackage.getPkgStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+	    	dpPkgEndDate.setValue(selectedPackage.getPkgEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+	    	taPkgDesc.setText(selectedPackage.getPkgDesc());
+	    	tfPkgBasePrice.setText(selectedPackage.getPkgBasePrice()+"");
+	    	tfPkgAgencyCommission.setText(selectedPackage.getPkgAgencyCommission()+"");
+    	}
+    	}
+
+	private void enableInputs(boolean myBool)
     {
-    	btnSave.setDisable(!myBool);
+    	
         
     	tfPkgName.setEditable(myBool);
     	tfPkgBasePrice.setEditable(myBool);
@@ -226,6 +385,7 @@ public class PackagesController implements Initializable{
     	
     	btnInsertProductIntoPkg.setVisible(myBool);
     	btnRemoveProductFromPkg.setVisible(myBool);
+    	
     }
 
 
