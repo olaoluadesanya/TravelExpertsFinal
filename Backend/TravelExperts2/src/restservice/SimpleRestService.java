@@ -13,6 +13,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import javax.persistence.Query;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.Produces;
 import javax.ws.rs.FormParam;
@@ -40,7 +41,7 @@ public class SimpleRestService {
 
 	@GET
 	@Path("/getallcustomers")
-    @Produces(MediaType.TEXT_PLAIN)
+    @Produces(MediaType.APPLICATION_JSON)
 	public String getAllCustomers(@QueryParam("request") String request ,
 			 @DefaultValue("1") @QueryParam("version") int version) {
 
@@ -86,7 +87,7 @@ public class SimpleRestService {
 	
 	@GET
 	@Path("/getallproducts")
-    @Produces(MediaType.TEXT_PLAIN)
+    @Produces(MediaType.APPLICATION_JSON)
 	public String getAllProducts(@QueryParam("request") String request ,
 			 @DefaultValue("1") @QueryParam("version") int version) {
 
@@ -179,7 +180,7 @@ public class SimpleRestService {
 	
 	@GET
 	@Path("/getallbookings")
-    @Produces(MediaType.TEXT_PLAIN)
+    @Produces(MediaType.APPLICATION_JSON)
 	public String getAllBookings(@QueryParam("request") String request ,
 			 @DefaultValue("1") @QueryParam("version") int version) {
 
@@ -267,11 +268,12 @@ public class SimpleRestService {
 	        return response;	
 		}
 	
-	
+	//http://localhost:8080/TravelExperts2/rs/db/postpackage
 	@POST
-	@Path("/<add method name here>")
+	@Path("/postpackage")
+	@Consumes({ MediaType.APPLICATION_JSON })
     @Produces(MediaType.TEXT_PLAIN)
-	public String postSomething(@FormParam("request") String request ,  @DefaultValue("1") @FormParam("version") int version) {
+	public String postPackage(String jsonString, @FormParam("request") String request ,  @DefaultValue("1") @FormParam("version") int version) {
 
 		if (logger.isDebugEnabled()) {
 			logger.debug("Start postSomething");
@@ -285,8 +287,19 @@ public class SimpleRestService {
             switch(version){
 	            case 1:
 	                if(logger.isDebugEnabled()) logger.debug("in version 1");
+	                
+	                EntityManagerFactory factory = Persistence.createEntityManagerFactory("TravelExperts2");
+	                EntityManager em = factory.createEntityManager();
+	                
+	                Gson gson = new Gson();
+	          	  	Packag packag = gson.fromJson(jsonString, Packag.class);
+	                
+	                em.getTransaction().begin();
+	                em.persist(packag);
+	                em.getTransaction().commit();
+	                
+	                response = "Package created";
 
-	                response = "Response from RESTEasy Restful Webservice : " + request;
                     break;
                 default: throw new Exception("Unsupported version: " + version);
             }
@@ -303,9 +316,10 @@ public class SimpleRestService {
 	}
 
 	@PUT
-	@Path("/<add method name here>")
+	@Path("/putpackage")
+	@Consumes({ MediaType.APPLICATION_JSON })
     @Produces(MediaType.TEXT_PLAIN)
-	public String putSomething(@FormParam("request") String request ,  @DefaultValue("1") @FormParam("version") int version) {
+	public String putPackage(String jsonString, @FormParam("request") String request ,  @DefaultValue("1") @FormParam("version") int version) {
 		if (logger.isDebugEnabled()) {
 			logger.debug("Start putSomething");
 			logger.debug("data: '" + request + "'");
@@ -318,8 +332,27 @@ public class SimpleRestService {
             switch(version){
 	            case 1:
 	                if(logger.isDebugEnabled()) logger.debug("in version 1");
+	                
+	                EntityManagerFactory factory = Persistence.createEntityManagerFactory("TravelExperts2");
+	                EntityManager em = factory.createEntityManager();
+	                
+	                Gson gson = new Gson();
+	          	  	Packag newPackage = gson.fromJson(jsonString, Packag.class);
+	          	  	
+	          	  	Packag oldPackage = em.find(Packag.class, newPackage.getPackageId());
+	                
+	                em.getTransaction().begin();
+	                oldPackage.setPackageId(newPackage.getPackageId());
+	                oldPackage.setPkgAgencyCommission(newPackage.getPkgAgencyCommission());
+	                oldPackage.setPkgBasePrice(newPackage.getPkgBasePrice());
+	                oldPackage.setPkgDesc(newPackage.getPkgDesc());
+	                oldPackage.setPkgEndDate(newPackage.getPkgEndDate());
+	                oldPackage.setPkgName(newPackage.getPkgName());
+	                oldPackage.setPkgStartDate(newPackage.getPkgStartDate());
+	                em.getTransaction().commit();
+	                
+	                response = "Package updated";
 
-	                response = "Response from RESTEasy Restful Webservice : " + request;
                     break;
                 default: throw new Exception("Unsupported version: " + version);
             }
