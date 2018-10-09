@@ -7,6 +7,15 @@ import java.text.SimpleDateFormat;
 import java.time.ZoneId;
 import java.util.ResourceBundle;
 
+/*
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
+import javax.persistence.Query;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+*/
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXDatePicker;
 import com.jfoenix.controls.JFXListView;
@@ -35,6 +44,8 @@ import model.Packag;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.lang.reflect.Type;
+import java.math.BigDecimal;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -120,6 +131,8 @@ public class PackagesController implements Initializable{
     private ObservableList<Packag> packages;
     
     private String status;
+    
+    private Packag newPkg;
   
     @Override
 	public void initialize(URL location, ResourceBundle resources)
@@ -140,7 +153,7 @@ public class PackagesController implements Initializable{
     	productsInPackage.add(new model.Product(3, "Wow"));
     	lvProductsInPackage.setItems(productsInPackage);
     	
-    	// create a list of packages
+    	// create a list of packages and columns in tvPackages
     	packages =FXCollections.observableArrayList();
     	tcPkgId.setCellValueFactory(new PropertyValueFactory<>("PackageId"));
 		tcPkgName.setCellValueFactory(new PropertyValueFactory<>("PkgName"));    	
@@ -165,7 +178,7 @@ public class PackagesController implements Initializable{
     	
     	try 
     	{
-    		// read and create each package object from json
+    		// read packages from json and put them into packages list
             JSONArray jsonArray = new JSONArray(buffer.toString());
             for (int i = 0; i < jsonArray.length(); i++)
             {
@@ -175,8 +188,7 @@ public class PackagesController implements Initializable{
                 String endDate = jsonPkg.getString("pkgEndDate");
                 DateFormat format = new SimpleDateFormat("MMM d, yyyy", Locale.ENGLISH);
                 
-                Packag pkg = new Packag(jsonPkg.getInt("packageId"), jsonPkg.getDouble("pkgAgencyCommission") ,jsonPkg.getDouble("pkgBasePrice"),jsonPkg.getString("pkgDesc"), format.parse(endDate), jsonPkg.getString("pkgName"), format.parse(startDate));
-                
+                Packag pkg= new Packag(jsonPkg.getInt("packageId"), new BigDecimal( jsonPkg.getDouble("pkgAgencyCommission") ), new BigDecimal( jsonPkg.getDouble("pkgBasePrice")), jsonPkg.getString("pkgDesc"),format.parse(endDate), jsonPkg.getString("pkgName"), format.parse(startDate));
                 packages.add(pkg);
             }
     	}
@@ -187,10 +199,6 @@ public class PackagesController implements Initializable{
     	
 		tvPackages.setItems(packages);
     	
-			
-			
-		
-		
 	}
 
     @FXML
@@ -252,6 +260,8 @@ public class PackagesController implements Initializable{
     	
     	eraseInputs();
     	
+    	
+    	
 
     }
 
@@ -279,9 +289,23 @@ public class PackagesController implements Initializable{
 	    	
 	    	if (status=="add")
 	    	{
+	    		// create a new package
 	    		
-	    			// refresh tvPackages
-	        		// 
+                
+                newPkg=new Packag(0, new BigDecimal( tfPkgAgencyCommission.getText()), new BigDecimal(tfPkgBasePrice.getText()), taPkgDesc.getText(), Date.from(dpPkgEndDate.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant()), tfPkgName.getText(), Date.from(dpPkgStartDate.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant()));                
+                
+                /*
+                Gson gson = new Gson();
+                Type type = new TypeToken<Packag>() {}.getType();
+                String json = gson.toJson(newPkg, type);
+                */
+                
+                
+                
+           
+	    		
+	    		// refresh tvPackages
+                
 	        		
 	    		lvProductsInPackage.setVisible(true);
 	        	lblProductsInPkg.setVisible(true);

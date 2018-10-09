@@ -2,6 +2,7 @@ package model;
 
 import java.util.Date;
 import java.util.List;
+import java.math.BigDecimal;
 
 
 
@@ -9,9 +10,9 @@ public class Packag
 {
 	private int packageId;
 
-	private double pkgAgencyCommission;
+	private BigDecimal pkgAgencyCommission;
 
-	private double pkgBasePrice;
+	private BigDecimal pkgBasePrice;
 
 	private String pkgDesc;
 
@@ -20,11 +21,8 @@ public class Packag
 	private String pkgName;
 
 	private Date pkgStartDate;
-	
-	private List<Product> products;
-	private List<Integer> productSupplierIds;
 
-	public Packag(int packageId, double pkgAgencyCommission, double pkgBasePrice, String pkgDesc, Date pkgEndDate,
+	public Packag(int packageId, BigDecimal pkgAgencyCommission, BigDecimal pkgBasePrice, String pkgDesc, Date pkgEndDate,
 			String pkgName, Date pkgStartDate)
 	{
 		super();
@@ -47,22 +45,22 @@ public class Packag
 		this.packageId = packageId;
 	}
 
-	public double getPkgAgencyCommission()
+	public BigDecimal getPkgAgencyCommission()
 	{
 		return pkgAgencyCommission;
 	}
 
-	public void setPkgAgencyCommission(double pkgAgencyCommission)
+	public void setPkgAgencyCommission(BigDecimal pkgAgencyCommission)
 	{
 		this.pkgAgencyCommission = pkgAgencyCommission;
 	}
 
-	public double getPkgBasePrice()
+	public BigDecimal getPkgBasePrice()
 	{
 		return pkgBasePrice;
 	}
 
-	public void setPkgBasePrice(double pkgBasePrice)
+	public void setPkgBasePrice(BigDecimal pkgBasePrice)
 	{
 		this.pkgBasePrice = pkgBasePrice;
 	}
@@ -109,27 +107,7 @@ public class Packag
 	
 	
 
-	public List<Product> getProducts()
-	{
-		return products;
-	}
-
-	public void setProducts(List<Product> products)
-	{
-		this.products = products;
-	}
-
 	
-	
-	public List<Integer> getProductSupplierIds()
-	{
-		return productSupplierIds;
-	}
-
-	public void setProductSupplierIds(List<Integer> productSupplierIds)
-	{
-		this.productSupplierIds = productSupplierIds;
-	}
 
 	@Override
 	public String toString()
