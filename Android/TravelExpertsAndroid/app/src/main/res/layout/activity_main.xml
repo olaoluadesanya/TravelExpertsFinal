@@ -37,87 +37,10 @@
             android:textAlignment="center"
             android:textAppearance="@android:style/TextAppearance.Material.Medium" />
 
-        <TableLayout
+        <ListView
+            android:id="@+id/lvPackages"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" >
-
-                <TextView
-                    android:id="@+id/tvPkgDesc1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:padding="10dp"
-                    android:text="TextView" />
-
-                <TextView
-                    android:id="@+id/tvPkgDates1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:padding="10dp"
-                    android:text="TextView" />
-
-                <ImageView
-                    android:id="@+id/ivPkg1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@mipmap/ic_launcher" />
-            </TableRow>
-
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" >
-
-                <TextView
-                    android:id="@+id/tvPkgDesc2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:padding="10dp"
-                    android:text="TextView" />
-
-                <TextView
-                    android:id="@+id/tvPkgDates2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:padding="10dp"
-                    android:text="TextView" />
-
-                <ImageView
-                    android:id="@+id/ivPkg2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@mipmap/ic_launcher" />
-            </TableRow>
-
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" >
-
-                <TextView
-                    android:id="@+id/tvPkgDesc3"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:padding="10dp"
-                    android:text="TextView" />
-
-                <TextView
-                    android:id="@+id/tvPkgDates3"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:padding="10dp"
-                    android:text="TextView" />
-
-                <ImageView
-                    android:id="@+id/ivPkg3"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@mipmap/ic_launcher" />
-
-            </TableRow>
-
-        </TableLayout>
+            android:layout_height="match_parent" />
 
     </LinearLayout>
 

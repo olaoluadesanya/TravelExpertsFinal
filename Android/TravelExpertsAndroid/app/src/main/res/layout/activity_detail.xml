@@ -108,6 +108,13 @@
 
         </LinearLayout>
 
+        <fragment
+            android:id="@+id/fragment"
+            android:name="com.example.a790232.travelexpertsandroid.BookingFragment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="2" />
+
     </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>

@@ -20,4 +20,7 @@
     <string name="number_of_travellers">Number of Travellers:</string>
     <string name="log_in_out">Log In/Out</string>
     <string name="my_account">My Account</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
