@@ -130,6 +130,8 @@ public class MainActivity extends Activity {
 
                     upcomingPackages.add(p);
 
+                    // ***** TO DO *****:  figure out how to display images
+
                     // Display all of these packages in the list view on the main activity.
                     // Use the package_item.xml layout for each item in the list view.
                     ArrayList<HashMap<String,String>> pkgMaps = new ArrayList<>();
