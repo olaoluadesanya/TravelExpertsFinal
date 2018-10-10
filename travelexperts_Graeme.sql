@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 10, 2018 at 02:07 AM
+-- Generation Time: Oct 10, 2018 at 05:46 PM
 -- Server version: 10.1.31-MariaDB
 -- PHP Version: 7.2.4
 
@@ -87,24 +87,23 @@ CREATE TABLE `agents` (
   `AgtEmail` varchar(50) DEFAULT NULL,
   `AgtPosition` varchar(20) DEFAULT NULL,
   `AgencyId` int(11) DEFAULT NULL,
-  `Pass` varchar(80) DEFAULT NULL,
-  `Salt` varchar(40) DEFAULT NULL
+  `Pass` varchar(80) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT;
 
 --
 -- Dumping data for table `agents`
 --
 
-INSERT INTO `agents` (`AgentId`, `AgtFirstName`, `AgtMiddleInitial`, `AgtLastName`, `AgtBusPhone`, `AgtEmail`, `AgtPosition`, `AgencyId`, `Pass`, `Salt`) VALUES
-(1, 'Janet', 'K', 'Delton', '(403) 210-7801', 'janet.delton@travelexperts.com', 'Senior Agent', 2, '651f7d48618a5c341c4788dcc8ae047a6c5ba210', 'qP1Nqi+sraeQqq+sWhReEA=='),
-(2, 'Judy', NULL, 'Lisle', '(403) 210-7802', 'judy.lisle@travelexperts.com', 'Intermediate Agent', 1, 'd5205b279e10d54526135fbf308af42937ce4871', 'A0iHYs8pSKfB1yY0gzAO1Q=='),
-(3, 'Dennis', 'C.', 'Reynolds', '(403) 210-7843', 'dennis.reynolds@travelexperts.com', 'Junior Agent', 1, NULL, NULL),
-(4, 'John', NULL, 'Coville', '(403) 210-7823', 'john.coville@travelexperts.com', 'Intermediate Agent', 2, NULL, NULL),
-(5, 'Fred', 'J', 'Smith', '(403) 210-5555', 'fred@travelexperts.com', 'Junior Agent', 2, NULL, NULL),
-(6, 'Bruce', 'J.', 'Dixon', '(403) 210-7867', 'bruce.dixon@travelexperts.com', 'Intermediate Agent', 2, NULL, NULL),
-(7, 'Beverly', 'S.', 'Jones', '(403) 210-7812', 'beverly.jones@travelexperts.com', 'Intermediate Agent', 1, NULL, NULL),
-(8, 'Jane', 'G.', 'Merrill', '(403) 210-7868', 'jane.merrill@travelexperts.com', 'Senior Agent', 2, NULL, NULL),
-(9, 'Brian', 'S.', 'Peterson', '(403) 210-7833', 'brian.peterson@travelexperts.com', 'Junior Agent', 2, NULL, NULL);
+INSERT INTO `agents` (`AgentId`, `AgtFirstName`, `AgtMiddleInitial`, `AgtLastName`, `AgtBusPhone`, `AgtEmail`, `AgtPosition`, `AgencyId`, `Pass`) VALUES
+(1, 'Janet', 'K', 'Delton', '(403) 210-7801', 'janet.delton@travelexperts.com', 'Senior Agent', 2, '$2a$10$1JabnHWKZW6LwGqWfcqNZuYR6ZtAlZEmX5nzX4bikBOfPp9egxyAm'),
+(2, 'Judy', NULL, 'Lisle', '(403) 210-7802', 'judy.lisle@travelexperts.com', 'Intermediate Agent', 1, '$2a$10$RStg9x4OQiHFkBDnhtPwc.fT4ge3sL2.JbyZHjGx.wK0SuzzpvnPW'),
+(3, 'Dennis', 'C.', 'Reynolds', '(403) 210-7843', 'dennis.reynolds@travelexperts.com', 'Junior Agent', 1, NULL),
+(4, 'John', NULL, 'Coville', '(403) 210-7823', 'john.coville@travelexperts.com', 'Intermediate Agent', 2, NULL),
+(5, 'Fred', 'J', 'Smith', '(403) 210-5555', 'fred@travelexperts.com', 'Junior Agent', 2, NULL),
+(6, 'Bruce', 'J.', 'Dixon', '(403) 210-7867', 'bruce.dixon@travelexperts.com', 'Intermediate Agent', 2, NULL),
+(7, 'Beverly', 'S.', 'Jones', '(403) 210-7812', 'beverly.jones@travelexperts.com', 'Intermediate Agent', 1, NULL),
+(8, 'Jane', 'G.', 'Merrill', '(403) 210-7868', 'jane.merrill@travelexperts.com', 'Senior Agent', 2, NULL),
+(9, 'Brian', 'S.', 'Peterson', '(403) 210-7833', 'brian.peterson@travelexperts.com', 'Junior Agent', 2, NULL);
 
 -- --------------------------------------------------------
 
