@@ -20,20 +20,18 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
+
 
 public class MainActivity extends Activity {
 
@@ -46,8 +44,11 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // Obtain a reference to the list view on the main activity that will list all
+        // of the packages with a start date in the future
         lvPackages = findViewById(R.id.lvPackages);
 
+        // Retrieve a list of these packages from the web service and display them
         loadUpcomingPackages();
 
         // Set up an event listener to go to the DetailActivity if a package in the list view
@@ -64,10 +65,10 @@ public class MainActivity extends Activity {
     }
 
     private void loadUpcomingPackages() {
-        new GetPackages().execute();
+        new GetCurrentPackages().execute();
     }
 
-    class GetPackages extends AsyncTask<Void, Void, Void>
+    class GetCurrentPackages extends AsyncTask<Void, Void, Void>
     {
 
         @Override
@@ -75,17 +76,14 @@ public class MainActivity extends Activity {
             try {
                 Log.d("travelexperts", "doinbackground");
 
-                // ***** TO DO:  Add correct URL *****
-                // ***** TO DO:  The REST service should return only packages with future start
-                // dates, i.e., those packages that can be booked by the customer.  Suggestion:
-                // do not just return/display a few "featured" packages (e.g., 3 upcoming ones);
-                // rather, return all packages that can be booked by the user on the mobile device.
-
-                URL url = new URL("http://10.163.101.82:8080/JSPDay7REST/rs/restcustomers/getall");
+                // This URL is used to retrieve all packages with start dates in the future
+                // from the web service.
+                URL url = new URL("http://10.163.101.59:8080/TravelExperts2/rs/db/getcurrentpackages");
 
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestProperty("accept", "application/json");
                 BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+
                 String line;
                 while ((line = br.readLine()) != null)
                 {
@@ -96,70 +94,52 @@ public class MainActivity extends Activity {
             } catch (java.io.IOException e) {
                 e.printStackTrace();
             }
+
+            // For testing only, when web service unavailable
+            //buffer.append("[{\"packageId\":1,\"pkgAgencyCommission\":400.0000,\"pkgBasePrice\":4800.0000,\"pkgDesc\":\"Cruise the Caribbean \\u0026 Celebrate the New Year.\",\"pkgEndDate\":\"Jan 4, 2017 12:00:00 AM\",\"pkgName\":\"Caribbean New Year\",\"pkgStartDate\":\"Dec 25, 2017 12:00:00 AM\"},{\"packageId\":2,\"pkgAgencyCommission\":310.0000,\"pkgBasePrice\":3000.0000,\"pkgDesc\":\"8 Day All Inclusive Hawaiian Vacation\",\"pkgEndDate\":\"Dec 20, 2016 12:00:00 AM\",\"pkgName\":\"Polynesian Paradise\",\"pkgStartDate\":\"Dec 12, 2016 12:00:00 AM\"},{\"packageId\":3,\"pkgAgencyCommission\":300.0000,\"pkgBasePrice\":2800.0000,\"pkgDesc\":\"Airfaire, Hotel and Eco Tour.\",\"pkgEndDate\":\"May 28, 2016 12:00:00 AM\",\"pkgName\":\"Asian Expedition\",\"pkgStartDate\":\"May 14, 2016 12:00:00 AM\"},{\"packageId\":4,\"pkgAgencyCommission\":280.0000,\"pkgBasePrice\":3000.0000,\"pkgDesc\":\"Euro Tour with Rail Pass and Travel Insurance\",\"pkgEndDate\":\"Nov 14, 2016 12:00:00 AM\",\"pkgName\":\"European Vacation\",\"pkgStartDate\":\"Nov 1, 2016 12:00:00 AM\"},{\"packageId\":5,\"pkgAgencyCommission\":400.0000,\"pkgBasePrice\":4800.0000,\"pkgDesc\":\"Cruise the Caribbean \\u0026 Celebrate the New Year.\",\"pkgEndDate\":\"Jan 4, 2017 12:00:00 AM\",\"pkgName\":\"Caribbean New Year\",\"pkgStartDate\":\"Dec 25, 2017 12:00:00 AM\"},{\"packageId\":6,\"pkgAgencyCommission\":400.0000,\"pkgBasePrice\":4800.0000,\"pkgDesc\":\"Cruise the Caribbean \\u0026 Celebrate the New Year.\",\"pkgEndDate\":\"Jan 4, 2017 12:00:00 AM\",\"pkgName\":\"Caribbean New Year\",\"pkgStartDate\":\"Dec 25, 2017 12:00:00 AM\"},{\"packageId\":7,\"pkgAgencyCommission\":400.0000,\"pkgBasePrice\":4800.0000,\"pkgDesc\":\"Cruise the Caribbean \\u0026 Celebrate the New Year.\",\"pkgEndDate\":\"Jan 5, 2017 12:00:00 AM\",\"pkgName\":\"Caribbean New Year\",\"pkgStartDate\":\"Dec 25, 2017 12:00:00 AM\"},{\"packageId\":8,\"pkgAgencyCommission\":400.0000,\"pkgBasePrice\":4800.0000,\"pkgDesc\":\"Cruise the Caribbean \\u0026 Celebrate the New Year.\",\"pkgEndDate\":\"Jan 5, 2017 12:00:00 AM\",\"pkgName\":\"Caribbean New Year\",\"pkgStartDate\":\"Dec 25, 2017 12:00:00 AM\"}]");
+
             return null;
         }
 
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            Log.d("harv", "Buffer = " + buffer);
+            Log.d("travelexperts", "Buffer = " + buffer);
 
-            // Obtain all of the upcoming packages from the database using the REST web service
-            try {
-                JSONArray jsonArray = new JSONArray(buffer.toString());
-                for (int i = 0; i < jsonArray.length(); i++)
-                {
-                    JSONObject pkg = (JSONObject) jsonArray.get(i);
-                    // Create a Packag object from the JSON object
-                    Packag p = new Packag();
-                    p.setPackageId(pkg.getInt("packageId"));
-                    p.setPkgAgencyCommission(pkg.getDouble("pkgAgencyCommission"));
-                    p.setPkgBasePrice(pkg.getDouble("pkgBasePrice"));
-                    p.setPkgDesc(pkg.getString("pkgDesc"));
+            // Obtain the list of upcoming packages from the JSON data in "buffer" that was
+            // returned by the RESTful service, using the fromJson() method that is part of
+            // the Gson package.
+            Gson gson = new Gson();
+            Type category = new TypeToken<List<Packag>>(){}.getType();
+            upcomingPackages = gson.fromJson(buffer.toString(), category);
 
-                    String strEndDate = pkg.getString("pkgEndDate");
-                    DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-                    Date endDate = df.parse(strEndDate);
-                    p.setPkgEndDate(endDate);
-
-                    p.setPkgName(pkg.getString("pkgName"));
-
-                    String strStartDate = pkg.getString("pkgStartDate");
-                    Date startDate = df.parse(strStartDate);
-                    p.setPkgEndDate(startDate);
-
-                    upcomingPackages.add(p);
-
-                    // ***** TO DO *****:  figure out how to display images
-
-                    // Display all of these packages in the list view on the main activity.
-                    // Use the package_item.xml layout for each item in the list view.
-                    ArrayList<HashMap<String,String>> pkgMaps = new ArrayList<>();
-                    for (Packag up : upcomingPackages) {
-                        HashMap<String,String> map = new HashMap<>();
-                        map.put("pkgname", up.getPkgName() + "");
-                        map.put("pkgdates", up.getDates() + "");
-                        pkgMaps.add(map);
-                    }
-                    int resource = R.layout.package_item;
-                    String [] from = {"pkgname", "pkgdates"};
-                    int [] to = {R.id.tvPkgName, R.id.tvPkgDates};
-                    SimpleAdapter adapter = new SimpleAdapter(getApplicationContext(), pkgMaps, resource, from, to);
-                    lvPackages.setAdapter(adapter);
-                }
-            } catch (JSONException | ParseException e) {
-                e.printStackTrace();
+            // Display all of these packages in the list view on the main activity.
+            // Use the package_item.xml layout for each item in the list view.
+            // ***** TO DO *****:  also display an image for each package
+            ArrayList<HashMap<String,String>> pkgMaps = new ArrayList<>();
+            for (Packag up : upcomingPackages) {
+                HashMap<String,String> map = new HashMap<>();
+                map.put("pkgname", up.getPkgName() + "");
+                map.put("pkgdates", up.getDates() + "");
+                pkgMaps.add(map);
             }
+            int resource = R.layout.package_item;
+            String [] from = {"pkgname", "pkgdates"};
+            int [] to = {R.id.tvPkgName, R.id.tvPkgDates};
+            SimpleAdapter adapter = new SimpleAdapter(getApplicationContext(), pkgMaps, resource, from, to);
+            lvPackages.setAdapter(adapter);
         }
     }
 
 
+    // Create and inflate the menu
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
+    // Set up an event handler for when a menu item is selected
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         Intent intent;
@@ -173,7 +153,7 @@ public class MainActivity extends Activity {
 //                intent.putExtra("option", option);
 //                startActivity(intent);
                 return true;
-            case R.id.miLogInOut:
+            case R.id.miLogOut:
 //                intent = new Intent(this, OptionsActivity.class);
 //                option = "Settings";
 //                intent.putExtra("option", option);

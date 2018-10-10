@@ -11,6 +11,8 @@ package com.example.a790232.travelexpertsandroid;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -44,11 +46,22 @@ public class DetailActivity extends Activity {
         tvPkgDesc.setText(packag.getPkgDesc());
         tvPkgDates.setText(packag.getDates());
 
-        String strPrice = String.format ("$7.2%f", packag.getPkgBasePrice() + packag.getPkgAgencyCommission());
+        String strPrice = String.format ("$%8.2f", packag.getPkgBasePrice().doubleValue() +
+                                                   packag.getPkgAgencyCommission().doubleValue());
         tvPkgPrice.setText(strPrice);
 
         // ***** TO DO *****: figure out how to display image
 
         // ***** TO DO *****:  implement booking functionality
+        // Create an event listener on the "Book" button
+        btnBook.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Check if the number of travellers has been set using the spinner.
+                // If not, generate an error message.
+                // If so, proceed with the booking.
+            }
+        });
+
     }
 }

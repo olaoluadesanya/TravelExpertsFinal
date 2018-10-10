@@ -1,20 +1,26 @@
+/*
+    Packag.java
+    Corinne Mullan
+    October 9, 2018
+
+    Initial version created, based on the JPA Packag class in the RESTful web service.
+    Note that "Package" is a reserved word, so the class has been named "Packag" instead.
+ */
+
 package com.example.a790232.travelexpertsandroid;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
-
-// ***** TO DO *****
-// How closely does this class have to match the one in the REST service?
 
 public class Packag implements Serializable {
 
     // Private member variables
     private int packageId;
-    private double pkgAgencyCommission;
-    private double pkgBasePrice;
+    private BigDecimal pkgAgencyCommission;
+    private BigDecimal pkgBasePrice;
     private String pkgDesc;
     private Date pkgEndDate;
     private String pkgName;
@@ -24,7 +30,7 @@ public class Packag implements Serializable {
     public Packag() {
     }
 
-    public Packag(int packageId, double pkgAgencyCommission, double pkgBasePrice, String pkgDesc, Date pkgEndDate, String pkgName, Date pkgStartDate) {
+    public Packag(int packageId, BigDecimal pkgAgencyCommission, BigDecimal pkgBasePrice, String pkgDesc, Date pkgEndDate, String pkgName, Date pkgStartDate) {
         this.packageId = packageId;
         this.pkgAgencyCommission = pkgAgencyCommission;
         this.pkgBasePrice = pkgBasePrice;
@@ -43,19 +49,19 @@ public class Packag implements Serializable {
         this.packageId = packageId;
     }
 
-    public double getPkgAgencyCommission() {
+    public BigDecimal getPkgAgencyCommission() {
         return pkgAgencyCommission;
     }
 
-    public void setPkgAgencyCommission(double pkgAgencyCommission) {
+    public void setPkgAgencyCommission(BigDecimal pkgAgencyCommission) {
         this.pkgAgencyCommission = pkgAgencyCommission;
     }
 
-    public double getPkgBasePrice() {
+    public BigDecimal getPkgBasePrice() {
         return pkgBasePrice;
     }
 
-    public void setPkgBasePrice(double pkgBasePrice) {
+    public void setPkgBasePrice(BigDecimal pkgBasePrice) {
         this.pkgBasePrice = pkgBasePrice;
     }
 
@@ -90,7 +96,7 @@ public class Packag implements Serializable {
     // The getDates() method returns the start and end dates of the package together
     // as a single string in the format "2018-01-15 to 2018-01-20"
     public String getDates() {
-        DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+        DateFormat df = new SimpleDateFormat("MMM d, yyyy");
         return df.format(pkgStartDate) + " to " + df.format(pkgEndDate);
     }
 }
