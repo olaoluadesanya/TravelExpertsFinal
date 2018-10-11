@@ -4,18 +4,23 @@ import java.net.URL;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ResourceBundle;
 
-/*
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
-import javax.persistence.Query;
-
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-*/
+
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.util.EntityUtils;
+
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXDatePicker;
 import com.jfoenix.controls.JFXListView;
@@ -43,7 +48,9 @@ import model.ProductsSupplier;
 import model.Packag;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.net.HttpURLConnection;
@@ -61,7 +68,7 @@ import org.json.JSONObject;
 
 public class PackagesController implements Initializable{
 	
-	// ==Sunghyun Lee ==
+	// ===================Sunghyun Lee =====================================================
 
 	@FXML
     private Label lblPackageId;
@@ -127,7 +134,7 @@ public class PackagesController implements Initializable{
 
     private StringBuffer buffer = new StringBuffer();
     
-    
+    private ObservableList<model.Product> productsInPackage;
     private ObservableList<Packag> packages;
     
     private String status;
@@ -145,20 +152,25 @@ public class PackagesController implements Initializable{
     	btnSave.setDisable(true);
     	tcPkgId.setSortable(false);
     	tcPkgName.setSortable(false);
+    	packages =FXCollections.observableArrayList();
+    	tcPkgId.setCellValueFactory(new PropertyValueFactory<>("PackageId"));
+		tcPkgName.setCellValueFactory(new PropertyValueFactory<>("PkgName"));
     	
+    	refreshTables();
+    	tvPackages.setItems(packages);
     	
+	}
+
+    private void refreshTables()
+	{
     	// manually creating list of products
-    	ObservableList<model.Product> productsInPackage = FXCollections.observableArrayList();
+    	productsInPackage = FXCollections.observableArrayList();
     	productsInPackage.add(new model.Product(2, "Air Bus"));
     	productsInPackage.add(new model.Product(3, "Wow"));
     	lvProductsInPackage.setItems(productsInPackage);
     	
     	// create a list of packages and columns in tvPackages
-    	packages =FXCollections.observableArrayList();
-    	tcPkgId.setCellValueFactory(new PropertyValueFactory<>("PackageId"));
-		tcPkgName.setCellValueFactory(new PropertyValueFactory<>("PkgName"));    	
-    	
-    	
+    	packages.clear();
     	try 
     	{
     		// reading json
@@ -173,7 +185,7 @@ public class PackagesController implements Initializable{
             }
 
         } catch (Exception e) {
-            System.out.println(e);
+    		e.printStackTrace();    	
         }
     	
     	try 
@@ -188,20 +200,25 @@ public class PackagesController implements Initializable{
                 String endDate = jsonPkg.getString("pkgEndDate");
                 DateFormat format = new SimpleDateFormat("MMM d, yyyy", Locale.ENGLISH);
                 
-                Packag pkg= new Packag(jsonPkg.getInt("packageId"), new BigDecimal( jsonPkg.getDouble("pkgAgencyCommission") ), new BigDecimal( jsonPkg.getDouble("pkgBasePrice")), jsonPkg.getString("pkgDesc"),format.parse(endDate), jsonPkg.getString("pkgName"), format.parse(startDate));
-                packages.add(pkg);
+                LocalDate ldEndDate=format.parse(endDate).toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+                LocalDate ldStartDate=format.parse(startDate).toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+
+                Packag pkg= new Packag(jsonPkg.getInt("packageId"), new BigDecimal( jsonPkg.getDouble("pkgAgencyCommission") ), new BigDecimal( jsonPkg.getDouble("pkgBasePrice")), jsonPkg.getString("pkgDesc"),ldEndDate, jsonPkg.getString("pkgName"), ldStartDate);
+                packages.add(pkg); 
+            }
+            for (Packag pp : packages) 
+            {
+    			System.out.println(pp.getPkgName());
+    			
             }
     	}
     	catch (Exception e)
     	{
-    		System.out.println(e);
+    		e.printStackTrace();    	
     	}
-    	
-		tvPackages.setItems(packages);
-    	
 	}
 
-    @FXML
+	@FXML
     void deletePackage(ActionEvent event) {
     	if (tvPackages.getSelectionModel().getSelectedItem()!=null)
     	{
@@ -289,36 +306,109 @@ public class PackagesController implements Initializable{
 	    	
 	    	if (status=="add")
 	    	{
-	    		// create a new package
-	    		
-                
-                newPkg=new Packag(0, new BigDecimal( tfPkgAgencyCommission.getText()), new BigDecimal(tfPkgBasePrice.getText()), taPkgDesc.getText(), Date.from(dpPkgEndDate.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant()), tfPkgName.getText(), Date.from(dpPkgStartDate.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant()));                
-                
-                /*
+	    		// create a new package               
+                //newPkg=new Packag(0, new BigDecimal( tfPkgAgencyCommission.getText()), new BigDecimal(tfPkgBasePrice.getText()), taPkgDesc.getText(), Date.from(dpPkgEndDate.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant()), tfPkgName.getText(), Date.from(dpPkgStartDate.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant()));                
+                newPkg=new Packag(0, new BigDecimal( tfPkgAgencyCommission.getText()), new BigDecimal(tfPkgBasePrice.getText()), taPkgDesc.getText(), dpPkgEndDate.getValue(), tfPkgName.getText(), dpPkgStartDate.getValue());                
+
+                // send json to web server
                 Gson gson = new Gson();
                 Type type = new TypeToken<Packag>() {}.getType();
                 String json = gson.toJson(newPkg, type);
-                */
                 
+                int idx=json.indexOf("pkgEndDate"); // index of "pkgEndDate" in json
                 
+                // manually modify json string to send date variables in a format that web server understands
+                String myJson= json.substring(0, idx+12)+"\""+newPkg.getPkgEndDate()+"\""+","
+                										+"\"pkgName\":\""+newPkg.getPkgName()+"\","
+                										+"\"pkgStartDate\":\""+newPkg.getPkgStartDate()+"\""
+                										+"}";
                 
-           
-	    		
-	    		// refresh tvPackages
+                String       postUrl       = "http://localhost:8080/TravelExperts2/rs/db/postpackage";// put in your url
+                HttpClient   httpClient    = HttpClientBuilder.create().build();
+                HttpPost     post          = new HttpPost(postUrl);
+                StringEntity postingString;
+                HttpResponse  response;
                 
-	        		
-	    		lvProductsInPackage.setVisible(true);
-	        	lblProductsInPkg.setVisible(true);
-	        	tvPackages.getSelectionModel().select(tvPackages.getItems().size()-1);
-	        	displayPackageInfo();
-	    		
-	        	
-	        	
+                int success=0; // store status code from http response to see whether successful
+				try
+				{
+					postingString = new StringEntity(myJson);
+					post.setEntity(postingString);
+					post.setHeader("Content-type", "application/json");
+					response = httpClient.execute(post);
+					success=response.getStatusLine().getStatusCode();
+					
+					HttpEntity entity = response.getEntity();
+		    	    String responseString = null;
+		    	    responseString = EntityUtils.toString(entity, "UTF-8");
+		    	    System.out.println("Repoese: " + responseString);
+		    	    
+					//System.out.println(response);
+				} catch ( IOException e)
+				{
+					e.printStackTrace();
+				}
+				
+
+				// 2nd
+				/*
+		        StringEntity entity = new StringEntity(json,
+		                ContentType.APPLICATION_FORM_URLENCODED);
+
+		        HttpClient httpClient = HttpClientBuilder.create().build();
+		        HttpPost request = new HttpPost("http://localhost:8080/TravelExperts2/rs/db/postpackage");
+		        request.setEntity(entity);
+
+		        HttpResponse response;
+				try
+				{
+					response = httpClient.execute(request);
+					System.out.println(response.getStatusLine().getStatusCode());
+				} catch (ClientProtocolException e)
+				{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IOException e)
+				{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				*/
+                // if successful
+	        	if (success==200)
+	        	{
+	        		Alert alert = new Alert(AlertType.INFORMATION);
+	        		alert.setTitle("Success");
+		    		alert.setHeaderText(null);
+		    		alert.setContentText("New packages has been successfully created");
+		    		alert.showAndWait();
+		    		//refreshTables();
+		    		
+		    	  
+		    	   
+	        	}
+	        	else
+	        	{
+	        		Alert alert = new Alert(AlertType.INFORMATION);
+	        		alert.setTitle("Failure");
+		    		alert.setHeaderText(null);
+		    		alert.setContentText("There was a problem and the package was not created");
+		    		alert.showAndWait();
+	        	}        	
+	        	newPkg=null;
 	    	}
+	    	// edit
 	    	else
 	    	{
 	    		
 	    	}
+	    	
+	    	// enable back the disabled inputs
+        	btnSave.setDisable(true);
+    		lvProductsInPackage.setVisible(true);
+        	lblProductsInPkg.setVisible(true);
+        	tvPackages.getSelectionModel().select(0);
+        	displayPackageInfo();
 		}
     }
     
@@ -385,13 +475,18 @@ public class PackagesController implements Initializable{
 	    	model.Packag selectedPackage= tvPackages.getSelectionModel().getSelectedItem();
 	    	lblPackageId.setText(""+selectedPackage.getPackageId());
 	    	tfPkgName.setText(""+selectedPackage.getPkgName());
-	    	dpPkgStartDate.setValue(selectedPackage.getPkgStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
-	    	dpPkgEndDate.setValue(selectedPackage.getPkgEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+	    	//dpPkgStartDate.setValue(selectedPackage.getPkgStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+	    	dpPkgStartDate.setValue(selectedPackage.getPkgStartDate());
+	    	
+	    	//dpPkgEndDate.setValue(selectedPackage.getPkgEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+	    	dpPkgEndDate.setValue(selectedPackage.getPkgEndDate());
+
 	    	taPkgDesc.setText(selectedPackage.getPkgDesc());
 	    	tfPkgBasePrice.setText(selectedPackage.getPkgBasePrice()+"");
 	    	tfPkgAgencyCommission.setText(selectedPackage.getPkgAgencyCommission()+"");
+	    	//System.out.println(selectedPackage.getPkgEndDate());
     	}
-    	}
+    }
 
 	private void enableInputs(boolean myBool)
     {
@@ -412,6 +507,8 @@ public class PackagesController implements Initializable{
     	
     }
 
+	
+	// =====================================================================================
 
 	
     

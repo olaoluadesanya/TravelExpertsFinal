@@ -1,3 +1,7 @@
+/*
+ * Author: Sunghyun Lee
+ * Created: 2018-10-01
+ */
 package model;
 
 public class ProductsSupplier

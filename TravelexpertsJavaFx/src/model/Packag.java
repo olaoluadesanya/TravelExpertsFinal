@@ -1,8 +1,14 @@
+/*
+ * Author: Sunghyun Lee
+ * Created: 2018-10-01
+ */
+
 package model;
 
 import java.util.Date;
 import java.util.List;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 
 
@@ -16,14 +22,14 @@ public class Packag
 
 	private String pkgDesc;
 
-	private Date pkgEndDate;
+	private LocalDate pkgEndDate;
 
 	private String pkgName;
 
-	private Date pkgStartDate;
+	private LocalDate pkgStartDate;
 
-	public Packag(int packageId, BigDecimal pkgAgencyCommission, BigDecimal pkgBasePrice, String pkgDesc, Date pkgEndDate,
-			String pkgName, Date pkgStartDate)
+	public Packag(int packageId, BigDecimal pkgAgencyCommission, BigDecimal pkgBasePrice, String pkgDesc, LocalDate pkgEndDate,
+			String pkgName, LocalDate pkgStartDate)
 	{
 		super();
 		this.packageId = packageId;
@@ -75,12 +81,12 @@ public class Packag
 		this.pkgDesc = pkgDesc;
 	}
 
-	public Date getPkgEndDate()
+	public LocalDate getPkgEndDate()
 	{
 		return pkgEndDate;
 	}
 
-	public void setPkgEndDate(Date pkgEndDate)
+	public void setPkgEndDate(LocalDate pkgEndDate)
 	{
 		this.pkgEndDate = pkgEndDate;
 	}
@@ -95,12 +101,12 @@ public class Packag
 		this.pkgName = pkgName;
 	}
 
-	public Date getPkgStartDate()
+	public LocalDate getPkgStartDate()
 	{
 		return pkgStartDate;
 	}
 
-	public void setPkgStartDate(Date pkgStartDate)
+	public void setPkgStartDate(LocalDate pkgStartDate)
 	{
 		this.pkgStartDate = pkgStartDate;
 	}
