@@ -5,6 +5,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 
 import java.lang.reflect.Type;
 import java.util.List;
@@ -23,6 +24,7 @@ import javax.ws.rs.core.MediaType;
 import org.apache.log4j.Logger;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 
 import model.Agent;
@@ -83,6 +85,54 @@ public class SimpleRestService {
         return response;	
 	}
 	
+	
+	//http://localhost:8080/TravelExperts2/rs/db/getcustomer
+
+		@GET
+		@Path("/getcustomer/{ custid }")
+	    @Produces(MediaType.APPLICATION_JSON)
+		public String getCustomer(@PathParam("custid") int custid,
+				@QueryParam("request") String request ,
+				 @DefaultValue("1") @QueryParam("version") int version) {
+
+			if (logger.isDebugEnabled()) {
+				logger.debug("Start getSomething");
+				logger.debug("data: '" + request + "'");
+				logger.debug("version: '" + version + "'");
+			}
+
+			String response = null;
+
+	        try{			
+	            switch(version){
+		            case 1:
+		                if(logger.isDebugEnabled()) logger.debug("in version 1");
+
+		                EntityManagerFactory factory = Persistence.createEntityManagerFactory("TravelExperts2");
+		                EntityManager em = factory.createEntityManager();
+		                
+		                Query query = em.createQuery("select c from Customer c where c.customerId=" + custid);
+		                Customer cust = (Customer) query.getSingleResult();
+		                
+		                Gson gson = new Gson();
+		                Type type = new TypeToken<Customer>() {}.getType();
+		                response = gson.toJson(cust, type);
+
+		                break;
+	                default: throw new Exception("Unsupported version: " + version);
+	            }
+	        }
+	        catch(Exception e){
+	        	response = e.getMessage().toString();
+	        }
+	        
+	        if(logger.isDebugEnabled()){
+	            logger.debug("result: '"+response+"'");
+	            logger.debug("End getSomething");
+	        }
+	        return response;	
+		}
+		
 	//http://localhost:8080/TravelExperts2/rs/db/getallproducts
 	
 	@GET
@@ -176,6 +226,53 @@ public class SimpleRestService {
         return response;	
 	}
 	
+	//http://localhost:8080/TravelExperts2/rs/db/getcurrentpackages
+	
+		@GET
+		@Path("/getcurrentpackages")
+	    @Produces(MediaType.APPLICATION_JSON)
+		public String getCurrentPackages(@QueryParam("request") String request ,
+				 @DefaultValue("1") @QueryParam("version") int version) {
+
+			if (logger.isDebugEnabled()) {
+				logger.debug("Start getSomething");
+				logger.debug("data: '" + request + "'");
+				logger.debug("version: '" + version + "'");
+			}
+
+			String response = null;
+
+	        try{			
+	            switch(version){
+		            case 1:
+		                if(logger.isDebugEnabled()) logger.debug("in version 1");
+		                
+		                EntityManagerFactory factory = Persistence.createEntityManagerFactory("TravelExperts2");
+		                EntityManager em = factory.createEntityManager();
+		                
+		                Query query = em.createQuery("select p from Packag p "
+		                		+ "WHERE p.pkgStartDate > CURRENT_DATE");
+		                List<Packag> list = query.getResultList();
+		                
+		                Gson gson = new Gson();
+		                Type type = new TypeToken<List<Packag>>() {}.getType();
+		                response = gson.toJson(list, type);
+		                
+	                    break;
+	                default: throw new Exception("Unsupported version: " + version);
+	            }
+	        }
+	        catch(Exception e){
+	        	response = e.getMessage().toString();
+	        }
+	        
+	        if(logger.isDebugEnabled()){
+	            logger.debug("result: '"+response+"'");
+	            logger.debug("End getSomething");
+	        }
+	        return response;	
+		}
+	
 	//http://localhost:8080/TravelExperts2/rs/db/getallbookings
 	
 	@GET
@@ -268,9 +365,9 @@ public class SimpleRestService {
 	        return response;	
 		}
 	
-	//http://localhost:8080/TravelExperts2/rs/db/postpackage
+	//http://localhost:8080/TravelExperts2/rs/db/insertpackage
 	@POST
-	@Path("/postpackage")
+	@Path("/insertpackage")
 	@Consumes({ MediaType.APPLICATION_JSON })
     @Produces(MediaType.TEXT_PLAIN)
 	public String postPackage(String jsonString, @FormParam("request") String request ,  @DefaultValue("1") @FormParam("version") int version) {
@@ -315,13 +412,15 @@ public class SimpleRestService {
         return response;	
 	}
 
-	@PUT
-	@Path("/putpackage")
+	//http://localhost:8080/TravelExperts2/rs/db/updatepackage
+	@POST
+	@Path("/updatepackage")
 	@Consumes({ MediaType.APPLICATION_JSON })
     @Produces(MediaType.TEXT_PLAIN)
-	public String putPackage(String jsonString, @FormParam("request") String request ,  @DefaultValue("1") @FormParam("version") int version) {
+	public String updatePackage(String jsonString, @FormParam("request") String request ,  @DefaultValue("1") @FormParam("version") int version) {
+
 		if (logger.isDebugEnabled()) {
-			logger.debug("Start putSomething");
+			logger.debug("Start postSomething");
 			logger.debug("data: '" + request + "'");
 			logger.debug("version: '" + version + "'");
 		}
@@ -336,13 +435,14 @@ public class SimpleRestService {
 	                EntityManagerFactory factory = Persistence.createEntityManagerFactory("TravelExperts2");
 	                EntityManager em = factory.createEntityManager();
 	                
+	                	                
 	                Gson gson = new Gson();
 	          	  	Packag newPackage = gson.fromJson(jsonString, Packag.class);
 	          	  	
 	          	  	Packag oldPackage = em.find(Packag.class, newPackage.getPackageId());
+	          	  	
 	                
 	                em.getTransaction().begin();
-	                oldPackage.setPackageId(newPackage.getPackageId());
 	                oldPackage.setPkgAgencyCommission(newPackage.getPkgAgencyCommission());
 	                oldPackage.setPkgBasePrice(newPackage.getPkgBasePrice());
 	                oldPackage.setPkgDesc(newPackage.getPkgDesc());
@@ -351,7 +451,9 @@ public class SimpleRestService {
 	                oldPackage.setPkgStartDate(newPackage.getPkgStartDate());
 	                em.getTransaction().commit();
 	                
-	                response = "Package updated";
+	                response = "Package Updated";
+	                
+	               
 
                     break;
                 default: throw new Exception("Unsupported version: " + version);
@@ -368,9 +470,10 @@ public class SimpleRestService {
         return response;	
 	}
 
+	//http://localhost:8080/TravelExperts2/rs/db/deletepackage
 	@DELETE
-	@Path("/<add method name here>")
-	public void deleteSomething(@FormParam("request") String request ,  @DefaultValue("1") @FormParam("version") int version) {
+	@Path("/deletepackage/{packageid}")
+	public String deletePackage(@PathParam("packageid") int packageid, @FormParam("request") String request ,  @DefaultValue("1") @FormParam("version") int version) {
 		
 		if (logger.isDebugEnabled()) {
 			logger.debug("Start deleteSomething");
@@ -378,22 +481,35 @@ public class SimpleRestService {
 			logger.debug("version: '" + version + "'");
 		}
 
-
+		String response = null;
         try{			
             switch(version){
 	            case 1:
 	                if(logger.isDebugEnabled()) logger.debug("in version 1");
-
+	                
+	                EntityManagerFactory factory = Persistence.createEntityManagerFactory("TravelExperts2");
+	                EntityManager em = factory.createEntityManager();
+	                
+	                Packag delPackage = em.find(Packag.class, packageid);
+	                	                
+	                em.getTransaction().begin();
+	                em.remove(delPackage);
+	                em.getTransaction().commit();
+	                
+	                response = "Package Deleted";
+	                
                     break;
                 default: throw new Exception("Unsupported version: " + version);
             }
         }
         catch(Exception e){
-        	e.printStackTrace();
+        	response = e.getMessage().toString();
         }
         
         if(logger.isDebugEnabled()){
-            logger.debug("End deleteSomething");
+            logger.debug("result: '"+response+"'");
+            logger.debug("End putSomething");
         }
+        return response;
 	}
 }
