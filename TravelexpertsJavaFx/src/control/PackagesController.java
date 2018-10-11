@@ -131,8 +131,11 @@ public class PackagesController implements Initializable{
     @FXML
     private JFXButton btnAddPackage;
     
+    @FXML
+    private JFXButton btnRefreshPkg;
+    
 
-    private StringBuffer buffer = new StringBuffer();
+    private StringBuffer buffer;
     
     private ObservableList<model.Product> productsInPackage;
     private ObservableList<Packag> packages;
@@ -152,25 +155,30 @@ public class PackagesController implements Initializable{
     	btnSave.setDisable(true);
     	tcPkgId.setSortable(false);
     	tcPkgName.setSortable(false);
+    	
     	packages =FXCollections.observableArrayList();
+    	productsInPackage = FXCollections.observableArrayList();
+    	
     	tcPkgId.setCellValueFactory(new PropertyValueFactory<>("PackageId"));
 		tcPkgName.setCellValueFactory(new PropertyValueFactory<>("PkgName"));
     	
-    	refreshTables();
+    	readTables();
     	tvPackages.setItems(packages);
     	
 	}
 
-    private void refreshTables()
+    private void readTables()
 	{
     	// manually creating list of products
-    	productsInPackage = FXCollections.observableArrayList();
+    	
     	productsInPackage.add(new model.Product(2, "Air Bus"));
     	productsInPackage.add(new model.Product(3, "Wow"));
     	lvProductsInPackage.setItems(productsInPackage);
     	
     	// create a list of packages and columns in tvPackages
     	packages.clear();
+    	buffer = new StringBuffer();
+    	System.out.println("clear: "+packages);
     	try 
     	{
     		// reading json
@@ -205,12 +213,9 @@ public class PackagesController implements Initializable{
 
                 Packag pkg= new Packag(jsonPkg.getInt("packageId"), new BigDecimal( jsonPkg.getDouble("pkgAgencyCommission") ), new BigDecimal( jsonPkg.getDouble("pkgBasePrice")), jsonPkg.getString("pkgDesc"),ldEndDate, jsonPkg.getString("pkgName"), ldStartDate);
                 packages.add(pkg); 
+                System.out.println("pkg "+i+": "+pkg);
             }
-            for (Packag pp : packages) 
-            {
-    			System.out.println(pp.getPkgName());
-    			
-            }
+            System.out.println("done: "+packages);
     	}
     	catch (Exception e)
     	{
@@ -408,6 +413,7 @@ public class PackagesController implements Initializable{
     		lvProductsInPackage.setVisible(true);
         	lblProductsInPkg.setVisible(true);
         	tvPackages.getSelectionModel().select(0);
+        	readTables();
         	displayPackageInfo();
 		}
     }
@@ -490,8 +496,6 @@ public class PackagesController implements Initializable{
 
 	private void enableInputs(boolean myBool)
     {
-    	
-        
     	tfPkgName.setEditable(myBool);
     	tfPkgBasePrice.setEditable(myBool);
     	tfPkgAgencyCommission.setEditable(myBool);
@@ -507,7 +511,11 @@ public class PackagesController implements Initializable{
     	
     }
 
-	
+	@FXML
+    void refreshPkgtables(ActionEvent event) {
+		readTables();
+
+    }
 	// =====================================================================================
 
 	

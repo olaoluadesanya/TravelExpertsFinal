@@ -90,6 +90,7 @@
                           </columns>
                         </TableView>
                         <JFXButton fx:id="btnSave" layoutX="614.0" layoutY="475.0" onAction="#savePackage" style="-fx-background-color: #00C851;" text="Save" />
+                        <JFXButton fx:id="btnRefreshPkg" layoutX="545.0" layoutY="475.0" onAction="#refreshPkgtables" text="Refresh" />
                      </children>
                   </AnchorPane>
               </content>
