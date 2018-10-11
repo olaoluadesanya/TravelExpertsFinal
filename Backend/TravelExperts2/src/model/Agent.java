@@ -31,6 +31,8 @@ public class Agent implements Serializable {
 	private String agtMiddleInitial;
 
 	private String agtPosition;
+	
+	private String Pass;
 
 	//bi-directional many-to-one association to Customer
 	@OneToMany(mappedBy="agent")
@@ -102,7 +104,15 @@ public class Agent implements Serializable {
 	public void setAgtPosition(String agtPosition) {
 		this.agtPosition = agtPosition;
 	}
+	
+	public String getPass() {
+		return this.Pass;
+	}
 
+	public void setPass(String Pass) {
+		this.Pass = Pass;
+	}
+	
 	public List<Customer> getCustomers() {
 		return this.customers;
 	}

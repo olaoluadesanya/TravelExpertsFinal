@@ -1,0 +1,46 @@
+.pane {
+    -fx-background-color:  #b3c4ff;
+    -fx-border-color:  #d1dbff;
+}
+
+.jfx-tab-pane .tab-header-area .tab-selected-line {
+    -fx-background-color: #f49542;
+}
+
+.tab{
+    -fx-pref-width: 100;
+    -fx-pref-height: 34;
+}
+
+.button-raised{
+    -jfx-button-type: RAISED;
+    -fx-background-color: #f49542;
+    -fx-pref-width: 70;
+    -fx-text-fill: WHITE;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+}
+
+.button-raised .jfx-rippler{
+    -jfx-rippler-fill: #094ebc;
+}
+
+.head{
+    -fx-background-color: #003284;
+}
+
+.head .text{
+    -fx-stroke: black;
+}
+
+.jfx-date-picker .jfx-text-field {
+    -jfx-label-float: true;
+}
+
+.jfx-text-field {
+    -fx-background-color:#d1dbff;
+}
+
+.jfx-password-field {
+    -fx-background-color:#d1dbff;
+}

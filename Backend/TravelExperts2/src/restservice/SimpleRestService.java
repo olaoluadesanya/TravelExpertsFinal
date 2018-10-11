@@ -23,6 +23,8 @@ import javax.ws.rs.core.MediaType;
 import org.apache.log4j.Logger;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 
 import model.Agent;
@@ -314,7 +316,66 @@ public class SimpleRestService {
         }
         return response;	
 	}
+	
+	//http://localhost:8080/TravelExperts2/rs/db/agentlogin
+	@POST
+	@Path("/agentlogin")
+	@Consumes({ MediaType.APPLICATION_JSON })
+	@Produces(MediaType.TEXT_PLAIN)
+	public String authenticateAgent(String jsonString, @FormParam("request") String request ,  @DefaultValue("1") @FormParam("version") int version) {
 
+		if (logger.isDebugEnabled()) {
+			logger.debug("Start postSomething");
+			logger.debug("data: '" + request + "'");
+			logger.debug("version: '" + version + "'");
+		}
+
+		String response = null;
+
+	    try{			
+	        switch(version){
+	            case 1:
+	                if(logger.isDebugEnabled()) logger.debug("in version 1");	    
+		                
+	                JsonObject json = new JsonParser().parse(jsonString).getAsJsonObject();
+	          	  	String email = json.get("username").getAsString();
+	          	  	String password = json.get("password").getAsString();          
+	          	    
+	                EntityManagerFactory factory = Persistence.createEntityManagerFactory("TravelExperts2");
+	                EntityManager em = factory.createEntityManager();    
+	          	  	Query query = em.createQuery("SELECT a.Pass FROM Agent a where a.agtEmail=?1");
+	          	  	query.setParameter(1, email);	   
+	          	  	
+		          	List<String> list = query.getResultList();   
+		          	if (list.isEmpty()) {
+		          		response = "Username is incorrect";
+		          	}
+	          	  	else {
+	          	  		String hashedPassword = list.get(0);
+	          	  		boolean result = BCrypt.checkpw(password, hashedPassword);	          	  		
+	          	  		if (result) {
+	          	  			response = "IStrue";
+	          	  		}
+	          	  		
+	          	  		else response = "IsFalse";	          	  		
+	          	  	}
+	          	  	
+	          	  	
+	                break;
+	            default: throw new Exception("Unsupported version: " + version);
+	        }
+	    }
+	    catch(Exception e){
+	      	response = e.getMessage().toString();
+	    }
+	        
+	    if(logger.isDebugEnabled()){
+	        logger.debug("result: '"+response+"'");
+	        logger.debug("End agentlogin");
+	    }
+	    return response;	
+	}
+	
 	@PUT
 	@Path("/putpackage")
 	@Consumes({ MediaType.APPLICATION_JSON })
