@@ -178,11 +178,12 @@ public class PackagesController implements Initializable{
 		// read lists from web server and set them to tables
     	readPackages();
     	tvPackages.setItems(packages1);    	
-    	readPackagesProductsSuppliers();
+    	//readPackagesProductsSuppliers();
 
     	
 	}
     // read package-product-suppliers list from web server
+    /*
     private void readPackagesProductsSuppliers()
 	{
     	StringBuffer buffer = new StringBuffer();    	
@@ -220,6 +221,7 @@ public class PackagesController implements Initializable{
     		e.printStackTrace();    	
     	}		
 	}
+	*/
 	// read packages from web server
     private void readPackages()
 	{    		
@@ -451,7 +453,7 @@ public class PackagesController implements Initializable{
 	    	// edit
 	    	else
 	    	{
-	    		readPackagesProductsSuppliers();
+	    		//readPackagesProductsSuppliers();
 	    	}
 	    	
 	    	// enable back the disabled inputs
