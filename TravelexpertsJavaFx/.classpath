@@ -13,16 +13,10 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.fx.ide.jdt.core.JAVAFX_CONTAINER"/>
-	<classpathentry kind="lib" path="C:/Users/773646/Downloads/jfoenix-9.0.6.jar"/>
-	<classpathentry kind="lib" path="C:/Users/773646/Downloads/java-json.jar/java-json.jar"/>
-	<classpathentry kind="lib" path="C:/Users/773646/Desktop/schoolstuff/gson-2.8.5.jar"/>
-	<classpathentry kind="lib" path="C:/Users/773646/Downloads/httpclient-4.5.6.jar" sourcepath="C:/Users/773646/.m2/repository/org/apache/httpcomponents/httpclient/4.5.6/httpclient-4.5.6-sources.jar"/>
-	<classpathentry kind="lib" path="C:/Users/773646/Downloads/httpcore-4.4.1.jar"/>
 	<classpathentry kind="con" path="org.eclipse.m2e.MAVEN2_CLASSPATH_CONTAINER">
 		<attributes>
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="C:/Users/773646/Downloads/eclipselink-2.5.0.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
