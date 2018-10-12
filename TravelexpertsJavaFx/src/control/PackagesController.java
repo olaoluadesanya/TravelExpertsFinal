@@ -1,3 +1,9 @@
+/*
+ * This file has many authors
+ * Authors: Sunghyun Lee, Graeme
+ * created: 2018-10-01
+ */
+
 package control;
 
 import java.net.URL;
@@ -46,6 +52,7 @@ import javafx.scene.input.MouseEvent;
 import model.Product;
 import model.ProductsSupplier;
 import model.Packag;
+import model.PackagesProductsSupplier;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -104,13 +111,13 @@ public class PackagesController implements Initializable{
     private TableColumn<Packag, String> tcPkgName;
 
     @FXML
-    private JFXButton btnEdit;
+    private JFXButton btnEdit1;
 
     @FXML
-    private JFXButton btnSave;
+    private JFXButton btnSave1;
 
     @FXML
-    private JFXButton btnDelete;
+    private JFXButton btnDelete1;
 
     @FXML
     private JFXListView<model.Product> lvProductsInPackage;
@@ -135,10 +142,12 @@ public class PackagesController implements Initializable{
     private JFXButton btnRefreshPkg;
     
 
-    private StringBuffer buffer;
+    //private StringBuffer buffer;
     
     private ObservableList<model.Product> productsInPackage;
-    private ObservableList<Packag> packages;
+    private ObservableList<Packag> packages1;
+    private ObservableList<ProductsSupplier> psList;
+    private ObservableList<PackagesProductsSupplier> ppsList;
     
     private String status;
     
@@ -147,38 +156,75 @@ public class PackagesController implements Initializable{
     @Override
 	public void initialize(URL location, ResourceBundle resources)
 	{
-		// TODO Auto-generated method stub
 		// initialize ability of controls
     	enableInputs(false);
     	btnAddPackage.setDisable(false);
-    	btnEdit.setDisable(false);
-    	btnSave.setDisable(true);
+    	btnEdit1.setDisable(false);
+    	btnSave1.setDisable(true);
     	tcPkgId.setSortable(false);
     	tcPkgName.setSortable(false);
+    	btnRefreshPkg.setVisible(false);
     	
-    	packages =FXCollections.observableArrayList();
+    	// instantiate lists
+    	packages1 =FXCollections.observableArrayList();
     	productsInPackage = FXCollections.observableArrayList();
+    	psList = FXCollections.observableArrayList();
+    	ppsList = FXCollections.observableArrayList();
     	
+    	// instantiate table columns
     	tcPkgId.setCellValueFactory(new PropertyValueFactory<>("PackageId"));
 		tcPkgName.setCellValueFactory(new PropertyValueFactory<>("PkgName"));
     	
-    	readTables();
-    	tvPackages.setItems(packages);
+		// read lists from web server and set them to tables
+    	readPackages();
+    	tvPackages.setItems(packages1);    	
+    	readPackagesProductsSuppliers();
+
     	
 	}
-
-    private void readTables()
+    // read package-product-suppliers list from web server
+    private void readPackagesProductsSuppliers()
 	{
-    	// manually creating list of products
+    	StringBuffer buffer = new StringBuffer();    	
+    	try 
+    	{
+    		// reading json
+            URL url = new URL("http://localhost:8080/TravelExperts2/rs/db/getallpps");
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestProperty("accept", "application/json");
+            BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            String line;
+            while ((line = br.readLine()) != null)
+            {
+            	buffer.append(line);
+            }
+
+        } catch (Exception e) {
+    		e.printStackTrace();    	
+        }
     	
-    	productsInPackage.add(new model.Product(2, "Air Bus"));
-    	productsInPackage.add(new model.Product(3, "Wow"));
-    	lvProductsInPackage.setItems(productsInPackage);
-    	
-    	// create a list of packages and columns in tvPackages
-    	packages.clear();
-    	buffer = new StringBuffer();
-    	System.out.println("clear: "+packages);
+    	try 
+    	{
+    		// read packagesProductsSuppliers from json and put them into ppslist
+            JSONArray jsonArray = new JSONArray(buffer.toString());
+            for (int i = 0; i < jsonArray.length(); i++)
+            {
+                JSONObject jsonPps = (JSONObject) jsonArray.get(i);
+
+                PackagesProductsSupplier pps= new PackagesProductsSupplier(jsonPps.getInt("packageId"), jsonPps.getInt("productSupplierId"));
+                ppsList.add(pps); 
+            }
+    	}
+    	catch (Exception e)
+    	{
+    		e.printStackTrace();    	
+    	}		
+	}
+	// read packages from web server
+    private void readPackages()
+	{    		
+    	packages1.clear();
+    	StringBuffer buffer = new StringBuffer();
     	try 
     	{
     		// reading json
@@ -212,10 +258,10 @@ public class PackagesController implements Initializable{
                 LocalDate ldStartDate=format.parse(startDate).toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 
                 Packag pkg= new Packag(jsonPkg.getInt("packageId"), new BigDecimal( jsonPkg.getDouble("pkgAgencyCommission") ), new BigDecimal( jsonPkg.getDouble("pkgBasePrice")), jsonPkg.getString("pkgDesc"),ldEndDate, jsonPkg.getString("pkgName"), ldStartDate);
-                packages.add(pkg); 
+                packages1.add(pkg); 
                 System.out.println("pkg "+i+": "+pkg);
             }
-            System.out.println("done: "+packages);
+            System.out.println("done: "+packages1);
     	}
     	catch (Exception e)
     	{
@@ -243,8 +289,8 @@ public class PackagesController implements Initializable{
     	if (tvPackages.getSelectionModel().getSelectedItem()!=null)
     	{
 	    	enableInputs(true);
-	    	btnEdit.setDisable(true);
-	    	btnSave.setDisable(false);
+	    	btnEdit1.setDisable(true);
+	    	btnSave1.setDisable(false);
 	    	btnAddPackage.setDisable(true);
 	    	tvPackages.setDisable(true);
 	    	status="edit";
@@ -261,10 +307,10 @@ public class PackagesController implements Initializable{
     
     @FXML
     void AddPackage(ActionEvent event) {
-    	btnEdit.setDisable(true);
+    	btnEdit1.setDisable(true);
     	btnAddPackage.setDisable(true);
-    	btnDelete.setDisable(true);
-    	btnSave.setDisable(false);
+    	btnDelete1.setDisable(true);
+    	btnSave1.setDisable(false);
     	enableInputs(true);
     	status="add";
     	tvPackages.setDisable(true);
@@ -304,9 +350,9 @@ public class PackagesController implements Initializable{
 		if (Validated())
 		{
 			enableInputs(false);
-	    	btnDelete.setDisable(false);
+	    	btnDelete1.setDisable(false);
 	    	btnAddPackage.setDisable(false);
-	    	btnEdit.setDisable(false);
+	    	btnEdit1.setDisable(false);
 	    	tvPackages.setDisable(false);
 	    	
 	    	if (status=="add")
@@ -405,15 +451,15 @@ public class PackagesController implements Initializable{
 	    	// edit
 	    	else
 	    	{
-	    		
+	    		readPackagesProductsSuppliers();
 	    	}
 	    	
 	    	// enable back the disabled inputs
-        	btnSave.setDisable(true);
+        	btnSave1.setDisable(true);
     		lvProductsInPackage.setVisible(true);
         	lblProductsInPkg.setVisible(true);
         	tvPackages.getSelectionModel().select(0);
-        	readTables();
+        	readPackages();
         	displayPackageInfo();
 		}
     }
@@ -513,7 +559,7 @@ public class PackagesController implements Initializable{
 
 	@FXML
     void refreshPkgtables(ActionEvent event) {
-		readTables();
+		readPackages();
 
     }
 	// =====================================================================================
