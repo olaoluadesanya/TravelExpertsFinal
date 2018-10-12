@@ -1,7 +1,14 @@
+/*
+ * Author: Sunghyun Lee
+ * Created: 2018-10-01
+ */
+
 package model;
 
 import java.util.Date;
 import java.util.List;
+import java.math.BigDecimal;
+import java.time.LocalDate;
 
 
 
@@ -9,23 +16,20 @@ public class Packag
 {
 	private int packageId;
 
-	private double pkgAgencyCommission;
+	private BigDecimal pkgAgencyCommission;
 
-	private double pkgBasePrice;
+	private BigDecimal pkgBasePrice;
 
 	private String pkgDesc;
 
-	private Date pkgEndDate;
+	private LocalDate pkgEndDate;
 
 	private String pkgName;
 
-	private Date pkgStartDate;
-	
-	private List<Product> products;
-	private List<Integer> productSupplierIds;
+	private LocalDate pkgStartDate;
 
-	public Packag(int packageId, double pkgAgencyCommission, double pkgBasePrice, String pkgDesc, Date pkgEndDate,
-			String pkgName, Date pkgStartDate)
+	public Packag(int packageId, BigDecimal pkgAgencyCommission, BigDecimal pkgBasePrice, String pkgDesc, LocalDate pkgEndDate,
+			String pkgName, LocalDate pkgStartDate)
 	{
 		super();
 		this.packageId = packageId;
@@ -47,22 +51,22 @@ public class Packag
 		this.packageId = packageId;
 	}
 
-	public double getPkgAgencyCommission()
+	public BigDecimal getPkgAgencyCommission()
 	{
 		return pkgAgencyCommission;
 	}
 
-	public void setPkgAgencyCommission(double pkgAgencyCommission)
+	public void setPkgAgencyCommission(BigDecimal pkgAgencyCommission)
 	{
 		this.pkgAgencyCommission = pkgAgencyCommission;
 	}
 
-	public double getPkgBasePrice()
+	public BigDecimal getPkgBasePrice()
 	{
 		return pkgBasePrice;
 	}
 
-	public void setPkgBasePrice(double pkgBasePrice)
+	public void setPkgBasePrice(BigDecimal pkgBasePrice)
 	{
 		this.pkgBasePrice = pkgBasePrice;
 	}
@@ -77,12 +81,12 @@ public class Packag
 		this.pkgDesc = pkgDesc;
 	}
 
-	public Date getPkgEndDate()
+	public LocalDate getPkgEndDate()
 	{
 		return pkgEndDate;
 	}
 
-	public void setPkgEndDate(Date pkgEndDate)
+	public void setPkgEndDate(LocalDate pkgEndDate)
 	{
 		this.pkgEndDate = pkgEndDate;
 	}
@@ -97,39 +101,19 @@ public class Packag
 		this.pkgName = pkgName;
 	}
 
-	public Date getPkgStartDate()
+	public LocalDate getPkgStartDate()
 	{
 		return pkgStartDate;
 	}
 
-	public void setPkgStartDate(Date pkgStartDate)
+	public void setPkgStartDate(LocalDate pkgStartDate)
 	{
 		this.pkgStartDate = pkgStartDate;
 	}
 	
 	
 
-	public List<Product> getProducts()
-	{
-		return products;
-	}
-
-	public void setProducts(List<Product> products)
-	{
-		this.products = products;
-	}
-
 	
-	
-	public List<Integer> getProductSupplierIds()
-	{
-		return productSupplierIds;
-	}
-
-	public void setProductSupplierIds(List<Integer> productSupplierIds)
-	{
-		this.productSupplierIds = productSupplierIds;
-	}
 
 	@Override
 	public String toString()
