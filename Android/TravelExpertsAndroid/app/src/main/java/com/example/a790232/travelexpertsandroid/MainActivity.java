@@ -19,6 +19,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -35,18 +36,31 @@ import java.util.List;
 
 public class MainActivity extends Activity {
 
+    // Class variables
+    TextView tvCustName;
     ListView lvPackages;
     StringBuffer buffer = new StringBuffer();
     ArrayList<Packag> upcomingPackages = new ArrayList<Packag>();
+
+    Customer customer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // Obtain the currently logged in customer from the intent
+        Intent intent = getIntent();
+        customer = (Customer) intent.getSerializableExtra("customer");
+
         // Obtain a reference to the list view on the main activity that will list all
-        // of the packages with a start date in the future
+        // of the packages with a start date in the future, and to the text view used
+        // for displaying the customer's name
+        tvCustName = findViewById(R.id.tvCustName);
         lvPackages = findViewById(R.id.lvPackages);
+
+        // Set the customer's name in the greeting
+        tvCustName.setText(customer.getCustFirstName() + "!");
 
         // Retrieve a list of these packages from the web service and display them
         loadUpcomingPackages();
@@ -147,17 +161,18 @@ public class MainActivity extends Activity {
 
         // **** TO DO *****
         switch(item.getItemId()) {
+            case R.id.miMyBookings:
+                // ***** TO DO *****
+                // Pass the Customer object in the intent to start the activity
+                return true;
             case R.id.miMyAccount:
-//                intent = new Intent(this, OptionsActivity.class);
-//                option = "About";
-//                intent.putExtra("option", option);
-//                startActivity(intent);
+                // ***** TO DO *****
+                // Pass the Customer object in the intent to start the activity
                 return true;
             case R.id.miLogOut:
-//                intent = new Intent(this, OptionsActivity.class);
-//                option = "Settings";
-//                intent.putExtra("option", option);
-//                startActivity(intent);
+                // ***** TO DO *****
+                // (How does logging out work?  Clear the customer object and return to login
+                // activity??)
                 return true;
             default:
                 return false;
