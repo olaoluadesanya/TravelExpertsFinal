@@ -41,6 +41,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -178,11 +179,12 @@ public class PackagesController implements Initializable{
 		// read lists from web server and set them to tables
     	readPackages();
     	tvPackages.setItems(packages1);    	
-    	readPackagesProductsSuppliers();
+    	//readPackagesProductsSuppliers();
 
     	
 	}
     // read package-product-suppliers list from web server
+    /*
     private void readPackagesProductsSuppliers()
 	{
     	StringBuffer buffer = new StringBuffer();    	
@@ -220,6 +222,7 @@ public class PackagesController implements Initializable{
     		e.printStackTrace();    	
     	}		
 	}
+	*/
 	// read packages from web server
     private void readPackages()
 	{    		
@@ -451,7 +454,7 @@ public class PackagesController implements Initializable{
 	    	// edit
 	    	else
 	    	{
-	    		readPackagesProductsSuppliers();
+	    		//readPackagesProductsSuppliers();
 	    	}
 	    	
 	    	// enable back the disabled inputs
@@ -562,6 +565,72 @@ public class PackagesController implements Initializable{
 		readPackages();
 
     }
+	// =====================================================================================
+	
+	// =======================Corinne Mullan================================================
+	
+	@FXML
+    private TableView<Product> tvProducts;
+
+    @FXML
+    private TableColumn<Product, Integer> tcProductId;
+
+    @FXML
+    private TableColumn<Product, String> tcProdName;
+
+    @FXML
+    private Label lblProductId;
+
+    @FXML
+    private JFXTextField tfProdName;
+
+    @FXML
+    private JFXButton btnEditProd;
+
+    @FXML
+    private JFXButton btnAddProd;
+
+    @FXML
+    private TableView<?> tvProductsSuppliers2;
+
+    @FXML
+    private JFXButton btnAddProdSupplier;
+
+    @FXML
+    private ComboBox<?> cboSuppliers;
+
+    @FXML
+    private JFXButton btnRefreshProd;
+
+    @FXML
+    private JFXButton btnSaveProd;
+
+    @FXML
+    void addProduct(ActionEvent event) {
+
+    }
+
+    @FXML
+    void addProductSupplier(ActionEvent event) {
+
+    }
+
+    @FXML
+    void editProduct(ActionEvent event) {
+
+    }
+
+    @FXML
+    void refreshProdTables(ActionEvent event) {
+
+    }
+
+    @FXML
+    void saveProduct(ActionEvent event) {
+
+    }
+
+	
 	// =====================================================================================
 
 	
