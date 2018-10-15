@@ -72,6 +72,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
@@ -211,7 +212,8 @@ public class PackagesController implements Initializable{
      private ObservableList<model.Product> products;
      private ObservableList<model.Supplier> suppliers;
      private ObservableList<ProductsSupplier> productsSuppliers;
-
+     
+     private String statusProd="null";  //add or edit product, or add a new product-supplier relationship
      
   // =====================================================================================
      
@@ -265,8 +267,8 @@ public class PackagesController implements Initializable{
     	// Instantiate the table columns
     	tcProductId.setCellValueFactory(new PropertyValueFactory<>("productId"));
 		tcProdName.setCellValueFactory(new PropertyValueFactory<>("prodName"));
-		tcProducts2.setCellValueFactory(new PropertyValueFactory<>("prodName"));
-		tcSuppliers2.setCellValueFactory(new PropertyValueFactory<>("supName"));
+		tcProducts2.setCellValueFactory(new PropertyValueFactory<>("product.prodName"));
+		tcSuppliers2.setCellValueFactory(new PropertyValueFactory<>("supplier.supName"));
     	
 		// Obtain the Products, Suppliers, and ProductsSuppliers from the web service
     	readProducts();
@@ -884,7 +886,7 @@ public class PackagesController implements Initializable{
     	
     	try 
     	{
-    		// Obtain the products from the JSON array and put them into the products list
+    		/*// Obtain the products from the JSON array and put them into the products list
             JSONArray jsonArray = new JSONArray(buffer.toString());
             for (int i = 0; i < jsonArray.length(); i++)
             {
@@ -894,8 +896,18 @@ public class PackagesController implements Initializable{
                 		                                        jsonProdSup.getString("prodName"),
                 		                                        jsonProdSup.getInt("supplierId"),
                 		                                        jsonProdSup.getString("supName"));
-                productsSuppliers.add(prodSup); 
-            }
+                productsSuppliers.add(prodSup);
+                
+                
+            }*/
+            
+            // Obtain the list of product-suppliers from the JSON data in "buffer" that was
+            // returned by the web service, using the fromJson() method that is part of
+            // the Gson package.
+            Gson gson = new Gson();
+            Type category = new TypeToken<List<ProductsSupplier>>(){}.getType();
+            productsSuppliers = gson.fromJson(buffer.toString(), category);
+            
     	}
     	catch (Exception e)
     	{
@@ -921,15 +933,33 @@ public class PackagesController implements Initializable{
     	btnSaveProd.setDisable(false);
     	btnRefreshProd.setDisable(false);
     	
-    	// Set the status to "add" for use by the saveProduct method
-    	status="add";
+    	// Set the product status to "add" for use by the saveProduct method
+    	statusProd = "add";
     }
 
     @FXML
     void addProductSupplier(ActionEvent event) {
     	
-    	// ***** TO DO *****
-
+    	// Disable the Edit and Add buttons, disable the product name input, 
+    	// disable the products table, and enable the save and reset buttons
+    	btnEditProd.setDisable(true);
+    	btnAddProd.setDisable(true);
+    	tfProdName.setDisable(true);
+    	tvProducts.setDisable(true);
+    	btnSaveProd.setDisable(false);
+    	btnRefreshProd.setDisable(false);
+    	
+    	// Set the product status to "addProdSup" for use by the saveProduct method
+    	statusProd = "addProdSup";
+    	
+    	// Confirm the product and supplier that will be added to the products_suppliers table
+    	Alert alert = new Alert(AlertType.INFORMATION);
+		alert.setTitle("Information");
+		alert.setHeaderText(null);
+		alert.setContentText("Click Save to add supplier " +  
+		                     cboSuppliers.getSelectionModel().getSelectedItem().getSupName() + 
+		                     " to product " + tfProdName.getText());
+		alert.showAndWait();  
     }
 
     @FXML
@@ -945,15 +975,15 @@ public class PackagesController implements Initializable{
     	btnSaveProd.setDisable(false);
     	btnRefreshProd.setDisable(false);
     	
-    	// Set the status to "edit" for use by the saveProduct method
-    	status="edit";
+    	// Set the product status to "edit" for use by the saveProduct method
+    	statusProd = "edit";
     }
 
     @FXML
     void refreshProdTables(ActionEvent event) {
     		readProducts();
     		readSuppliers();
-    		// readProductsSuppliers();
+    		readProductsSuppliers();
     		
     		// Set all the controls back to their initial state
     		btnAddProd.setDisable(false);
@@ -969,7 +999,7 @@ public class PackagesController implements Initializable{
     @FXML
     void saveProduct(ActionEvent event) {
     	
-    	if (status=="add")
+    	if (statusProd=="add")
     	{
     		// Create a new product          
             Product newProd = new Product(0, tfProdName.getText());                
@@ -998,9 +1028,8 @@ public class PackagesController implements Initializable{
 				HttpEntity entity = response.getEntity();
 	    	    String responseString = null;
 	    	    responseString = EntityUtils.toString(entity, "UTF-8");
-	    	    System.out.println("Repoese: " + responseString);
+	    	    System.out.println("Response: " + responseString);
 	    	    
-				//System.out.println(response);
 			} catch ( IOException e)
 			{
 				e.printStackTrace();
@@ -1024,28 +1053,129 @@ public class PackagesController implements Initializable{
 	    		alert.setContentText("There was a problem and the product was not created");
 	    		alert.showAndWait();
         	}        	
-        	newPkg=null;
     	}
-    	// If status = "edit":
-    	else
+    	else if (statusProd == "edit")
     	{
-    		// ***** TO DO ****
-    		// Code for updating a product
+    		// Create a new product object with the updated description (the product Id will be unchanged)
+    		Product updProd = new Product(Integer.parseInt(lblProductId.getText()), tfProdName.getText());
+    		
+            // Create the JSON string for the updated product to send to the server
+            Gson gson = new Gson();
+            Type type = new TypeToken<Product>() {}.getType();
+            String json = gson.toJson(updProd, type);
+            
+            String        postUrl       = "http://localhost:8080/TravelExperts2/rs/db/updateproduct";
+            HttpClient    httpClient    = HttpClientBuilder.create().build();
+            HttpPost      post          = new HttpPost(postUrl);
+            StringEntity  postingString;
+            HttpResponse  response;
+            
+            int success=0; // Store the status code from the http response to indicate whether the request was successful
+			try
+			{
+				postingString = new StringEntity(json);
+				post.setEntity(postingString);
+				post.setHeader("Content-type", "application/json");
+				response = httpClient.execute(post);
+				success = response.getStatusLine().getStatusCode();
+				
+			} catch ( IOException e)
+			{
+				e.printStackTrace();
+			}
+			if (success == 200)
+        	{
+        		Alert alert = new Alert(AlertType.INFORMATION);
+        		alert.setTitle("Success");
+	    		alert.setHeaderText(null);
+	    		alert.setContentText("The product has been successfully updated");
+	    		alert.showAndWait();
+        	}
+        	else
+        	{
+        		Alert alert = new Alert(AlertType.INFORMATION);
+        		alert.setTitle("Failure");
+	    		alert.setHeaderText(null);
+	    		alert.setContentText("There was a problem, and the product was not updated");
+	    		alert.showAndWait();
+        	}        	
+
+    	}
+    	else if (statusProd == "addProdSup") {
+
+    		// Obtain the data for the new products_suppliers record.  The product ID can be 
+        	// obtained from the label in the detail product view, and the supplier ID is the 
+        	// ID of the supplier selected in the combo box.
+        	int newProductId = Integer.parseInt(lblProductId.getText());
+        	int newSupplierId = cboSuppliers.getSelectionModel().getSelectedItem().getSupplierId();
+        	
+        	// Create a new product-supplier object  
+            ProductsSupplier newProdSup = new ProductsSupplier(0, newProductId, null, newSupplierId, null);                
+
+            // Create the JSON object for the new product
+            Gson gson = new Gson();
+            Type type = new TypeToken<Product>() {}.getType();
+            String json = gson.toJson(newProdSup, type);
+            
+            // Create the HTTP post request to send to the web server
+            String        postUrl       = "http://localhost:8080/TravelExperts2/rs/db/insertproductsupplier";
+            HttpClient    httpClient    = HttpClientBuilder.create().build();
+            HttpPost      post          = new HttpPost(postUrl);
+            StringEntity  postingString;
+            HttpResponse  response;
+            
+            int success=0; // Store the status code from the http response to indicate whether the request was successful
+			try
+			{
+				postingString = new StringEntity(json);
+				post.setEntity(postingString);
+				post.setHeader("Content-type", "application/json");
+				response = httpClient.execute(post);
+				success=response.getStatusLine().getStatusCode();
+				
+				HttpEntity entity = response.getEntity();
+	    	    String responseString = null;
+	    	    responseString = EntityUtils.toString(entity, "UTF-8");
+	    	    System.out.println("Response: " + responseString);
+			} 
+			catch ( IOException e)
+			{
+				e.printStackTrace();
+			}
+			
+			// On success
+        	if (success==200)
+        	{
+        		Alert alert = new Alert(AlertType.INFORMATION);
+        		alert.setTitle("Success");
+	    		alert.setHeaderText(null);
+	    		alert.setContentText("The new product-supplier has been successfully created");
+	    		alert.showAndWait();  
+        	}
+        	// On failure
+        	else
+        	{
+        		Alert alert = new Alert(AlertType.INFORMATION);
+        		alert.setTitle("Failure");
+	    		alert.setHeaderText(null);
+	    		alert.setContentText("There was a problem and the product-supplier was not created");
+	    		alert.showAndWait();
+        	}      
+        	
     	}
     	
     	// Revert the controls to their initial enabled/disabled state
-    	
     	tfProdName.setDisable(true);
     	btnAddProd.setDisable(false);
     	btnEditProd.setDisable(false);
     	tvProducts.setDisable(false);
     	btnSaveProd.setDisable(true);
     	
-    	status = "";
+    	statusProd = "";
 
     	readProducts();
     	readSuppliers();
-    	// readProductsSuppliers();
+    	readProductsSuppliers();
     }
     
     @FXML
