@@ -28,12 +28,15 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 
 import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXDatePicker;
 import com.jfoenix.controls.JFXListView;
 import com.jfoenix.controls.JFXTextArea;
 import com.jfoenix.controls.JFXTextField;
 import com.jfoenix.controls.JFXTreeTableView;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -54,10 +57,18 @@ import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.TreeTableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
-
+import javafx.util.StringConverter;
 import model.Product;
 import model.ProductsSupplier;
+
+import model.TripType;
+import model.Booking;
+import model.Clas;
+import model.Customer;
+import model.FeeType;
+
 import model.Supplier;
+
 import model.Packag;
 import model.PackagesProductsSupplier;
 
@@ -83,8 +94,11 @@ import org.json.JSONObject;
 
 public class PackagesController implements Initializable{
 	
+	private String URLCONSTANT= "http://10.163.101.59:8080";
+	//private String URLCONSTANT="http://localhost:8080";
+	
 	// ===================Sunghyun Lee =====================================================
-
+	// controls and variables for package tab
 	@FXML
     private Label lblPackageId;
 	
@@ -157,7 +171,7 @@ public class PackagesController implements Initializable{
     private ObservableList<ProductsSupplier> psList;
     private ObservableList<PackagesProductsSupplier> ppsList;
     
-    private String status="null"; //add or edit (package)
+    private String pkgStatus="null"; // whether package is being added or edited
     
     private Packag newPkg;
     
@@ -215,11 +229,14 @@ public class PackagesController implements Initializable{
      
   // =====================================================================================
      
-  // ===================Sunghyun Lee =====================================================
+  
   
     @Override
 	public void initialize(URL location, ResourceBundle resources)
 	{
+    	// ===================Sunghyun Lee =====================================================
+    	// initialize package tab
+    	
 		// initialize ability of controls
     	enableInputs(false);
     	btnAddPackage.setDisable(false);
@@ -230,7 +247,7 @@ public class PackagesController implements Initializable{
     	btnCancelPkg.setDisable(true);
     	
     	// instantiate lists
-    	packages1 =FXCollections.observableArrayList();
+    	packages1 = FXCollections.observableArrayList();
     	productsInPackage = FXCollections.observableArrayList();
     	psList = FXCollections.observableArrayList();
     	ppsList = FXCollections.observableArrayList();
@@ -242,7 +259,138 @@ public class PackagesController implements Initializable{
 		// read lists from web server and set them to tables
     	readPackages();
     	tvPackages.setItems(packages1);    	
-    	//readPackagesProductsSuppliers();
+    	readPackagesProductsSuppliers();
+    	
+    	
+    	//======================= Bookings Tab ========================================
+    	//traveler count field input validation: only allows numbers
+    	tfBookingTravelerCount.textProperty().addListener(new ChangeListener<String>() {
+    	    @Override
+    	    public void changed(ObservableValue<? extends String> observable, String oldValue, 
+    	        String newValue) {
+    	        if (!newValue.matches("\\d*")) {
+    	            tfBookingTravelerCount.setText(newValue.replaceAll("[^\\d]", ""));
+    	        }
+    	    }
+    	});
+    	
+    	//instantiate and fill lists
+    	customerIds = FXCollections.observableArrayList();    	
+    	fillCustomerIdList(getBuffer(URLCONSTANT + "/TravelExperts2/rs/db/getallcustomers"));
+    	classes = FXCollections.observableArrayList();
+    	fillClassesList(getBuffer(URLCONSTANT +"/TravelExperts2/rs/db/getallclasses"));
+    	feeTypes = FXCollections.observableArrayList();
+    	fillFeeTypeList(getBuffer(URLCONSTANT +"/TravelExperts2/rs/db/getallfees"));
+    	tripTypes = FXCollections.observableArrayList();
+    	fillTripTypeList(getBuffer(URLCONSTANT +"/TravelExperts2/rs/db/getalltriptypes"));
+    	
+    	//set combo boxes
+    	cbBookingPackage.setItems(packages1);
+    	cbBookingPackage.setConverter(
+        		new StringConverter<Packag>() {
+    				@Override
+    				public Packag fromString(String arg0) {
+    					// TODO Auto-generated method stub
+    					return null;
+    				}
+
+    				@Override
+    				public String toString(Packag pack) {
+    					if (pack == null) {
+    						return null;
+    					}
+    					else {
+    						return pack.getPkgName();
+    					}
+    				}    			
+        		}
+        );
+    	
+    	cbBookingCustomerId.setItems(customerIds);
+    	cbBookingCustomerId.setConverter(
+    		new StringConverter<Customer>() {
+				@Override
+				public Customer fromString(String arg0) {
+					// TODO Auto-generated method stub
+					return null;
+				}
+
+				@Override
+				public String toString(Customer cust) {
+					if (cust == null) {
+						return null;
+					}
+					else {
+						return Integer.toString(cust.getCustomerId());
+					}
+				}    			
+    		}
+    	);
+    	
+    	cbBookingClass.setItems(classes);
+    	cbBookingClass.setConverter(
+    		new StringConverter<Clas>() {
+				@Override
+				public Clas fromString(String arg0) {
+					// TODO Auto-generated method stub
+					return null;
+				}
+
+				@Override
+				public String toString(Clas clas) {
+					if (clas == null) {
+						return null;
+					}
+					else {
+						return clas.getClassName();
+					}
+				}    			
+    		}
+    	);
+    	
+    	cbBookingFeeType.setItems(feeTypes);
+    	cbBookingFeeType.setConverter(
+    		new StringConverter<FeeType>() {
+				@Override
+				public FeeType fromString(String arg0) {
+					// TODO Auto-generated method stub
+					return null;
+				}
+
+
+				@Override
+				public String toString(FeeType type) {
+					if (type == null) {
+						return null;
+					}
+					else {
+						return type.getFeeName();
+					}
+				}    			
+    		}
+    	);
+    
+      cbBookingTripType.setItems(tripTypes);
+    	cbBookingTripType.setConverter(
+    		new StringConverter<TripType>() {
+				@Override
+				public TripType fromString(String arg0) {
+					// TODO Auto-generated method stub
+					return null;
+				}
+
+				@Override
+				public String toString(TripType trip) {
+					if (trip == null) {
+						return null;
+					}
+					else {
+						return trip.getTtName();
+					}
+				}    			
+    		}
+    	);
+
 
     	// =======================Corinne Mullan================================================
     	// Initialize the Products tab
@@ -279,18 +427,26 @@ public class PackagesController implements Initializable{
     	cboSuppliers.setItems(suppliers);
     	
     	// =====================================================================================
+
+    	
     	
 	}
+    // =====================Sunghyun Lee===================================================
+    // methods for package tab
+    
     // read package-product-suppliers list from web server
-    /*
+    
     private void readPackagesProductsSuppliers()
 	{
     	StringBuffer buffer = new StringBuffer();    	
     	try 
     	{
     		// reading json
-            URL url = new URL("http://localhost:8080/TravelExperts2/rs/db/getallpps");
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            //URL url = new URL(URLCONSTANT +"/TravelExperts2/rs/db/getallpackagesproductsuppliers");
+    		URL url = new URL(URLCONSTANT +"/TravelExperts2/rs/db/getallpackagesproductsuppliers");
+    		
+    		
+    		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestProperty("accept", "application/json");
             BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
             String line;
@@ -310,9 +466,12 @@ public class PackagesController implements Initializable{
             for (int i = 0; i < jsonArray.length(); i++)
             {
                 JSONObject jsonPps = (JSONObject) jsonArray.get(i);
-
+                
+                System.out.println(jsonPps.getString("id"));
+                /*
                 PackagesProductsSupplier pps= new PackagesProductsSupplier(jsonPps.getInt("packageId"), jsonPps.getInt("productSupplierId"));
                 ppsList.add(pps); 
+                */
             }
     	}
     	catch (Exception e)
@@ -320,7 +479,7 @@ public class PackagesController implements Initializable{
     		e.printStackTrace();    	
     	}		
 	}
-	*/
+	
 	// read packages from web server
     private void readPackages()
 	{    		
@@ -329,8 +488,9 @@ public class PackagesController implements Initializable{
     	try 
     	{
     		// reading json
-            URL url = new URL("http://localhost:8080/TravelExperts2/rs/db/getallpackages");
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            //URL url = new URL(URLCONSTANT +"/TravelExperts2/rs/db/getallpackages");
+    		URL url = new URL(URLCONSTANT +"/TravelExperts2/rs/db/getallpackages");
+    		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestProperty("accept", "application/json");
             BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
             String line;
@@ -367,7 +527,7 @@ public class PackagesController implements Initializable{
     		e.printStackTrace();    	
     	}
 	}
-
+    
 	@FXML
     void deletePackage(ActionEvent event) {
     	if (tvPackages.getSelectionModel().getSelectedItem()!=null)
@@ -386,7 +546,8 @@ public class PackagesController implements Initializable{
     		{	
 				try
 				{
-					URL url = new URL("http://localhost:8080/TravelExperts2/rs/db/deletepackage/"+tvPackages.getSelectionModel().getSelectedItem().getPackageId());
+					//URL url = new URL(URLCONSTANT +"/TravelExperts2/rs/db/deletepackage/"+tvPackages.getSelectionModel().getSelectedItem().getPackageId());
+					URL url = new URL(URLCONSTANT +"/TravelExperts2/rs/db/deletepackage/"+tvPackages.getSelectionModel().getSelectedItem().getPackageId());
 					HttpURLConnection httpCon = (HttpURLConnection) url.openConnection();
 	    			//httpCon.setDoOutput(true);
 	    			
@@ -430,7 +591,7 @@ public class PackagesController implements Initializable{
 	    	btnSave1.setDisable(false);
 	    	btnAddPackage.setDisable(true);
 	    	tvPackages.setDisable(true);
-	    	status="edit";
+	    	pkgStatus="edit";
 	    	btnCancelPkg.setDisable(false);
     	}
     	else 
@@ -451,7 +612,7 @@ public class PackagesController implements Initializable{
     	btnDelete1.setDisable(true);
     	btnSave1.setDisable(false);
     	enableInputs(true);
-    	status="add";
+    	pkgStatus="add";
     	tvPackages.setDisable(true);
     	btnCancelPkg.setDisable(false);
     	
@@ -486,8 +647,9 @@ public class PackagesController implements Initializable{
 	}
 
 	@FXML
-    void savePackage(ActionEvent event) {
-		if (Validated())
+    void savePackage(ActionEvent event) 
+	{
+		if (validatePackage())
 		{
 			enableInputs(false);
 	    	btnDelete1.setDisable(false);
@@ -496,7 +658,7 @@ public class PackagesController implements Initializable{
 	    	tvPackages.setDisable(false);
 	    	
 	    	// add a new package
-	    	if (status=="add")
+	    	if (pkgStatus=="add")
 	    	{
 	    		// create a new package               
                 //newPkg=new Packag(0, new BigDecimal( tfPkgAgencyCommission.getText()), new BigDecimal(tfPkgBasePrice.getText()), taPkgDesc.getText(), Date.from(dpPkgEndDate.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant()), tfPkgName.getText(), Date.from(dpPkgStartDate.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant()));                
@@ -515,7 +677,8 @@ public class PackagesController implements Initializable{
                 										+"\"pkgStartDate\":\""+newPkg.getPkgStartDate()+"\""
                 										+"}";
                 
-                String       postUrl       = "http://localhost:8080/TravelExperts2/rs/db/insertpackage";// put in your url
+                //String       postUrl       = URLCONSTANT +"/TravelExperts2/rs/db/insertpackage";// put in your url
+                String       postUrl       = URLCONSTANT +"/TravelExperts2/rs/db/insertpackage";// put in your url
                 HttpClient   httpClient    = HttpClientBuilder.create().build();
                 HttpPost     post          = new HttpPost(postUrl);
                 StringEntity postingString;
@@ -562,7 +725,7 @@ public class PackagesController implements Initializable{
 	        	}        	
 	    	}
 	    	// edit the selected package
-	    	else if(status=="edit")
+	    	else if(pkgStatus=="edit")
 	    	{
 	    		newPkg = tvPackages.getSelectionModel().getSelectedItem();
 	    		newPkg.setPkgAgencyCommission(Double.parseDouble( tfPkgAgencyCommission.getText()));
@@ -584,7 +747,8 @@ public class PackagesController implements Initializable{
                 										+"\"pkgStartDate\":\""+newPkg.getPkgStartDate()+"\""
                 										+"}";
                 
-                String       postUrl       = "http://localhost:8080/TravelExperts2/rs/db/updatepackage";
+                //String       postUrl       = URLCONSTANT +"/TravelExperts2/rs/db/updatepackage";
+                String       postUrl       = URLCONSTANT +"/TravelExperts2/rs/db/updatepackage";
                 HttpClient   httpClient    = HttpClientBuilder.create().build();
                 HttpPost     post          = new HttpPost(postUrl);
                 StringEntity postingString;
@@ -622,11 +786,7 @@ public class PackagesController implements Initializable{
 
 	    	}
 	    	// edit
-	    	else
-	    	{
-	    		//readPackagesProductsSuppliers();
-
-	    	}
+	    	
 	    	newPkg=null;
 	    	
         	btnSave1.setDisable(true);
@@ -638,11 +798,11 @@ public class PackagesController implements Initializable{
         	readPackages();
         	
         	// select the package just created or updated
-        	if (status=="add")
+        	if (pkgStatus=="add")
         	{
         		tvPackages.getSelectionModel().select(tvPackages.getItems().size()-1);
         	}
-        	else if (status=="edit")
+        	else if (pkgStatus=="edit")
         	{
         		for (Packag pkg : tvPackages.getItems())
         		{
@@ -654,9 +814,10 @@ public class PackagesController implements Initializable{
         	displayPackageInfo();
         	btnCancelPkg.setDisable(true);
 		}
-    }
-    
-    private boolean Validated()
+			
+	}
+    // validate inputs on package tab before saving
+    private boolean validatePackage()
 	{
 		
     	boolean myBool=true; // return true or false
@@ -753,7 +914,7 @@ public class PackagesController implements Initializable{
 	@FXML
     void refreshPkgTab(ActionEvent event) {
 		// if cancelled while adding, select the first package in tvPackages
-		if (status=="add")
+		if (pkgStatus=="add")
 			tvPackages.getSelectionModel().select(0);
 		
 		enableInputs(false);
@@ -770,11 +931,202 @@ public class PackagesController implements Initializable{
     	lblProductsInPkg.setVisible(true);
 		
 		displayPackageInfo();
-		status="null";
+		pkgStatus="null";
 		
 		
     }
+	
 	// =====================================================================================
+
+	// ==================================== Graeme =========================================
+	
+	@FXML
+    private JFXComboBox<Packag> cbBookingPackage;
+
+    @FXML
+    private JFXComboBox<TripType> cbBookingTripType;
+
+    @FXML
+    private JFXTextField tfBookingTravelerCount;
+
+    @FXML
+    private JFXComboBox<Customer> cbBookingCustomerId;
+
+    @FXML
+    private JFXTextArea taBookingDescription;
+
+    @FXML
+    private JFXTextField tfBookingDestination;
+
+    @FXML
+    private JFXComboBox<Clas> cbBookingClass;
+
+    @FXML
+    private JFXComboBox<FeeType> cbBookingFeeType;
+
+    @FXML
+    private Label lblBookingPackageId;
+
+    @FXML
+    private JFXButton btnCreateBooking;
+    
+    private ObservableList<Customer> customerIds;
+    
+    private ObservableList<Clas> classes;
+    
+    private ObservableList<TripType> tripTypes;
+    
+    private ObservableList<FeeType> feeTypes;
+
+
+ // get json from web server
+    private StringBuffer getBuffer(String urlString)
+	{ 
+    	StringBuffer buffer = new StringBuffer();
+    	try 
+    	{
+    		// reading json
+            URL url = new URL(urlString);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestProperty("accept", "application/json");
+            BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            String line;
+            while ((line = br.readLine()) != null)
+            {
+            	buffer.append(line);
+            }
+
+        } catch (Exception e) {
+    		e.printStackTrace();    	
+        }
+    	return buffer;
+	}
+    
+    //fill lists to be used for combo boxes using stringbuffer created getbuffer()
+    private void fillClassesList(StringBuffer buffer) {
+    	classes.clear();
+    	JSONArray jsonArray = new JSONArray(buffer.toString());
+    	for (int i = 0; i < jsonArray.length(); i++)
+        {
+            JSONObject jsonPkg = (JSONObject) jsonArray.get(i);                
+            Clas clas = new Clas(jsonPkg.getString("classId"), jsonPkg.getString("className"));
+            classes.add(clas); 
+        }
+    }
+    
+    private void fillCustomerIdList(StringBuffer buffer) {
+    	customerIds.clear();
+    	JSONArray jsonArray = new JSONArray(buffer.toString());
+    	for (int i = 0; i < jsonArray.length(); i++)
+        {
+            JSONObject jsonPkg = (JSONObject) jsonArray.get(i);                
+            Customer cust = new Customer(jsonPkg.getInt("customerId"));
+            customerIds.add(cust); 
+        }
+    }
+    
+    private void fillTripTypeList(StringBuffer buffer) {
+    	tripTypes.clear();
+    	JSONArray jsonArray = new JSONArray(buffer.toString());
+    	for (int i = 0; i < jsonArray.length(); i++)
+        {
+            JSONObject jsonPkg = (JSONObject) jsonArray.get(i);                
+            TripType tripType = new TripType(jsonPkg.getString("tripTypeId"), jsonPkg.getString("TTName"));
+            tripTypes.add(tripType); 
+        }
+    }
+    
+    private void fillFeeTypeList(StringBuffer buffer) {
+    	feeTypes.clear();
+    	JSONArray jsonArray = new JSONArray(buffer.toString());
+    	for (int i = 0; i < jsonArray.length(); i++)
+        {
+            JSONObject jsonPkg = (JSONObject) jsonArray.get(i);                
+            FeeType feeType = new FeeType(jsonPkg.getString("feeId"), jsonPkg.getString("feeName"));
+            feeTypes.add(feeType); 
+        }
+    }    
+    
+    public void validateBooking() {   
+    	//show alert
+    	if(cbBookingCustomerId.getValue() == null || cbBookingClass.getValue() == null || cbBookingPackage.getValue() == null || cbBookingTripType.getValue() == null
+    			|| cbBookingFeeType.getValue() == null || tfBookingTravelerCount.getText().trim().isEmpty()) {    		
+    		Alert alert = new Alert(AlertType.INFORMATION);
+    		alert.setTitle("Empty Field");
+    		alert.setHeaderText(null);
+    		alert.setContentText("Please fill in all required fields, denoted with *");
+    		alert.showAndWait();
+    		
+    		//make empty fields red
+    		if(cbBookingCustomerId.getValue() == null) {
+    			cbBookingCustomerId.getStylesheets().add(getClass().getResource("/view/error.css").toExternalForm());
+    		}
+    		if(cbBookingClass.getValue() == null) {
+    			cbBookingClass.getStylesheets().add(getClass().getResource("/view/error.css").toExternalForm());
+    		}
+    		if(cbBookingPackage.getValue() == null) {
+    			cbBookingPackage.getStylesheets().add(getClass().getResource("/view/error.css").toExternalForm());
+    		}
+    		if(cbBookingTripType.getValue() == null) {
+    			cbBookingTripType.getStylesheets().add(getClass().getResource("/view/error.css").toExternalForm());
+    		}
+    		if(cbBookingFeeType.getValue() == null) {
+    			cbBookingFeeType.getStylesheets().add(getClass().getResource("/view/error.css").toExternalForm());
+    		}
+    		if(tfBookingTravelerCount.getText().trim().isEmpty()) {
+    			tfBookingTravelerCount.getStylesheets().add(getClass().getResource("/view/error.css").toExternalForm());
+    		}
+    	}
+    	else {
+    		insertBooking();
+    	}
+    }
+    
+    private void insertBooking() {
+    	Booking booking = new Booking(cbBookingCustomerId.getValue().getCustomerId(), cbBookingClass.getValue().getClassId(), cbBookingPackage.getValue().getPackageId(), cbBookingTripType.getValue().getTripTypeId(), 
+    			Integer.parseInt(tfBookingTravelerCount.getText().trim()), cbBookingFeeType.getValue().getFeeId(), tfBookingDestination.getText().trim(), taBookingDescription.getText().trim());         
+    	
+        // send json to web server
+        Gson gson = new Gson();
+        Type type = new TypeToken<Booking>() {}.getType();
+        String json = gson.toJson(booking, type);
+        
+        //int idx=json.indexOf("pkgEndDate"); // index of "pkgEndDate" in json
+        
+        // manually modify json string to send date variables in a format that web server understands
+        //String myJson= json.substring(0, idx+12)+"\""+newPkg.getPkgEndDate()+"\""+","
+        										//+"\"pkgName\":\""+newPkg.getPkgName()+"\","
+        										//+"\"pkgStartDate\":\""+newPkg.getPkgStartDate()+"\""
+        										//+"}";
+        
+        String       postUrl       = URLCONSTANT +"/TravelExperts2/rs/db/postbooking";// put in your url
+        HttpClient   httpClient    = HttpClientBuilder.create().build();
+        HttpPost     post          = new HttpPost(postUrl);
+        StringEntity postingString;
+        HttpResponse  response;
+        
+        int success=0; // store status code from http response to see whether successful
+		try
+		{
+			postingString = new StringEntity(json);
+			post.setEntity(postingString);
+			post.setHeader("Content-type", "application/json");
+			response = httpClient.execute(post);
+			success=response.getStatusLine().getStatusCode();
+			
+			HttpEntity entity = response.getEntity();
+    	    String responseString = null;
+    	    responseString = EntityUtils.toString(entity, "UTF-8");
+    	    System.out.println("Response: " + responseString);
+    	    
+			//System.out.println(response);
+		} catch ( IOException e)
+		{
+			e.printStackTrace();
+		}
+    }
+
+
 	
 	// =======================Corinne Mullan================================================
 	// Methods for the Products tab
@@ -787,7 +1139,7 @@ public class PackagesController implements Initializable{
     	try 
     	{
     		// Read the JSON array from the web service
-            URL url = new URL("http://localhost:8080/TravelExperts2/rs/db/getallproducts");
+            URL url = new URL(URLCONSTANT +"/TravelExperts2/rs/db/getallproducts");
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestProperty("accept", "application/json");
             BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
@@ -827,7 +1179,7 @@ public class PackagesController implements Initializable{
     	try 
     	{
     		// Read the JSON array from the web service
-            URL url = new URL("http://localhost:8080/TravelExperts2/rs/db/getallsuppliers");
+            URL url = new URL(URLCONSTANT +"/TravelExperts2/rs/db/getallsuppliers");
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestProperty("accept", "application/json");
             BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
@@ -868,7 +1220,7 @@ public class PackagesController implements Initializable{
     	try 
     	{
     		// Read the JSON array from the web service
-            URL url = new URL("http://localhost:8080/TravelExperts2/rs/db/getallproductssuppliers");
+            URL url = new URL(URLCONSTANT +"/TravelExperts2/rs/db/getallproductssuppliers");
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestProperty("accept", "application/json");
             BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
@@ -922,7 +1274,7 @@ public class PackagesController implements Initializable{
     	btnRefreshProd.setDisable(false);
     	
     	// Set the status to "add" for use by the saveProduct method
-    	status="add";
+    	pkgStatus="add";
     }
 
     @FXML
@@ -946,7 +1298,7 @@ public class PackagesController implements Initializable{
     	btnRefreshProd.setDisable(false);
     	
     	// Set the status to "edit" for use by the saveProduct method
-    	status="edit";
+    	pkgStatus="edit";
     }
 
     @FXML
@@ -969,7 +1321,7 @@ public class PackagesController implements Initializable{
     @FXML
     void saveProduct(ActionEvent event) {
     	
-    	if (status=="add")
+    	if (pkgStatus=="add")
     	{
     		// Create a new product          
             Product newProd = new Product(0, tfProdName.getText());                
@@ -980,7 +1332,9 @@ public class PackagesController implements Initializable{
             String json = gson.toJson(newProd, type);
             
             // Create the HTTP post request to send to the web server
-            String        postUrl       = "http://localhost:8080/TravelExperts2/rs/db/insertproduct";
+            //String        postUrl       = URLCONSTANT +"/TravelExperts2/rs/db/insertproduct";
+            String        postUrl       = URLCONSTANT +"/TravelExperts2/rs/db/insertproduct";
+
             HttpClient    httpClient    = HttpClientBuilder.create().build();
             HttpPost      post          = new HttpPost(postUrl);
             StringEntity  postingString;
@@ -1041,7 +1395,7 @@ public class PackagesController implements Initializable{
     	tvProducts.setDisable(false);
     	btnSaveProd.setDisable(true);
     	
-    	status = "";
+    	pkgStatus = "";
 
     	readProducts();
     	readSuppliers();
@@ -1065,6 +1419,7 @@ public class PackagesController implements Initializable{
 	}
 	
 	// ====================================================================================
-
+	
 		
 	}
+
