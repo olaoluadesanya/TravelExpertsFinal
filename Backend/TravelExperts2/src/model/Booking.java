@@ -16,8 +16,7 @@ import java.util.List;
 public class Booking implements Serializable {
 	private static final long serialVersionUID = 1L;
 
-	@Id	
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	@Id
 	private int bookingId;
 
 	@Temporal(TemporalType.TIMESTAMP)
@@ -29,9 +28,9 @@ public class Booking implements Serializable {
 
 	private String tripTypeId;
 
-	//bi-directional one-to-many association to Bookingdetail
-	@OneToMany(mappedBy="booking", cascade = {CascadeType.PERSIST})
-	private List<Bookingdetail> bookingdetails;
+	//bi-directional many-to-one association to Bookingdetail
+	@OneToMany(mappedBy="booking")
+	private transient List<Bookingdetail> bookingdetails;
 
 	//bi-directional many-to-one association to Customer
 	@ManyToOne
