@@ -11,6 +11,9 @@
 		<class>model.Product</class>
 		<class>model.ProductsSupplier</class>
 		<class>model.Supplier</class>
+		<class>model.Clas</class>
+		<class>model.Fee</class>
+		<class>model.Triptype</class>
 		<properties>
 			<property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/travelexperts"/>
 			<property name="javax.persistence.jdbc.user" value="root"/>
