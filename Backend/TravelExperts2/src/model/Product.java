@@ -21,8 +21,9 @@ public class Product implements Serializable {
 	private String prodName;
 
 	//bi-directional many-to-one association to ProductsSupplier
+	// Added "transient" -- Corinne Mullan
 	@OneToMany(mappedBy="product")
-	private List<ProductsSupplier> productsSuppliers;
+	private transient List<ProductsSupplier> productsSuppliers;
 
 	public Product() {
 	}
