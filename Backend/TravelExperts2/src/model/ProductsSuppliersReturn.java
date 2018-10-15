@@ -1,4 +1,6 @@
 /*
+ * Ported into web service from JavaFX project
+ * 
  * Author: Sunghyun Lee
  * Created: 2018-10-01
  * 
@@ -9,7 +11,9 @@
 
 package model;
 
-public class ProductsSupplier
+import java.io.Serializable;
+
+public class ProductsSuppliersReturn implements Serializable
 {
 	private int productSupplierId;
 	private int productId;		
@@ -17,9 +21,8 @@ public class ProductsSupplier
 	private int supplierId;
 	private String supName;
 
-	public ProductsSupplier(int productSupplierId, int productId, String prodName, int supplierId, String supName)
+	public ProductsSuppliersReturn(int productSupplierId, int productId, String prodName, int supplierId, String supName)
 	{
-		super();
 		this.productSupplierId = productSupplierId;
 		this.productId = productId;
 		this.prodName = prodName;
@@ -76,5 +79,14 @@ public class ProductsSupplier
 	{
 		this.supName = supName;
 	}
+
+	@Override
+	public String toString() {
+		return "{\"productSupplierId\":" + productSupplierId + ", \"productId\"=" + productId
+				+ ", \"prodName\"=\"" + prodName + "\", \"supplierId\"=" + supplierId + ", \"supName\"=\"" + supName 
+				+ "\"}";
+	}
+	
+	
 	
 }
