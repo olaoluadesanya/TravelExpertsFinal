@@ -256,16 +256,8 @@ public class PackagesController implements Initializable{
 		// read lists from web server and set them to tables
     	readPackages();
     	tvPackages.setItems(packages1);    	
-<<<<<<< HEAD
     	readPackagesProductsSuppliers();
-    	/*
-    	for (PackagesProductsSupplier pps:ppsList)
-    	{
-    		System.out.println(pps);
-    	}
-    	*/
-=======
-    	//readPackagesProductsSuppliers();
+    	
     	
     	//======================= Bookings Tab ========================================
     	//traveler count field input validation: only allows numbers
@@ -395,7 +387,7 @@ public class PackagesController implements Initializable{
 				}    			
     		}
     	);
->>>>>>> master
+
 
     	// =======================Corinne Mullan================================================
     	// Initialize the Products tab
@@ -652,7 +644,8 @@ public class PackagesController implements Initializable{
 	}
 
 	@FXML
-    void savePackage(ActionEvent event) {
+    void savePackage(ActionEvent event) 
+	{
 		if (validatePackage())
 		{
 			enableInputs(false);
@@ -790,11 +783,7 @@ public class PackagesController implements Initializable{
 
 	    	}
 	    	// edit
-	    	else
-	    	{
-	    		//readPackagesProductsSuppliers();
-
-	    	}
+	    	
 	    	newPkg=null;
 	    	
         	btnSave1.setDisable(true);
@@ -822,7 +811,8 @@ public class PackagesController implements Initializable{
         	displayPackageInfo();
         	btnCancelPkg.setDisable(true);
 		}
-    }
+			
+	}
     // validate inputs on package tab before saving
     private boolean validatePackage()
 	{
@@ -1132,7 +1122,7 @@ public class PackagesController implements Initializable{
 			e.printStackTrace();
 		}
     }
-}
+
 
 	
 	// =======================Corinne Mullan================================================
