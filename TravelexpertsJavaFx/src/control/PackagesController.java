@@ -84,7 +84,7 @@ import org.json.JSONObject;
 public class PackagesController implements Initializable{
 	
 	// ===================Sunghyun Lee =====================================================
-
+	// controls and variables for package tab
 	@FXML
     private Label lblPackageId;
 	
@@ -157,7 +157,7 @@ public class PackagesController implements Initializable{
     private ObservableList<ProductsSupplier> psList;
     private ObservableList<PackagesProductsSupplier> ppsList;
     
-    private String status="null"; //add or edit (package)
+    private String pkgStatus="null"; // whether package is being added or edited
     
     private Packag newPkg;
     
@@ -215,11 +215,14 @@ public class PackagesController implements Initializable{
      
   // =====================================================================================
      
-  // ===================Sunghyun Lee =====================================================
+  
   
     @Override
 	public void initialize(URL location, ResourceBundle resources)
 	{
+    	// ===================Sunghyun Lee =====================================================
+    	// initialize package tab
+    	
 		// initialize ability of controls
     	enableInputs(false);
     	btnAddPackage.setDisable(false);
@@ -281,6 +284,9 @@ public class PackagesController implements Initializable{
     	// =====================================================================================
     	
 	}
+    // =====================Sunghyun Lee===================================================
+    // methods for package tab
+    
     // read package-product-suppliers list from web server
     /*
     private void readPackagesProductsSuppliers()
@@ -430,7 +436,7 @@ public class PackagesController implements Initializable{
 	    	btnSave1.setDisable(false);
 	    	btnAddPackage.setDisable(true);
 	    	tvPackages.setDisable(true);
-	    	status="edit";
+	    	pkgStatus="edit";
 	    	btnCancelPkg.setDisable(false);
     	}
     	else 
@@ -451,7 +457,7 @@ public class PackagesController implements Initializable{
     	btnDelete1.setDisable(true);
     	btnSave1.setDisable(false);
     	enableInputs(true);
-    	status="add";
+    	pkgStatus="add";
     	tvPackages.setDisable(true);
     	btnCancelPkg.setDisable(false);
     	
@@ -487,7 +493,7 @@ public class PackagesController implements Initializable{
 
 	@FXML
     void savePackage(ActionEvent event) {
-		if (Validated())
+		if (validatePackage())
 		{
 			enableInputs(false);
 	    	btnDelete1.setDisable(false);
@@ -496,7 +502,7 @@ public class PackagesController implements Initializable{
 	    	tvPackages.setDisable(false);
 	    	
 	    	// add a new package
-	    	if (status=="add")
+	    	if (pkgStatus=="add")
 	    	{
 	    		// create a new package               
                 //newPkg=new Packag(0, new BigDecimal( tfPkgAgencyCommission.getText()), new BigDecimal(tfPkgBasePrice.getText()), taPkgDesc.getText(), Date.from(dpPkgEndDate.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant()), tfPkgName.getText(), Date.from(dpPkgStartDate.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant()));                
@@ -562,7 +568,7 @@ public class PackagesController implements Initializable{
 	        	}        	
 	    	}
 	    	// edit the selected package
-	    	else if(status=="edit")
+	    	else if(pkgStatus=="edit")
 	    	{
 	    		newPkg = tvPackages.getSelectionModel().getSelectedItem();
 	    		newPkg.setPkgAgencyCommission(Double.parseDouble( tfPkgAgencyCommission.getText()));
@@ -638,11 +644,11 @@ public class PackagesController implements Initializable{
         	readPackages();
         	
         	// select the package just created or updated
-        	if (status=="add")
+        	if (pkgStatus=="add")
         	{
         		tvPackages.getSelectionModel().select(tvPackages.getItems().size()-1);
         	}
-        	else if (status=="edit")
+        	else if (pkgStatus=="edit")
         	{
         		for (Packag pkg : tvPackages.getItems())
         		{
@@ -655,8 +661,8 @@ public class PackagesController implements Initializable{
         	btnCancelPkg.setDisable(true);
 		}
     }
-    
-    private boolean Validated()
+    // validate inputs on package tab before saving
+    private boolean validatePackage()
 	{
 		
     	boolean myBool=true; // return true or false
@@ -753,7 +759,7 @@ public class PackagesController implements Initializable{
 	@FXML
     void refreshPkgTab(ActionEvent event) {
 		// if cancelled while adding, select the first package in tvPackages
-		if (status=="add")
+		if (pkgStatus=="add")
 			tvPackages.getSelectionModel().select(0);
 		
 		enableInputs(false);
@@ -770,7 +776,7 @@ public class PackagesController implements Initializable{
     	lblProductsInPkg.setVisible(true);
 		
 		displayPackageInfo();
-		status="null";
+		pkgStatus="null";
 		
 		
     }
@@ -922,7 +928,7 @@ public class PackagesController implements Initializable{
     	btnRefreshProd.setDisable(false);
     	
     	// Set the status to "add" for use by the saveProduct method
-    	status="add";
+    	pkgStatus="add";
     }
 
     @FXML
@@ -946,7 +952,7 @@ public class PackagesController implements Initializable{
     	btnRefreshProd.setDisable(false);
     	
     	// Set the status to "edit" for use by the saveProduct method
-    	status="edit";
+    	pkgStatus="edit";
     }
 
     @FXML
@@ -969,7 +975,7 @@ public class PackagesController implements Initializable{
     @FXML
     void saveProduct(ActionEvent event) {
     	
-    	if (status=="add")
+    	if (pkgStatus=="add")
     	{
     		// Create a new product          
             Product newProd = new Product(0, tfProdName.getText());                
@@ -1041,7 +1047,7 @@ public class PackagesController implements Initializable{
     	tvProducts.setDisable(false);
     	btnSaveProd.setDisable(true);
     	
-    	status = "";
+    	pkgStatus = "";
 
     	readProducts();
     	readSuppliers();
