@@ -49,12 +49,12 @@
                         </VBox>
                         <HBox layoutX="352.0" layoutY="432.0" prefHeight="25.0" prefWidth="193.0">
                            <children>
-                              <JFXButton fx:id="btnEdit1" onAction="#editPackage" style="-fx-background-color: #ffbb33;" text="Edit">
+                              <JFXButton fx:id="btnEdit1" onAction="#editPackage" style="-fx-background-color: skyblue;" text="Edit">
                                  <HBox.margin>
                                     <Insets right="30.0" />
                                  </HBox.margin>
                               </JFXButton>
-                              <JFXButton fx:id="btnAddPackage" onAction="#AddPackage" style="-fx-background-color: #3F729B;" text="Add">
+                              <JFXButton fx:id="btnAddPackage" onAction="#AddPackage" style="-fx-background-color: skyblue;" text="Add">
                                  <HBox.margin>
                                     <Insets right="30.0" />
                                  </HBox.margin>
@@ -83,7 +83,7 @@
                         <Label fx:id="lblProductsInPkg" layoutX="233.0" layoutY="250.0" text="Products In the Package" />
                         <Label fx:id="lblProductsSuppliers" layoutX="392.0" layoutY="250.0" text="Choose a Product and a Supplier" />
                         <JFXButton fx:id="btnInsertProductIntoPkg" layoutX="337.0" layoutY="390.0" style="-fx-background-color: skyblue;" text="Insert the Product" />
-                        <JFXButton fx:id="btnRemoveProductFromPkg" layoutX="456.0" layoutY="390.0" style="-fx-background-color: #9d8854;" text="Remove the Product" />
+                        <JFXButton fx:id="btnRemoveProductFromPkg" layoutX="456.0" layoutY="390.0" style="-fx-background-color: skyblue;" text="Remove the Product" />
                         <TableView fx:id="tvPackages" onMouseClicked="#selectPackage" prefHeight="513.0" prefWidth="200.0">
                           <columns>
                             <TableColumn fx:id="tcPkgId" prefWidth="36.0" text="C1" />
@@ -91,7 +91,7 @@
                           </columns>
                         </TableView>
                         <JFXButton fx:id="btnSave1" layoutX="614.0" layoutY="475.0" onAction="#savePackage" style="-fx-background-color: #00C851;" text="Save" />
-                        <JFXButton fx:id="btnRefreshPkg" layoutX="545.0" layoutY="475.0" onAction="#refreshPkgtables" text="Refresh" />
+                        <JFXButton fx:id="btnCancelPkg" layoutX="545.0" layoutY="475.0" onAction="#refreshPkgTab" style="-fx-background-color: skyblue;" text="Cancel" />
                      </children>
                   </AnchorPane>
               </content>
