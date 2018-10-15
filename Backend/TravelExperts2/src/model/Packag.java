@@ -12,8 +12,7 @@ import java.util.List;
  * 
  */
 @Entity
-// Fixed name of table (packages not packags) -- Corinne Mullan
-@Table(name="packages")
+@Table(name="packags")
 @NamedQuery(name="Packag.findAll", query="SELECT p FROM Packag p")
 public class Packag implements Serializable {
 	private static final long serialVersionUID = 1L;
