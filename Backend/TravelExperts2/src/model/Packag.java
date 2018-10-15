@@ -12,8 +12,7 @@ import java.util.List;
  * 
  */
 @Entity
-// Fixed name of table (packages not packags) -- Corinne Mullan
-@Table(name="packages")
+@Table(name="packags")
 @NamedQuery(name="Packag.findAll", query="SELECT p FROM Packag p")
 public class Packag implements Serializable {
 	private static final long serialVersionUID = 1L;
@@ -34,14 +33,11 @@ public class Packag implements Serializable {
 
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date pkgStartDate;
+	
 
 	//bi-directional many-to-one association to Booking
 	@OneToMany(mappedBy="packag")
 	private transient List<Booking> bookings;
-
-	//bi-directional many-to-one association to PackagesProductsSupplier
-	@OneToMany(mappedBy="packag")
-	private transient List<PackagesProductsSupplier> packagesProductsSuppliers;
 
 	public Packag() {
 	}
@@ -122,28 +118,6 @@ public class Packag implements Serializable {
 		booking.setPackag(null);
 
 		return booking;
-	}
-
-	public List<PackagesProductsSupplier> getPackagesProductsSuppliers() {
-		return this.packagesProductsSuppliers;
-	}
-
-	public void setPackagesProductsSuppliers(List<PackagesProductsSupplier> packagesProductsSuppliers) {
-		this.packagesProductsSuppliers = packagesProductsSuppliers;
-	}
-
-	public PackagesProductsSupplier addPackagesProductsSupplier(PackagesProductsSupplier packagesProductsSupplier) {
-		getPackagesProductsSuppliers().add(packagesProductsSupplier);
-		packagesProductsSupplier.setPackag(this);
-
-		return packagesProductsSupplier;
-	}
-
-	public PackagesProductsSupplier removePackagesProductsSupplier(PackagesProductsSupplier packagesProductsSupplier) {
-		getPackagesProductsSuppliers().remove(packagesProductsSupplier);
-		packagesProductsSupplier.setPackag(null);
-
-		return packagesProductsSupplier;
 	}
 
 }

@@ -2,6 +2,7 @@ package model;
 
 import java.io.Serializable;
 import javax.persistence.*;
+import java.util.List;
 
 
 /**
@@ -17,8 +18,11 @@ public class Supplier implements Serializable {
 	@Id
 	private int supplierId;
 
-	@Lob
 	private String supName;
+
+	//bi-directional many-to-one association to ProductsSupplier
+	@OneToMany(mappedBy="supplier")
+	private transient List<ProductsSupplier> productsSuppliers;
 
 	public Supplier() {
 	}
@@ -37,6 +41,28 @@ public class Supplier implements Serializable {
 
 	public void setSupName(String supName) {
 		this.supName = supName;
+	}
+
+	public List<ProductsSupplier> getProductsSuppliers() {
+		return this.productsSuppliers;
+	}
+
+	public void setProductsSuppliers(List<ProductsSupplier> productsSuppliers) {
+		this.productsSuppliers = productsSuppliers;
+	}
+
+	public ProductsSupplier addProductsSupplier(ProductsSupplier productsSupplier) {
+		getProductsSuppliers().add(productsSupplier);
+		productsSupplier.setSupplier(this);
+
+		return productsSupplier;
+	}
+
+	public ProductsSupplier removeProductsSupplier(ProductsSupplier productsSupplier) {
+		getProductsSuppliers().remove(productsSupplier);
+		productsSupplier.setSupplier(null);
+
+		return productsSupplier;
 	}
 
 }
