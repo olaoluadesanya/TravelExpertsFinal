@@ -41,6 +41,8 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonBar;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -66,6 +68,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Optional;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -239,7 +242,7 @@ public class PackagesController implements Initializable{
             {
             	buffer.append(line);
             }
-
+            
         } catch (Exception e) {
     		e.printStackTrace();    	
         }
@@ -261,9 +264,7 @@ public class PackagesController implements Initializable{
 
                 Packag pkg= new Packag(jsonPkg.getInt("packageId"), new BigDecimal( jsonPkg.getDouble("pkgAgencyCommission") ), new BigDecimal( jsonPkg.getDouble("pkgBasePrice")), jsonPkg.getString("pkgDesc"),ldEndDate, jsonPkg.getString("pkgName"), ldStartDate);
                 packages1.add(pkg); 
-                System.out.println("pkg "+i+": "+pkg);
             }
-            System.out.println("done: "+packages1);
     	}
     	catch (Exception e)
     	{
@@ -275,6 +276,42 @@ public class PackagesController implements Initializable{
     void deletePackage(ActionEvent event) {
     	if (tvPackages.getSelectionModel().getSelectedItem()!=null)
     	{
+    		ButtonType ok = new ButtonType("Yes", ButtonBar.ButtonData.OK_DONE);
+    		ButtonType cancel = new ButtonType("No", ButtonBar.ButtonData.CANCEL_CLOSE);
+    		Alert alert = new Alert(AlertType.WARNING,
+    		        "Are you sure you want to delete this package?",
+    		        ok,
+    		        cancel);
+
+    		alert.setTitle(null);
+    		Optional<ButtonType> result = alert.showAndWait();
+
+    		if (result.orElse(cancel) == ok) 
+    		{	
+				try
+				{
+					URL url = new URL("http://localhost:8080/TravelExperts2/rs/db/deletepackage/"+tvPackages.getSelectionModel().getSelectedItem().getPackageId());
+					HttpURLConnection httpCon = (HttpURLConnection) url.openConnection();
+	    			//httpCon.setDoOutput(true);
+	    			
+	    			
+					httpCon.setRequestProperty("Content-Type",
+	    		                "application/x-www-form-urlencoded");
+					httpCon.setRequestMethod("DELETE");
+	    		    System.out.println(httpCon.getResponseCode());
+	    		    //httpCon.disconnect();
+		    	    
+		    	    	    			
+	    			readPackages();
+	    			//readpp();
+	    			tvPackages.getSelectionModel().select(0);
+				} catch (IOException e)
+				{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+    		}
     	}
     	else
     	{
@@ -284,6 +321,7 @@ public class PackagesController implements Initializable{
     		alert.setContentText("Please select a package to delete");
     		alert.showAndWait();
     	}
+    	
     }
 
     @FXML
@@ -328,14 +366,14 @@ public class PackagesController implements Initializable{
     	btnRemoveProductFromPkg.setVisible(false);
     	
     	
-    	eraseInputs();
+    	emptyTxtFieldsInPkgTab();
     	
     	
     	
 
     }
-
-    private void eraseInputs()
+    // empty all text fields in the Package tab
+    private void emptyTxtFieldsInPkgTab()
 	{
 		// TODO Auto-generated method stub
 		lblPackageId.setText("New");
@@ -357,6 +395,7 @@ public class PackagesController implements Initializable{
 	    	btnEdit1.setDisable(false);
 	    	tvPackages.setDisable(false);
 	    	
+	    	// add a new package
 	    	if (status=="add")
 	    	{
 	    		// create a new package               
@@ -376,13 +415,13 @@ public class PackagesController implements Initializable{
                 										+"\"pkgStartDate\":\""+newPkg.getPkgStartDate()+"\""
                 										+"}";
                 
-                String       postUrl       = "http://localhost:8080/TravelExperts2/rs/db/postpackage";// put in your url
+                String       postUrl       = "http://localhost:8080/TravelExperts2/rs/db/insertpackage";// put in your url
                 HttpClient   httpClient    = HttpClientBuilder.create().build();
                 HttpPost     post          = new HttpPost(postUrl);
                 StringEntity postingString;
                 HttpResponse  response;
                 
-                int success=0; // store status code from http response to see whether successful
+                int success=0; // status code that tells whether insertpackage request was successful or not
 				try
 				{
 					postingString = new StringEntity(myJson);
@@ -390,43 +429,19 @@ public class PackagesController implements Initializable{
 					post.setHeader("Content-type", "application/json");
 					response = httpClient.execute(post);
 					success=response.getStatusLine().getStatusCode();
-					
+					/*
 					HttpEntity entity = response.getEntity();
 		    	    String responseString = null;
 		    	    responseString = EntityUtils.toString(entity, "UTF-8");
 		    	    System.out.println("Repoese: " + responseString);
+		    	    */
 		    	    
-					//System.out.println(response);
+		    	    
 				} catch ( IOException e)
 				{
 					e.printStackTrace();
 				}
-				
 
-				// 2nd
-				/*
-		        StringEntity entity = new StringEntity(json,
-		                ContentType.APPLICATION_FORM_URLENCODED);
-
-		        HttpClient httpClient = HttpClientBuilder.create().build();
-		        HttpPost request = new HttpPost("http://localhost:8080/TravelExperts2/rs/db/postpackage");
-		        request.setEntity(entity);
-
-		        HttpResponse response;
-				try
-				{
-					response = httpClient.execute(request);
-					System.out.println(response.getStatusLine().getStatusCode());
-				} catch (ClientProtocolException e)
-				{
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (IOException e)
-				{
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				*/
                 // if successful
 	        	if (success==200)
 	        	{
@@ -434,34 +449,103 @@ public class PackagesController implements Initializable{
 	        		alert.setTitle("Success");
 		    		alert.setHeaderText(null);
 		    		alert.setContentText("New packages has been successfully created");
-		    		alert.showAndWait();
-		    		//refreshTables();
-		    		
-		    	  
-		    	   
+		    		alert.showAndWait();		    		
+		    	  		    	 
 	        	}
 	        	else
 	        	{
 	        		Alert alert = new Alert(AlertType.INFORMATION);
 	        		alert.setTitle("Failure");
 		    		alert.setHeaderText(null);
-		    		alert.setContentText("There was a problem and the package was not created");
+		    		alert.setContentText("There was a problem, and the package was not created");
 		    		alert.showAndWait();
 	        	}        	
-	        	newPkg=null;
 	    	}
-	    	// edit
+	    	// edit the selected package
 	    	else
 	    	{
-	    		//readPackagesProductsSuppliers();
+	    		newPkg = tvPackages.getSelectionModel().getSelectedItem();
+	    		newPkg.setPkgAgencyCommission(new BigDecimal( tfPkgAgencyCommission.getText()));
+	    		newPkg.setPkgBasePrice(new BigDecimal(tfPkgBasePrice.getText()));
+	    		newPkg.setPkgDesc(taPkgDesc.getText());
+	    		newPkg.setPkgName(tfPkgName.getText());
+	    		newPkg.setPkgEndDate(dpPkgEndDate.getValue());
+	    		newPkg.setPkgStartDate(dpPkgStartDate.getValue());
+                // send json to web server
+                Gson gson = new Gson();
+                Type type = new TypeToken<Packag>() {}.getType();
+                String json = gson.toJson(newPkg, type);
+                
+                int idx=json.indexOf("pkgEndDate"); // index of "pkgEndDate" in json
+                
+                // manually modify json string to send date variables in a format that web server understands
+                String myJson= json.substring(0, idx+12)+"\""+newPkg.getPkgEndDate()+"\""+","
+                										+"\"pkgName\":\""+newPkg.getPkgName()+"\","
+                										+"\"pkgStartDate\":\""+newPkg.getPkgStartDate()+"\""
+                										+"}";
+                
+                String       postUrl       = "http://localhost:8080/TravelExperts2/rs/db/updatepackage";
+                HttpClient   httpClient    = HttpClientBuilder.create().build();
+                HttpPost     post          = new HttpPost(postUrl);
+                StringEntity postingString;
+                HttpResponse  response;
+                
+                int success1=0; // status code that tells whether updatepackage request was successful or not
+				try
+				{
+					postingString = new StringEntity(myJson);
+					post.setEntity(postingString);
+					post.setHeader("Content-type", "application/json");
+					response = httpClient.execute(post);
+					success1=response.getStatusLine().getStatusCode();
+					
+				} catch ( IOException e)
+				{
+					e.printStackTrace();
+				}
+				if (success1==200)
+	        	{
+	        		Alert alert = new Alert(AlertType.INFORMATION);
+	        		alert.setTitle("Success");
+		    		alert.setHeaderText(null);
+		    		alert.setContentText("The package has been successfully updated");
+		    		alert.showAndWait();
+	        	}
+	        	else
+	        	{
+	        		Alert alert = new Alert(AlertType.INFORMATION);
+	        		alert.setTitle("Failure");
+		    		alert.setHeaderText(null);
+		    		alert.setContentText("There was a problem, and the package was not updated");
+		    		alert.showAndWait();
+	        	}        	
+				
 	    	}
+	    	newPkg=null;
 	    	
 	    	// enable back the disabled inputs
         	btnSave1.setDisable(true);
     		lvProductsInPackage.setVisible(true);
         	lblProductsInPkg.setVisible(true);
-        	tvPackages.getSelectionModel().select(0);
+
+        	//re-read data from web server
+        	//readPackagesProductsSuppliers();
         	readPackages();
+        	
+        	// select the package just created or updated
+        	if (status=="add")
+        	{
+        		tvPackages.getSelectionModel().select(tvPackages.getItems().size()-1);
+        	}
+        	else
+        	{
+        		for (Packag pkg : tvPackages.getItems())
+        		{
+        			if (pkg.getPackageId() == Integer.parseInt( lblPackageId.getText()))
+        				tvPackages.getSelectionModel().select(pkg);
+        		}
+        	}
+        	
         	displayPackageInfo();
 		}
     }
@@ -492,7 +576,7 @@ public class PackagesController implements Initializable{
     		alert.showAndWait();
     		myBool= false;
 		}
-    	// empty inputs
+    	// empty text fields
     	if (tfPkgName.getText().trim().isEmpty())
     	{
     		alert.setTitle("Emtpy Input");
@@ -538,7 +622,8 @@ public class PackagesController implements Initializable{
 	    	taPkgDesc.setText(selectedPackage.getPkgDesc());
 	    	tfPkgBasePrice.setText(selectedPackage.getPkgBasePrice()+"");
 	    	tfPkgAgencyCommission.setText(selectedPackage.getPkgAgencyCommission()+"");
-	    	//System.out.println(selectedPackage.getPkgEndDate());
+
+	    	
     	}
     }
 
