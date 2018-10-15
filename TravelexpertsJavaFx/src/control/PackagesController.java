@@ -41,8 +41,12 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+
+import javafx.scene.control.ComboBox;
+
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
+
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -53,6 +57,7 @@ import javafx.scene.input.MouseEvent;
 
 import model.Product;
 import model.ProductsSupplier;
+import model.Supplier;
 import model.Packag;
 import model.PackagesProductsSupplier;
 
@@ -155,6 +160,62 @@ public class PackagesController implements Initializable{
     private String status="null"; //add or edit (package)
     
     private Packag newPkg;
+    
+ // =====================================================================================
+	
+ // =======================Corinne Mullan================================================
+ // Variables used on the Products tab
+ 	
+ 	 @FXML
+     private TableView<Product> tvProducts;
+
+     @FXML
+     private TableColumn<Product, Integer> tcProductId;
+
+     @FXML
+     private TableColumn<Product, String> tcProdName;
+
+     @FXML
+     private Label lblProductId;
+
+     @FXML
+     private JFXTextField tfProdName;
+
+     @FXML
+     private JFXButton btnEditProd;
+
+     @FXML
+     private JFXButton btnAddProd;
+
+     @FXML
+     private TableView<ProductsSupplier> tvProductsSuppliers2;
+     
+     @FXML
+     private TableColumn<Product, String> tcProducts2;
+
+     @FXML
+     private TableColumn<Product, String> tcSuppliers2;
+
+     @FXML
+     private JFXButton btnAddProdSupplier;
+
+     @FXML
+     private ComboBox<Supplier> cboSuppliers;
+
+     @FXML
+     private JFXButton btnRefreshProd;
+
+     @FXML
+     private JFXButton btnSaveProd;
+     
+     private ObservableList<model.Product> products;
+     private ObservableList<model.Supplier> suppliers;
+     private ObservableList<ProductsSupplier> productsSuppliers;
+
+     
+  // =====================================================================================
+     
+  // ===================Sunghyun Lee =====================================================
   
     @Override
 	public void initialize(URL location, ResourceBundle resources)
@@ -183,6 +244,41 @@ public class PackagesController implements Initializable{
     	tvPackages.setItems(packages1);    	
     	//readPackagesProductsSuppliers();
 
+    	// =======================Corinne Mullan================================================
+    	// Initialize the Products tab
+    	
+    	// Set the controls to their initial states
+    	btnAddProd.setDisable(false);
+    	btnEditProd.setDisable(false);
+    	btnSaveProd.setDisable(true);
+    	tcProductId.setSortable(false);
+    	tcProdName.setSortable(false);
+    	tfProdName.setDisable(true);
+    	tcProducts2.setSortable(false);
+    	tcSuppliers2.setSortable(false);
+    	
+    	// Instantiate the lists
+    	products = FXCollections.observableArrayList();
+    	suppliers = FXCollections.observableArrayList();
+    	productsSuppliers = FXCollections.observableArrayList();
+    	
+    	// Instantiate the table columns
+    	tcProductId.setCellValueFactory(new PropertyValueFactory<>("productId"));
+		tcProdName.setCellValueFactory(new PropertyValueFactory<>("prodName"));
+		tcProducts2.setCellValueFactory(new PropertyValueFactory<>("prodName"));
+		tcSuppliers2.setCellValueFactory(new PropertyValueFactory<>("supName"));
+    	
+		// Obtain the Products, Suppliers, and ProductsSuppliers from the web service
+    	readProducts();
+    	readSuppliers(); 	
+    	readProductsSuppliers();
+    	tvProducts.setItems(products);   
+    	tvProductsSuppliers2.setItems(productsSuppliers);
+    	
+    	// Initialize the combo box containing supplier names
+    	cboSuppliers.setItems(suppliers);
+    	
+    	// =====================================================================================
     	
 	}
     // read package-product-suppliers list from web server
@@ -523,7 +619,13 @@ public class PackagesController implements Initializable{
 		    		alert.setContentText("There was a problem, and the package was not updated");
 		    		alert.showAndWait();
 	        	}        	
-				
+
+	    	}
+	    	// edit
+	    	else
+	    	{
+	    		//readPackagesProductsSuppliers();
+
 	    	}
 	    	newPkg=null;
 	    	
@@ -673,9 +775,296 @@ public class PackagesController implements Initializable{
 		
     }
 	// =====================================================================================
-
 	
+	// =======================Corinne Mullan================================================
+	// Methods for the Products tab
+	
+	// Obtain a list of all of the products from the database using the web service
+    private void readProducts()
+	{    		
+    	products.clear();
+    	StringBuffer buffer = new StringBuffer();
+    	try 
+    	{
+    		// Read the JSON array from the web service
+            URL url = new URL("http://localhost:8080/TravelExperts2/rs/db/getallproducts");
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestProperty("accept", "application/json");
+            BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            String line;
+            while ((line = br.readLine()) != null)
+            {
+            	buffer.append(line);
+            }
+
+        } catch (Exception e) {
+    		e.printStackTrace();    	
+        }
+    	
+    	try 
+    	{
+    		// Obtain the products from the JSON array and put them into the products list
+            JSONArray jsonArray = new JSONArray(buffer.toString());
+            for (int i = 0; i < jsonArray.length(); i++)
+            {
+                JSONObject jsonProd = (JSONObject) jsonArray.get(i);
+                Product prod = new Product(jsonProd.getInt("productId"), 
+                		                   jsonProd.getString("prodName"));
+                products.add(prod); 
+            }
+    	}
+    	catch (Exception e)
+    	{
+    		e.printStackTrace();    	
+    	}
+	}
+    
+ // Obtain a list of all of the suppliers from the database using the web service
+    private void readSuppliers()
+	{    		
+    	suppliers.clear();
+    	StringBuffer buffer = new StringBuffer();
+    	try 
+    	{
+    		// Read the JSON array from the web service
+            URL url = new URL("http://localhost:8080/TravelExperts2/rs/db/getallsuppliers");
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestProperty("accept", "application/json");
+            BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            String line;
+            while ((line = br.readLine()) != null)
+            {
+            	buffer.append(line);
+            }
+
+        } catch (Exception e) {
+    		e.printStackTrace();    	
+        }
+    	
+    	try 
+    	{
+    		// Obtain the products from the JSON array and put them into the products list
+            JSONArray jsonArray = new JSONArray(buffer.toString());
+            for (int i = 0; i < jsonArray.length(); i++)
+            {
+                JSONObject jsonSup = (JSONObject) jsonArray.get(i);
+                Supplier sup = new Supplier(jsonSup.getInt("supplierId"), 
+                		                     jsonSup.getString("supName"));
+                suppliers.add(sup); 
+            }
+            
+    	}
+    	catch (Exception e)
+    	{
+    		e.printStackTrace();    	
+    	}
+	}
+    
+ // Obtain a list of all of the products - suppliers from the database using the web service
+    private void readProductsSuppliers()
+	{    		
+    	productsSuppliers.clear();
+    	StringBuffer buffer = new StringBuffer();
+    	try 
+    	{
+    		// Read the JSON array from the web service
+            URL url = new URL("http://localhost:8080/TravelExperts2/rs/db/getallproductssuppliers");
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestProperty("accept", "application/json");
+            BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            String line;
+            while ((line = br.readLine()) != null)
+            {
+            	buffer.append(line);
+            }
+
+        } catch (Exception e) {
+    		e.printStackTrace();    	
+        }
+    	
+    	try 
+    	{
+    		// Obtain the products from the JSON array and put them into the products list
+            JSONArray jsonArray = new JSONArray(buffer.toString());
+            for (int i = 0; i < jsonArray.length(); i++)
+            {
+                JSONObject jsonProdSup = (JSONObject) jsonArray.get(i);
+                ProductsSupplier prodSup = new ProductsSupplier(jsonProdSup.getInt("productSupplierId"),
+                		                                        jsonProdSup.getInt("productId"), 
+                		                                        jsonProdSup.getString("prodName"),
+                		                                        jsonProdSup.getInt("supplierId"),
+                		                                        jsonProdSup.getString("supName"));
+                productsSuppliers.add(prodSup); 
+            }
+    	}
+    	catch (Exception e)
+    	{
+    		e.printStackTrace();    	
+    	}
+	}
+
+    @FXML
+    void addProduct(ActionEvent event) {
+    	
+    	// Clear the selection on the Products table, and clear the data entry fields
+    	tvProducts.getSelectionModel().clearSelection();
+    	lblProductId.setText("");
+    	tfProdName.setText("");
+    	
+    	// Disable the Edit and Add buttons, enable the product name input, 
+    	// disable the products table, and enable the save and reset buttons
+    	btnEditProd.setDisable(true);
+    	btnAddProd.setDisable(true);
+    	tfProdName.setDisable(false);
+    	tfProdName.setEditable(true);
+    	tvProducts.setDisable(true);
+    	btnSaveProd.setDisable(false);
+    	btnRefreshProd.setDisable(false);
+    	
+    	// Set the status to "add" for use by the saveProduct method
+    	status="add";
+    }
+
+    @FXML
+    void addProductSupplier(ActionEvent event) {
+    	
+    	// ***** TO DO *****
+
+    }
+
+    @FXML
+    void editProduct(ActionEvent event) {
+    	
+    	// Disable the Edit and Add buttons, enable the product name input, 
+    	// disable the products table, and enable the save and reset buttons
+    	btnEditProd.setDisable(true);
+    	btnAddProd.setDisable(true);
+    	tfProdName.setDisable(false);
+    	tfProdName.setEditable(true);
+    	tvProducts.setDisable(true);
+    	btnSaveProd.setDisable(false);
+    	btnRefreshProd.setDisable(false);
+    	
+    	// Set the status to "edit" for use by the saveProduct method
+    	status="edit";
+    }
+
+    @FXML
+    void refreshProdTables(ActionEvent event) {
+    		readProducts();
+    		readSuppliers();
+    		// readProductsSuppliers();
+    		
+    		// Set all the controls back to their initial state
+    		btnAddProd.setDisable(false);
+        	btnEditProd.setDisable(false);
+        	btnSaveProd.setDisable(true);
+        	tvProducts.setDisable(false);
+        	tfProdName.setDisable(true);	
+        	
+        	lblProductId.setText("");
+        	tfProdName.setText("");
+    }
+
+    @FXML
+    void saveProduct(ActionEvent event) {
+    	
+    	if (status=="add")
+    	{
+    		// Create a new product          
+            Product newProd = new Product(0, tfProdName.getText());                
+
+            // Create the JSON object for the new product
+            Gson gson = new Gson();
+            Type type = new TypeToken<Product>() {}.getType();
+            String json = gson.toJson(newProd, type);
+            
+            // Create the HTTP post request to send to the web server
+            String        postUrl       = "http://localhost:8080/TravelExperts2/rs/db/insertproduct";
+            HttpClient    httpClient    = HttpClientBuilder.create().build();
+            HttpPost      post          = new HttpPost(postUrl);
+            StringEntity  postingString;
+            HttpResponse  response;
+            
+            int success=0; // Store the status code from the http response to indicate whether the request was successful
+			try
+			{
+				postingString = new StringEntity(json);
+				post.setEntity(postingString);
+				post.setHeader("Content-type", "application/json");
+				response = httpClient.execute(post);
+				success=response.getStatusLine().getStatusCode();
+				
+				HttpEntity entity = response.getEntity();
+	    	    String responseString = null;
+	    	    responseString = EntityUtils.toString(entity, "UTF-8");
+	    	    System.out.println("Repoese: " + responseString);
+	    	    
+				//System.out.println(response);
+			} catch ( IOException e)
+			{
+				e.printStackTrace();
+			}
+			
+			// On success
+        	if (success==200)
+        	{
+        		Alert alert = new Alert(AlertType.INFORMATION);
+        		alert.setTitle("Success");
+	    		alert.setHeaderText(null);
+	    		alert.setContentText("The new product has been successfully created");
+	    		alert.showAndWait();  
+        	}
+        	// On failure
+        	else
+        	{
+        		Alert alert = new Alert(AlertType.INFORMATION);
+        		alert.setTitle("Failure");
+	    		alert.setHeaderText(null);
+	    		alert.setContentText("There was a problem and the product was not created");
+	    		alert.showAndWait();
+        	}        	
+        	newPkg=null;
+    	}
+    	// If status = "edit":
+    	else
+    	{
+    		// ***** TO DO ****
+    		// Code for updating a product
+    	}
+    	
+    	// Revert the controls to their initial enabled/disabled state
+    	
+    	tfProdName.setDisable(true);
+    	btnAddProd.setDisable(false);
+    	btnEditProd.setDisable(false);
+    	tvProducts.setDisable(false);
+    	btnSaveProd.setDisable(true);
+    	
+    	status = "";
+
+    	readProducts();
+    	readSuppliers();
+    	// readProductsSuppliers();
+    }
+    
+    @FXML
+    void selectProduct(MouseEvent event) {
+    	displayProductInfo();
+    }
     
     
-    
-}
+	private void displayProductInfo() {
+		
+		if (tvProducts.getSelectionModel().getSelectedItem()!= null)
+    	{
+	    	model.Product selectedProduct= tvProducts.getSelectionModel().getSelectedItem();
+	    	lblProductId.setText("" + selectedProduct.getProductId());
+	    	tfProdName.setText("" + selectedProduct.getProdName());
+    	}
+	}
+	
+	// ====================================================================================
+
+		
+	}
