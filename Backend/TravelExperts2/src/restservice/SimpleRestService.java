@@ -41,7 +41,6 @@ import model.Packag;
 import model.PackagesProductsSupplier;
 import model.Product;
 import model.ProductsSupplier;
-import model.ProductsSuppliersReturn;
 import model.Supplier;
 import model.Triptype;
 
@@ -974,10 +973,10 @@ public class SimpleRestService {
 	                
 	                Query query = em.createQuery("SELECT p FROM ProductsSupplier p");
 	                
-	                List<ProductsSuppliersReturn> list = query.getResultList();
+	                List<ProductsSupplier> list = query.getResultList();
 	                
 	                Gson gson = new Gson();
-	                Type type = new TypeToken<List<ProductsSuppliersReturn>>() {}.getType();
+	                Type type = new TypeToken<List<ProductsSupplier>>() {}.getType();
 	                response = gson.toJson(list, type);
 	                
 	                /*response = "[";
