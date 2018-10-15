@@ -94,6 +94,9 @@ import org.json.JSONObject;
 
 public class PackagesController implements Initializable{
 	
+	private String URLCONSTANT= "http://10.163.101.59:8080";
+	//private String URLCONSTANT="http://localhost:8080";
+	
 	// ===================Sunghyun Lee =====================================================
 	// controls and variables for package tab
 	@FXML
@@ -273,13 +276,13 @@ public class PackagesController implements Initializable{
     	
     	//instantiate and fill lists
     	customerIds = FXCollections.observableArrayList();    	
-    	fillCustomerIdList(getBuffer("http://localhost:8080/TravelExperts2/rs/db/getallcustomers"));
+    	fillCustomerIdList(getBuffer(URLCONSTANT + "/TravelExperts2/rs/db/getallcustomers"));
     	classes = FXCollections.observableArrayList();
-    	fillClassesList(getBuffer("http://localhost:8080/TravelExperts2/rs/db/getallclasses"));
+    	fillClassesList(getBuffer(URLCONSTANT +"/TravelExperts2/rs/db/getallclasses"));
     	feeTypes = FXCollections.observableArrayList();
-    	fillFeeTypeList(getBuffer("http://localhost:8080/TravelExperts2/rs/db/getallfees"));
+    	fillFeeTypeList(getBuffer(URLCONSTANT +"/TravelExperts2/rs/db/getallfees"));
     	tripTypes = FXCollections.observableArrayList();
-    	fillTripTypeList(getBuffer("http://localhost:8080/TravelExperts2/rs/db/getalltriptypes"));
+    	fillTripTypeList(getBuffer(URLCONSTANT +"/TravelExperts2/rs/db/getalltriptypes"));
     	
     	//set combo boxes
     	cbBookingPackage.setItems(packages1);
@@ -439,8 +442,8 @@ public class PackagesController implements Initializable{
     	try 
     	{
     		// reading json
-            //URL url = new URL("http://localhost:8080/TravelExperts2/rs/db/getallpackagesproductsuppliers");
-    		URL url = new URL("http://10.163.101.59:8080/TravelExperts2/rs/db/getallpackagesproductsuppliers");
+            //URL url = new URL(URLCONSTANT +"/TravelExperts2/rs/db/getallpackagesproductsuppliers");
+    		URL url = new URL(URLCONSTANT +"/TravelExperts2/rs/db/getallpackagesproductsuppliers");
     		
     		
     		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -485,8 +488,8 @@ public class PackagesController implements Initializable{
     	try 
     	{
     		// reading json
-            //URL url = new URL("http://localhost:8080/TravelExperts2/rs/db/getallpackages");
-    		URL url = new URL("http://10.163.101.59:8080/TravelExperts2/rs/db/getallpackages");
+            //URL url = new URL(URLCONSTANT +"/TravelExperts2/rs/db/getallpackages");
+    		URL url = new URL(URLCONSTANT +"/TravelExperts2/rs/db/getallpackages");
     		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestProperty("accept", "application/json");
             BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
@@ -543,8 +546,8 @@ public class PackagesController implements Initializable{
     		{	
 				try
 				{
-					//URL url = new URL("http://localhost:8080/TravelExperts2/rs/db/deletepackage/"+tvPackages.getSelectionModel().getSelectedItem().getPackageId());
-					URL url = new URL("http://10.163.101.59:8080/TravelExperts2/rs/db/deletepackage/"+tvPackages.getSelectionModel().getSelectedItem().getPackageId());
+					//URL url = new URL(URLCONSTANT +"/TravelExperts2/rs/db/deletepackage/"+tvPackages.getSelectionModel().getSelectedItem().getPackageId());
+					URL url = new URL(URLCONSTANT +"/TravelExperts2/rs/db/deletepackage/"+tvPackages.getSelectionModel().getSelectedItem().getPackageId());
 					HttpURLConnection httpCon = (HttpURLConnection) url.openConnection();
 	    			//httpCon.setDoOutput(true);
 	    			
@@ -674,8 +677,8 @@ public class PackagesController implements Initializable{
                 										+"\"pkgStartDate\":\""+newPkg.getPkgStartDate()+"\""
                 										+"}";
                 
-                //String       postUrl       = "http://localhost:8080/TravelExperts2/rs/db/insertpackage";// put in your url
-                String       postUrl       = "http://10.163.101.59:8080/TravelExperts2/rs/db/insertpackage";// put in your url
+                //String       postUrl       = URLCONSTANT +"/TravelExperts2/rs/db/insertpackage";// put in your url
+                String       postUrl       = URLCONSTANT +"/TravelExperts2/rs/db/insertpackage";// put in your url
                 HttpClient   httpClient    = HttpClientBuilder.create().build();
                 HttpPost     post          = new HttpPost(postUrl);
                 StringEntity postingString;
@@ -744,8 +747,8 @@ public class PackagesController implements Initializable{
                 										+"\"pkgStartDate\":\""+newPkg.getPkgStartDate()+"\""
                 										+"}";
                 
-                //String       postUrl       = "http://localhost:8080/TravelExperts2/rs/db/updatepackage";
-                String       postUrl       = "http://10.163.101.59:8080/TravelExperts2/rs/db/updatepackage";
+                //String       postUrl       = URLCONSTANT +"/TravelExperts2/rs/db/updatepackage";
+                String       postUrl       = URLCONSTANT +"/TravelExperts2/rs/db/updatepackage";
                 HttpClient   httpClient    = HttpClientBuilder.create().build();
                 HttpPost     post          = new HttpPost(postUrl);
                 StringEntity postingString;
@@ -1096,7 +1099,7 @@ public class PackagesController implements Initializable{
         										//+"\"pkgStartDate\":\""+newPkg.getPkgStartDate()+"\""
         										//+"}";
         
-        String       postUrl       = "http://localhost:8080/TravelExperts2/rs/db/postbooking";// put in your url
+        String       postUrl       = URLCONSTANT +"/TravelExperts2/rs/db/postbooking";// put in your url
         HttpClient   httpClient    = HttpClientBuilder.create().build();
         HttpPost     post          = new HttpPost(postUrl);
         StringEntity postingString;
@@ -1136,7 +1139,7 @@ public class PackagesController implements Initializable{
     	try 
     	{
     		// Read the JSON array from the web service
-            URL url = new URL("http://localhost:8080/TravelExperts2/rs/db/getallproducts");
+            URL url = new URL(URLCONSTANT +"/TravelExperts2/rs/db/getallproducts");
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestProperty("accept", "application/json");
             BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
@@ -1176,7 +1179,7 @@ public class PackagesController implements Initializable{
     	try 
     	{
     		// Read the JSON array from the web service
-            URL url = new URL("http://localhost:8080/TravelExperts2/rs/db/getallsuppliers");
+            URL url = new URL(URLCONSTANT +"/TravelExperts2/rs/db/getallsuppliers");
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestProperty("accept", "application/json");
             BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
@@ -1217,7 +1220,7 @@ public class PackagesController implements Initializable{
     	try 
     	{
     		// Read the JSON array from the web service
-            URL url = new URL("http://localhost:8080/TravelExperts2/rs/db/getallproductssuppliers");
+            URL url = new URL(URLCONSTANT +"/TravelExperts2/rs/db/getallproductssuppliers");
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestProperty("accept", "application/json");
             BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
@@ -1329,8 +1332,8 @@ public class PackagesController implements Initializable{
             String json = gson.toJson(newProd, type);
             
             // Create the HTTP post request to send to the web server
-            //String        postUrl       = "http://localhost:8080/TravelExperts2/rs/db/insertproduct";
-            String        postUrl       = "http://10.163.101.59:8080/TravelExperts2/rs/db/insertproduct";
+            //String        postUrl       = URLCONSTANT +"/TravelExperts2/rs/db/insertproduct";
+            String        postUrl       = URLCONSTANT +"/TravelExperts2/rs/db/insertproduct";
 
             HttpClient    httpClient    = HttpClientBuilder.create().build();
             HttpPost      post          = new HttpPost(postUrl);
