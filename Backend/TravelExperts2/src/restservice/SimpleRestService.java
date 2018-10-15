@@ -680,74 +680,8 @@ public class SimpleRestService {
         }
         return response;	
 	}
-<<<<<<< HEAD
     
-    //http://localhost:8080/TravelExperts2/rs/db/postbooking
-	@POST
-	@Path("/postbooking")
-	@Consumes({ MediaType.APPLICATION_JSON })
-    @Produces(MediaType.TEXT_PLAIN)
-	public String insertBooking(String jsonString, @FormParam("request") String request ,  @DefaultValue("1") @FormParam("version") int version) {
-
-		if (logger.isDebugEnabled()) {
-			logger.debug("Start postSomething");
-			logger.debug("data: '" + request + "'");
-			logger.debug("version: '" + version + "'");
-		}
-
-		String response = null;
-
-        try{			
-            switch(version){
-	            case 1:
-	                if(logger.isDebugEnabled()) logger.debug("in version 1");
-	                
-	                EntityManagerFactory factory = Persistence.createEntityManagerFactory("TravelExperts2");
-	                EntityManager em = factory.createEntityManager();
-		                
-	                Gson gson = new Gson();
-	          	  	Booking booking = gson.fromJson(jsonString, Booking.class);
-	          	  	//add current date to booking object	
-	          	  	SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-	          	  	Date date = format.parse(format.format(new Date()));
-	          	  	booking.setBookingDate(date);	
-	          	  	//add customer id 
-	          	  	Customer cust = gson.fromJson(jsonString, Customer.class);
-	          	  	booking.setCustomer(cust);
-	          	  	System.out.println("JSON = " + jsonString);	          	  	
-	          	  	//add package id
-	          	  	Packag pack = gson.fromJson(jsonString, Packag.class);
-	          	  	booking.setPackag(pack);
-	          	  	//add booking detail
-	          	  	Bookingdetail detail = gson.fromJson(jsonString, Bookingdetail.class);	
-	          	  	detail.setBooking(booking);
-	          	  	List<Bookingdetail> detailsList = new ArrayList();
-	          	  	detailsList.add(detail);
-	          	    booking.setBookingdetails(detailsList);         	  	
-	          	  	//insert booking
-	                em.getTransaction().begin();
-	                em.persist(booking);	                
-	                em.getTransaction().commit();	                
-	                
-	                response = "Booking and Detail created";
-
-                    break;
-                default: throw new Exception("Unsupported version: " + version);
-            }
-        }
-        catch(Exception e){
-        	response = e.getMessage().toString();
-        }
-	        
-        if(logger.isDebugEnabled()){
-            logger.debug("result: '"+response+"'");
-            logger.debug("End postSomething");
-        }
-        return response;	
-	}
-=======
->>>>>>> parent of 4df2884... Merge pull request #16 from olaoluadesanya/Graeme-Service
-	
+    
 	/*
 	 * This block of code does crud operations on agents
 	 */

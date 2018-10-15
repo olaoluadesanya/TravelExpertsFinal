@@ -18,7 +18,7 @@ public class Supplier implements Serializable {
 	@Id
 	private int supplierId;
 
-	private Object supName;
+	private String supName;
 
 	//bi-directional many-to-one association to ProductsSupplier
 	@OneToMany(mappedBy="supplier")
@@ -35,11 +35,11 @@ public class Supplier implements Serializable {
 		this.supplierId = supplierId;
 	}
 
-	public Object getSupName() {
+	public String getSupName() {
 		return this.supName;
 	}
 
-	public void setSupName(Object supName) {
+	public void setSupName(String supName) {
 		this.supName = supName;
 	}
 

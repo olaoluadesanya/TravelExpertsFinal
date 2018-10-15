@@ -99,13 +99,6 @@ public class Agent implements Serializable {
 	public void setAgtPosition(String agtPosition) {
 		this.agtPosition = agtPosition;
 	}
-<<<<<<< HEAD
-=======
-
-	public List<Customer> getCustomers() {
-		return this.customers;
-	}
->>>>>>> parent of 4df2884... Merge pull request #16 from olaoluadesanya/Graeme-Service
 
 	public String getPass() {
 		return this.pass;

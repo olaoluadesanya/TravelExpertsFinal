@@ -7,9 +7,6 @@
 		<class>model.Packag</class>
 		<class>model.PackagesProductsSupplier</class>
 		<class>model.PackagesProductsSupplierPK</class>
-		<class>model.Clas</class>
-		<class>model.Fee</class>
-		<class>model.Triptype</class>
 		<class>model.Agent</class>
 		<class>model.Product</class>
 		<class>model.ProductsSupplier</class>
