@@ -909,12 +909,6 @@ public class SimpleRestService {
 	                Type type = new TypeToken<List<ProductsSupplier>>() {}.getType();
 	                response = gson.toJson(list, type);
 	                
-	                /*response = "[";
-	                for (ProductsSuppliersReturn listItem : list) {
-	                	response += listItem.toString();
-	                	response += ",";
-	                }
-	                response = response.replace((char) (response.length()-1), ']');*/
 
 	                break;
                 default: throw new Exception("Unsupported version: " + version);
