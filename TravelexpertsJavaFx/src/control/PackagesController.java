@@ -28,12 +28,15 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 
 import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXDatePicker;
 import com.jfoenix.controls.JFXListView;
 import com.jfoenix.controls.JFXTextArea;
 import com.jfoenix.controls.JFXTextField;
 import com.jfoenix.controls.JFXTreeTableView;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -48,9 +51,14 @@ import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.TreeTableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
-
+import javafx.util.StringConverter;
 import model.Product;
 import model.ProductsSupplier;
+import model.TripType;
+import model.Booking;
+import model.Clas;
+import model.Customer;
+import model.FeeType;
 import model.Packag;
 import model.PackagesProductsSupplier;
 
@@ -166,7 +174,7 @@ public class PackagesController implements Initializable{
     	btnRefreshPkg.setVisible(false);
     	
     	// instantiate lists
-    	packages1 =FXCollections.observableArrayList();
+    	packages1 = FXCollections.observableArrayList();
     	productsInPackage = FXCollections.observableArrayList();
     	psList = FXCollections.observableArrayList();
     	ppsList = FXCollections.observableArrayList();
@@ -179,8 +187,134 @@ public class PackagesController implements Initializable{
     	readPackages();
     	tvPackages.setItems(packages1);    	
     	//readPackagesProductsSuppliers();
-
     	
+    	//======================= Bookings Tab ========================================
+    	//traveler count field input validation: only allows numbers
+    	tfBookingTravelerCount.textProperty().addListener(new ChangeListener<String>() {
+    	    @Override
+    	    public void changed(ObservableValue<? extends String> observable, String oldValue, 
+    	        String newValue) {
+    	        if (!newValue.matches("\\d*")) {
+    	            tfBookingTravelerCount.setText(newValue.replaceAll("[^\\d]", ""));
+    	        }
+    	    }
+    	});
+    	
+    	//instantiate and fill lists
+    	customerIds = FXCollections.observableArrayList();    	
+    	fillCustomerIdList(getBuffer("http://localhost:8080/TravelExperts2/rs/db/getallcustomers"));
+    	classes = FXCollections.observableArrayList();
+    	fillClassesList(getBuffer("http://localhost:8080/TravelExperts2/rs/db/getallclasses"));
+    	feeTypes = FXCollections.observableArrayList();
+    	fillFeeTypeList(getBuffer("http://localhost:8080/TravelExperts2/rs/db/getallfees"));
+    	tripTypes = FXCollections.observableArrayList();
+    	fillTripTypeList(getBuffer("http://localhost:8080/TravelExperts2/rs/db/getalltriptypes"));
+    	
+    	//set combo boxes
+    	cbBookingPackage.setItems(packages1);
+    	cbBookingPackage.setConverter(
+        		new StringConverter<Packag>() {
+    				@Override
+    				public Packag fromString(String arg0) {
+    					// TODO Auto-generated method stub
+    					return null;
+    				}
+
+    				@Override
+    				public String toString(Packag pack) {
+    					if (pack == null) {
+    						return null;
+    					}
+    					else {
+    						return pack.getPkgName();
+    					}
+    				}    			
+        		}
+        );
+    	
+    	cbBookingCustomerId.setItems(customerIds);
+    	cbBookingCustomerId.setConverter(
+    		new StringConverter<Customer>() {
+				@Override
+				public Customer fromString(String arg0) {
+					// TODO Auto-generated method stub
+					return null;
+				}
+
+				@Override
+				public String toString(Customer cust) {
+					if (cust == null) {
+						return null;
+					}
+					else {
+						return Integer.toString(cust.getCustomerId());
+					}
+				}    			
+    		}
+    	);
+    	
+    	cbBookingClass.setItems(classes);
+    	cbBookingClass.setConverter(
+    		new StringConverter<Clas>() {
+				@Override
+				public Clas fromString(String arg0) {
+					// TODO Auto-generated method stub
+					return null;
+				}
+
+				@Override
+				public String toString(Clas clas) {
+					if (clas == null) {
+						return null;
+					}
+					else {
+						return clas.getClassName();
+					}
+				}    			
+    		}
+    	);
+    	
+    	cbBookingFeeType.setItems(feeTypes);
+    	cbBookingFeeType.setConverter(
+    		new StringConverter<FeeType>() {
+				@Override
+				public FeeType fromString(String arg0) {
+					// TODO Auto-generated method stub
+					return null;
+				}
+
+				@Override
+				public String toString(FeeType type) {
+					if (type == null) {
+						return null;
+					}
+					else {
+						return type.getFeeName();
+					}
+				}    			
+    		}
+    	);
+    	
+    	cbBookingTripType.setItems(tripTypes);
+    	cbBookingTripType.setConverter(
+    		new StringConverter<TripType>() {
+				@Override
+				public TripType fromString(String arg0) {
+					// TODO Auto-generated method stub
+					return null;
+				}
+
+				@Override
+				public String toString(TripType trip) {
+					if (trip == null) {
+						return null;
+					}
+					else {
+						return trip.getTtName();
+					}
+				}    			
+    		}
+    	);
 	}
     // read package-product-suppliers list from web server
     /*
@@ -565,9 +699,191 @@ public class PackagesController implements Initializable{
 
     }
 	// =====================================================================================
-
+	// ==================================== Graeme =========================================
 	
+	@FXML
+    private JFXComboBox<Packag> cbBookingPackage;
+
+    @FXML
+    private JFXComboBox<TripType> cbBookingTripType;
+
+    @FXML
+    private JFXTextField tfBookingTravelerCount;
+
+    @FXML
+    private JFXComboBox<Customer> cbBookingCustomerId;
+
+    @FXML
+    private JFXTextArea taBookingDescription;
+
+    @FXML
+    private JFXTextField tfBookingDestination;
+
+    @FXML
+    private JFXComboBox<Clas> cbBookingClass;
+
+    @FXML
+    private JFXComboBox<FeeType> cbBookingFeeType;
+
+    @FXML
+    private Label lblBookingPackageId;
+
+    @FXML
+    private JFXButton btnCreateBooking;
     
+    private ObservableList<Customer> customerIds;
     
+    private ObservableList<Clas> classes;
     
+    private ObservableList<TripType> tripTypes;
+    
+    private ObservableList<FeeType> feeTypes;
+
+
+ // get json from web server
+    private StringBuffer getBuffer(String urlString)
+	{ 
+    	StringBuffer buffer = new StringBuffer();
+    	try 
+    	{
+    		// reading json
+            URL url = new URL(urlString);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestProperty("accept", "application/json");
+            BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            String line;
+            while ((line = br.readLine()) != null)
+            {
+            	buffer.append(line);
+            }
+
+        } catch (Exception e) {
+    		e.printStackTrace();    	
+        }
+    	return buffer;
+	}
+    
+    //fill lists to be used for combo boxes using stringbuffer created getbuffer()
+    private void fillClassesList(StringBuffer buffer) {
+    	classes.clear();
+    	JSONArray jsonArray = new JSONArray(buffer.toString());
+    	for (int i = 0; i < jsonArray.length(); i++)
+        {
+            JSONObject jsonPkg = (JSONObject) jsonArray.get(i);                
+            Clas clas = new Clas(jsonPkg.getString("classId"), jsonPkg.getString("className"));
+            classes.add(clas); 
+        }
+    }
+    
+    private void fillCustomerIdList(StringBuffer buffer) {
+    	customerIds.clear();
+    	JSONArray jsonArray = new JSONArray(buffer.toString());
+    	for (int i = 0; i < jsonArray.length(); i++)
+        {
+            JSONObject jsonPkg = (JSONObject) jsonArray.get(i);                
+            Customer cust = new Customer(jsonPkg.getInt("customerId"));
+            customerIds.add(cust); 
+        }
+    }
+    
+    private void fillTripTypeList(StringBuffer buffer) {
+    	tripTypes.clear();
+    	JSONArray jsonArray = new JSONArray(buffer.toString());
+    	for (int i = 0; i < jsonArray.length(); i++)
+        {
+            JSONObject jsonPkg = (JSONObject) jsonArray.get(i);                
+            TripType tripType = new TripType(jsonPkg.getString("tripTypeId"), jsonPkg.getString("TTName"));
+            tripTypes.add(tripType); 
+        }
+    }
+    
+    private void fillFeeTypeList(StringBuffer buffer) {
+    	feeTypes.clear();
+    	JSONArray jsonArray = new JSONArray(buffer.toString());
+    	for (int i = 0; i < jsonArray.length(); i++)
+        {
+            JSONObject jsonPkg = (JSONObject) jsonArray.get(i);                
+            FeeType feeType = new FeeType(jsonPkg.getString("feeId"), jsonPkg.getString("feeName"));
+            feeTypes.add(feeType); 
+        }
+    }    
+    
+    public void validateBooking() {   
+    	//show alert
+    	if(cbBookingCustomerId.getValue() == null || cbBookingClass.getValue() == null || cbBookingPackage.getValue() == null || cbBookingTripType.getValue() == null
+    			|| cbBookingFeeType.getValue() == null || tfBookingTravelerCount.getText().trim().isEmpty()) {    		
+    		Alert alert = new Alert(AlertType.INFORMATION);
+    		alert.setTitle("Empty Field");
+    		alert.setHeaderText(null);
+    		alert.setContentText("Please fill in all required fields, denoted with *");
+    		alert.showAndWait();
+    		
+    		//make empty fields red
+    		if(cbBookingCustomerId.getValue() == null) {
+    			cbBookingCustomerId.getStylesheets().add(getClass().getResource("/view/error.css").toExternalForm());
+    		}
+    		if(cbBookingClass.getValue() == null) {
+    			cbBookingClass.getStylesheets().add(getClass().getResource("/view/error.css").toExternalForm());
+    		}
+    		if(cbBookingPackage.getValue() == null) {
+    			cbBookingPackage.getStylesheets().add(getClass().getResource("/view/error.css").toExternalForm());
+    		}
+    		if(cbBookingTripType.getValue() == null) {
+    			cbBookingTripType.getStylesheets().add(getClass().getResource("/view/error.css").toExternalForm());
+    		}
+    		if(cbBookingFeeType.getValue() == null) {
+    			cbBookingFeeType.getStylesheets().add(getClass().getResource("/view/error.css").toExternalForm());
+    		}
+    		if(tfBookingTravelerCount.getText().trim().isEmpty()) {
+    			tfBookingTravelerCount.getStylesheets().add(getClass().getResource("/view/error.css").toExternalForm());
+    		}
+    	}
+    	else {
+    		insertBooking();
+    	}
+    }
+    
+    private void insertBooking() {
+    	Booking booking = new Booking(cbBookingCustomerId.getValue().getCustomerId(), cbBookingClass.getValue().getClassId(), cbBookingPackage.getValue().getPackageId(), cbBookingTripType.getValue().getTripTypeId(), 
+    			Integer.parseInt(tfBookingTravelerCount.getText().trim()), cbBookingFeeType.getValue().getFeeId(), tfBookingDestination.getText().trim(), taBookingDescription.getText().trim());         
+    	
+        // send json to web server
+        Gson gson = new Gson();
+        Type type = new TypeToken<Booking>() {}.getType();
+        String json = gson.toJson(booking, type);
+        
+        //int idx=json.indexOf("pkgEndDate"); // index of "pkgEndDate" in json
+        
+        // manually modify json string to send date variables in a format that web server understands
+        //String myJson= json.substring(0, idx+12)+"\""+newPkg.getPkgEndDate()+"\""+","
+        										//+"\"pkgName\":\""+newPkg.getPkgName()+"\","
+        										//+"\"pkgStartDate\":\""+newPkg.getPkgStartDate()+"\""
+        										//+"}";
+        
+        String       postUrl       = "http://localhost:8080/TravelExperts2/rs/db/postbooking";// put in your url
+        HttpClient   httpClient    = HttpClientBuilder.create().build();
+        HttpPost     post          = new HttpPost(postUrl);
+        StringEntity postingString;
+        HttpResponse  response;
+        
+        int success=0; // store status code from http response to see whether successful
+		try
+		{
+			postingString = new StringEntity(json);
+			post.setEntity(postingString);
+			post.setHeader("Content-type", "application/json");
+			response = httpClient.execute(post);
+			success=response.getStatusLine().getStatusCode();
+			
+			HttpEntity entity = response.getEntity();
+    	    String responseString = null;
+    	    responseString = EntityUtils.toString(entity, "UTF-8");
+    	    System.out.println("Response: " + responseString);
+    	    
+			//System.out.println(response);
+		} catch ( IOException e)
+		{
+			e.printStackTrace();
+		}
+    }
 }
