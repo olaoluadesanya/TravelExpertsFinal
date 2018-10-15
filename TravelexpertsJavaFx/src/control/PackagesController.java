@@ -142,7 +142,7 @@ public class PackagesController implements Initializable{
     private JFXButton btnAddPackage;
     
     @FXML
-    private JFXButton btnRefreshPkg;
+    private JFXButton btnCancelPkg;
     
 
     //private StringBuffer buffer;
@@ -152,7 +152,7 @@ public class PackagesController implements Initializable{
     private ObservableList<ProductsSupplier> psList;
     private ObservableList<PackagesProductsSupplier> ppsList;
     
-    private String status;
+    private String status="null"; //add or edit (package)
     
     private Packag newPkg;
   
@@ -166,7 +166,7 @@ public class PackagesController implements Initializable{
     	btnSave1.setDisable(true);
     	tcPkgId.setSortable(false);
     	tcPkgName.setSortable(false);
-    	btnRefreshPkg.setVisible(false);
+    	btnCancelPkg.setDisable(true);
     	
     	// instantiate lists
     	packages1 =FXCollections.observableArrayList();
@@ -262,7 +262,7 @@ public class PackagesController implements Initializable{
                 LocalDate ldEndDate=format.parse(endDate).toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
                 LocalDate ldStartDate=format.parse(startDate).toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 
-                Packag pkg= new Packag(jsonPkg.getInt("packageId"), new BigDecimal( jsonPkg.getDouble("pkgAgencyCommission") ), new BigDecimal( jsonPkg.getDouble("pkgBasePrice")), jsonPkg.getString("pkgDesc"),ldEndDate, jsonPkg.getString("pkgName"), ldStartDate);
+                Packag pkg= new Packag(jsonPkg.getInt("packageId"), jsonPkg.getDouble("pkgAgencyCommission"), jsonPkg.getDouble("pkgBasePrice"), jsonPkg.getString("pkgDesc"),ldEndDate, jsonPkg.getString("pkgName"), ldStartDate);
                 packages1.add(pkg); 
             }
     	}
@@ -305,6 +305,7 @@ public class PackagesController implements Initializable{
 	    			readPackages();
 	    			//readpp();
 	    			tvPackages.getSelectionModel().select(0);
+	    			displayPackageInfo();
 				} catch (IOException e)
 				{
 					// TODO Auto-generated catch block
@@ -334,6 +335,7 @@ public class PackagesController implements Initializable{
 	    	btnAddPackage.setDisable(true);
 	    	tvPackages.setDisable(true);
 	    	status="edit";
+	    	btnCancelPkg.setDisable(false);
     	}
     	else 
     	{
@@ -347,6 +349,7 @@ public class PackagesController implements Initializable{
     
     @FXML
     void AddPackage(ActionEvent event) {
+    	// enable or disable elements
     	btnEdit1.setDisable(true);
     	btnAddPackage.setDisable(true);
     	btnDelete1.setDisable(true);
@@ -354,6 +357,7 @@ public class PackagesController implements Initializable{
     	enableInputs(true);
     	status="add";
     	tvPackages.setDisable(true);
+    	btnCancelPkg.setDisable(false);
     	
     	// hide products-related controls
     	
@@ -400,7 +404,7 @@ public class PackagesController implements Initializable{
 	    	{
 	    		// create a new package               
                 //newPkg=new Packag(0, new BigDecimal( tfPkgAgencyCommission.getText()), new BigDecimal(tfPkgBasePrice.getText()), taPkgDesc.getText(), Date.from(dpPkgEndDate.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant()), tfPkgName.getText(), Date.from(dpPkgStartDate.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant()));                
-                newPkg=new Packag(0, new BigDecimal( tfPkgAgencyCommission.getText()), new BigDecimal(tfPkgBasePrice.getText()), taPkgDesc.getText(), dpPkgEndDate.getValue(), tfPkgName.getText(), dpPkgStartDate.getValue());                
+                newPkg=new Packag(0, Double.parseDouble( tfPkgAgencyCommission.getText()), Double.parseDouble(tfPkgBasePrice.getText()), taPkgDesc.getText(), dpPkgEndDate.getValue(), tfPkgName.getText(), dpPkgStartDate.getValue());                
 
                 // send json to web server
                 Gson gson = new Gson();
@@ -462,11 +466,11 @@ public class PackagesController implements Initializable{
 	        	}        	
 	    	}
 	    	// edit the selected package
-	    	else
+	    	else if(status=="edit")
 	    	{
 	    		newPkg = tvPackages.getSelectionModel().getSelectedItem();
-	    		newPkg.setPkgAgencyCommission(new BigDecimal( tfPkgAgencyCommission.getText()));
-	    		newPkg.setPkgBasePrice(new BigDecimal(tfPkgBasePrice.getText()));
+	    		newPkg.setPkgAgencyCommission(Double.parseDouble( tfPkgAgencyCommission.getText()));
+	    		newPkg.setPkgBasePrice(Double.parseDouble(tfPkgBasePrice.getText()));
 	    		newPkg.setPkgDesc(taPkgDesc.getText());
 	    		newPkg.setPkgName(tfPkgName.getText());
 	    		newPkg.setPkgEndDate(dpPkgEndDate.getValue());
@@ -523,7 +527,6 @@ public class PackagesController implements Initializable{
 	    	}
 	    	newPkg=null;
 	    	
-	    	// enable back the disabled inputs
         	btnSave1.setDisable(true);
     		lvProductsInPackage.setVisible(true);
         	lblProductsInPkg.setVisible(true);
@@ -537,7 +540,7 @@ public class PackagesController implements Initializable{
         	{
         		tvPackages.getSelectionModel().select(tvPackages.getItems().size()-1);
         	}
-        	else
+        	else if (status=="edit")
         	{
         		for (Packag pkg : tvPackages.getItems())
         		{
@@ -547,6 +550,7 @@ public class PackagesController implements Initializable{
         	}
         	
         	displayPackageInfo();
+        	btnCancelPkg.setDisable(true);
 		}
     }
     
@@ -643,11 +647,30 @@ public class PackagesController implements Initializable{
     	btnRemoveProductFromPkg.setVisible(myBool);
     	
     }
-
+	// when cancel button is clicked, reset all settings back to default
 	@FXML
-    void refreshPkgtables(ActionEvent event) {
-		readPackages();
-
+    void refreshPkgTab(ActionEvent event) {
+		// if cancelled while adding, select the first package in tvPackages
+		if (status=="add")
+			tvPackages.getSelectionModel().select(0);
+		
+		enableInputs(false);
+    	btnDelete1.setDisable(false);
+    	btnAddPackage.setDisable(false);
+    	btnEdit1.setDisable(false);
+    	tvPackages.setDisable(false);
+    	btnCancelPkg.setDisable(true);
+		
+    	newPkg=null;
+    	
+    	btnSave1.setDisable(true);
+		lvProductsInPackage.setVisible(true);
+    	lblProductsInPkg.setVisible(true);
+		
+		displayPackageInfo();
+		status="null";
+		
+		
     }
 	// =====================================================================================
 

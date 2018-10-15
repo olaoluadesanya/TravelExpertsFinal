@@ -16,9 +16,9 @@ public class Packag
 {
 	private int packageId;
 
-	private BigDecimal pkgAgencyCommission;
+	private double pkgAgencyCommission;
 
-	private BigDecimal pkgBasePrice;
+	private double pkgBasePrice;
 
 	private String pkgDesc;
 
@@ -28,7 +28,7 @@ public class Packag
 
 	private LocalDate pkgStartDate;
 
-	public Packag(int packageId, BigDecimal pkgAgencyCommission, BigDecimal pkgBasePrice, String pkgDesc, LocalDate pkgEndDate,
+	public Packag(int packageId, double pkgAgencyCommission, double pkgBasePrice, String pkgDesc, LocalDate pkgEndDate,
 			String pkgName, LocalDate pkgStartDate)
 	{
 		super();
@@ -51,22 +51,22 @@ public class Packag
 		this.packageId = packageId;
 	}
 
-	public BigDecimal getPkgAgencyCommission()
+	public double getPkgAgencyCommission()
 	{
 		return pkgAgencyCommission;
 	}
 
-	public void setPkgAgencyCommission(BigDecimal pkgAgencyCommission)
+	public void setPkgAgencyCommission(double pkgAgencyCommission)
 	{
 		this.pkgAgencyCommission = pkgAgencyCommission;
 	}
 
-	public BigDecimal getPkgBasePrice()
+	public double getPkgBasePrice()
 	{
 		return pkgBasePrice;
 	}
 
-	public void setPkgBasePrice(BigDecimal pkgBasePrice)
+	public void setPkgBasePrice(double pkgBasePrice)
 	{
 		this.pkgBasePrice = pkgBasePrice;
 	}
