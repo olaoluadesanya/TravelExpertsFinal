@@ -497,7 +497,7 @@ public class SimpleRestService {
 	}
 	
 	/*
-	 * This block of code does crud operations on packages
+	 * This block of code does crud operations on packagesproductssuppliers
 	 */
 	
 	//http://localhost:8080/TravelExperts2/rs/db/getallpackagesproductsuppliers	
@@ -595,9 +595,9 @@ public class SimpleRestService {
 
 
 	//http://localhost:8080/TravelExperts2/rs/db/deletepackagesproductssupplier
-	@DELETE
-	@Path("/deletepackagesproductssupplier/{packagesproductssupplierid}")
-	public String deletePackagesProductsSupplier(@PathParam("packagesproductssupplierid") int packagesproductssupplierid, @FormParam("request") String request ,  @DefaultValue("1") @FormParam("version") int version) {
+	@POST
+	@Path("/deletepackagesproductssupplier")
+	public String deletePackagesProductsSupplier(String jsonString, @FormParam("request") String request ,  @DefaultValue("1") @FormParam("version") int version) {
 		
 		if (logger.isDebugEnabled()) {
 			logger.debug("Start deletePackagesProductsSupplier");
@@ -614,7 +614,11 @@ public class SimpleRestService {
 	                EntityManagerFactory factory = Persistence.createEntityManagerFactory("TravelExperts2");
 	                EntityManager em = factory.createEntityManager();
 	                
-	                PackagesProductsSupplier delPackagesProductsSupplier = em.find(PackagesProductsSupplier.class, packagesproductssupplierid);
+	                Gson gson = new Gson();
+	                
+	                PackagesProductsSupplier packagesProductsSupplier = gson.fromJson(jsonString, PackagesProductsSupplier.class);
+	                PackagesProductsSupplier delPackagesProductsSupplier = em.find(PackagesProductsSupplier.class, packagesProductsSupplier.getId());
+	           
 	                	                
 	                em.getTransaction().begin();
 	                em.remove(delPackagesProductsSupplier);
@@ -636,6 +640,7 @@ public class SimpleRestService {
         }
         return response;
 	}
+	
 	/*
 	 * This block of code does crud operations on bookings
 	 */
@@ -690,7 +695,7 @@ public class SimpleRestService {
 	@Path("/postbooking")
 	@Consumes({ MediaType.APPLICATION_JSON })
     @Produces(MediaType.TEXT_PLAIN)
-	public String postBooking(String jsonString, @FormParam("request") String request ,  @DefaultValue("1") @FormParam("version") int version) {
+	public String insertBooking(String jsonString, @FormParam("request") String request ,  @DefaultValue("1") @FormParam("version") int version) {
 
 		if (logger.isDebugEnabled()) {
 			logger.debug("Start postSomething");
@@ -967,10 +972,7 @@ public class SimpleRestService {
 	                EntityManagerFactory factory = Persistence.createEntityManagerFactory("TravelExperts2");
 	                EntityManager em = factory.createEntityManager();
 	                
-	                Query query = em.createQuery("select ps.productSupplierId, ps.product.productId, " + 
-	                                             "ps.product.prodName, ps.supplierId, s.supName " + 
-	                		                     "from ProductsSupplier ps inner join Supplier s " + 
-	                                             "where s.supplierId = ps.supplierId");
+	                Query query = em.createQuery("SELECT p FROM ProductsSupplier p");
 	                
 	                List<ProductsSuppliersReturn> list = query.getResultList();
 	                

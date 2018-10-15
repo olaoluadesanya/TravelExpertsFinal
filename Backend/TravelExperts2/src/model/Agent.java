@@ -2,7 +2,6 @@ package model;
 
 import java.io.Serializable;
 import javax.persistence.*;
-import java.util.List;
 
 
 /**
@@ -31,12 +30,8 @@ public class Agent implements Serializable {
 	private String agtMiddleInitial;
 
 	private String agtPosition;
-	
-	private String Pass;
 
-	//bi-directional many-to-one association to Customer
-	@OneToMany(mappedBy="agent")
-	private transient List<Customer> customers;
+	private String pass;
 
 	public Agent() {
 	}
@@ -104,35 +99,13 @@ public class Agent implements Serializable {
 	public void setAgtPosition(String agtPosition) {
 		this.agtPosition = agtPosition;
 	}
-	
+
 	public String getPass() {
-		return this.Pass;
+		return this.pass;
 	}
 
-	public void setPass(String Pass) {
-		this.Pass = Pass;
-	}
-	
-	public List<Customer> getCustomers() {
-		return this.customers;
-	}
-
-	public void setCustomers(List<Customer> customers) {
-		this.customers = customers;
-	}
-
-	public Customer addCustomer(Customer customer) {
-		getCustomers().add(customer);
-		customer.setAgent(this);
-
-		return customer;
-	}
-
-	public Customer removeCustomer(Customer customer) {
-		getCustomers().remove(customer);
-		customer.setAgent(null);
-
-		return customer;
+	public void setPass(String pass) {
+		this.pass = pass;
 	}
 
 }
