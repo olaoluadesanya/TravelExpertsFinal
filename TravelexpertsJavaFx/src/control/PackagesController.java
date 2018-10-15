@@ -94,8 +94,8 @@ import org.json.JSONObject;
 
 public class PackagesController implements Initializable{
 	
-	private String URLCONSTANT= "http://10.163.101.59:8080";
-	//private String URLCONSTANT="http://localhost:8080";
+	//private String URLCONSTANT= "http://10.163.101.59:8080";
+	private String URLCONSTANT="http://localhost:8080";
 	
 	// ===================Sunghyun Lee =====================================================
 	// controls and variables for package tab
