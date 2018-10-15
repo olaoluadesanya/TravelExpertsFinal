@@ -10,8 +10,34 @@
     <string name="error_invalid_email">This email address is invalid</string>
     <string name="error_invalid_password">This password is too short</string>
     <string name="error_incorrect_password">This password is incorrect</string>
+    <string name="error_incorrect_credentials">The supplied credentials are incorrect</string>
     <string name="error_field_required">This field is required</string>
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
+    <string name="welcome_msg">Welcome to Travel Experts</string>
+    <string name="current_package_deals">Current Package Deals:</string>
+    <string name="package_details">Package Details</string>
+    <string name="number_of_travellers">Number of Travellers:</string>
+    <string name="log_out">Log Out</string>
+    <string name="my_account">My Account</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="my_bookings">My Bookings</string>
+
+    <!-- Items used to populate the spinner for the number of travellers -->
+    <string-array name="array_num_travellers">
+        <item>Select...</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+        <item>10</item>
+    </string-array>
 </resources>

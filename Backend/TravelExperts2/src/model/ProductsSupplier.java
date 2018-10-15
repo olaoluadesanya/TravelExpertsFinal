@@ -2,7 +2,6 @@ package model;
 
 import java.io.Serializable;
 import javax.persistence.*;
-import java.util.List;
 
 
 /**
@@ -18,16 +17,15 @@ public class ProductsSupplier implements Serializable {
 	@Id
 	private int productSupplierId;
 
-	private int supplierId;
-
 	//bi-directional many-to-one association to Product
 	@ManyToOne
 	@JoinColumn(name="ProductId")
 	private Product product;
 
-	//bi-directional many-to-one association to PackagesProductsSupplier
-	@OneToMany(mappedBy="productsSupplier")
-	private transient List<PackagesProductsSupplier> packagesProductsSuppliers;
+	//bi-directional many-to-one association to Supplier
+	@ManyToOne
+	@JoinColumn(name="SupplierId")
+	private Supplier supplier;
 
 	public ProductsSupplier() {
 	}
@@ -40,14 +38,6 @@ public class ProductsSupplier implements Serializable {
 		this.productSupplierId = productSupplierId;
 	}
 
-	public int getSupplierId() {
-		return this.supplierId;
-	}
-
-	public void setSupplierId(int supplierId) {
-		this.supplierId = supplierId;
-	}
-
 	public Product getProduct() {
 		return this.product;
 	}
@@ -56,26 +46,12 @@ public class ProductsSupplier implements Serializable {
 		this.product = product;
 	}
 
-	public List<PackagesProductsSupplier> getPackagesProductsSuppliers() {
-		return this.packagesProductsSuppliers;
+	public Supplier getSupplier() {
+		return this.supplier;
 	}
 
-	public void setPackagesProductsSuppliers(List<PackagesProductsSupplier> packagesProductsSuppliers) {
-		this.packagesProductsSuppliers = packagesProductsSuppliers;
-	}
-
-	public PackagesProductsSupplier addPackagesProductsSupplier(PackagesProductsSupplier packagesProductsSupplier) {
-		getPackagesProductsSuppliers().add(packagesProductsSupplier);
-		packagesProductsSupplier.setProductsSupplier(this);
-
-		return packagesProductsSupplier;
-	}
-
-	public PackagesProductsSupplier removePackagesProductsSupplier(PackagesProductsSupplier packagesProductsSupplier) {
-		getPackagesProductsSuppliers().remove(packagesProductsSupplier);
-		packagesProductsSupplier.setProductsSupplier(null);
-
-		return packagesProductsSupplier;
+	public void setSupplier(Supplier supplier) {
+		this.supplier = supplier;
 	}
 
 }

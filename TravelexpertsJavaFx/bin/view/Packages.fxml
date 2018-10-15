@@ -27,12 +27,12 @@
                         <VBox layoutX="381.0" layoutY="7.0" prefHeight="251.0" prefWidth="273.0">
                            <children>
                               <Label fx:id="lblPackageId" prefHeight="21.0" prefWidth="87.0" style="-fx-font-size: 15;" />
-                              <JFXTextField fx:id="tfPkgName" editable="false" />
-                              <JFXDatePicker fx:id="dpPkgStartDate" disable="true" editable="false" />
-                              <JFXDatePicker fx:id="dpPkgEndDate" disable="true" editable="false" />
-                              <JFXTextArea fx:id="taPkgDesc" editable="false" prefHeight="78.0" prefWidth="153.0" />
-                              <JFXTextField fx:id="tfPkgBasePrice" editable="false" />
-                              <JFXTextField fx:id="tfPkgAgencyCommission" editable="false" />
+                              <JFXTextField fx:id="tfPkgName" />
+                              <JFXDatePicker fx:id="dpPkgStartDate" editable="false" />
+                              <JFXDatePicker fx:id="dpPkgEndDate" editable="false" />
+                              <JFXTextArea fx:id="taPkgDesc" prefHeight="42.0" prefWidth="273.0" />
+                              <JFXTextField fx:id="tfPkgBasePrice" />
+                              <JFXTextField fx:id="tfPkgAgencyCommission" />
                            </children>
                         </VBox>
                         <VBox layoutX="233.0" layoutY="7.0" prefHeight="250.0" prefWidth="117.0">
@@ -41,52 +41,55 @@
                               <Label prefHeight="24.0" prefWidth="107.0" text="Name" />
                               <Label prefHeight="30.0" prefWidth="109.0" text="Start Date" />
                               <Label prefHeight="31.0" prefWidth="111.0" text="End Date" />
-                              <Label prefHeight="80.0" prefWidth="107.0" text="Description" />
+                              <Label prefHeight="43.0" prefWidth="107.0" text="Description" />
                               <Label prefHeight="25.0" prefWidth="109.0" text="Base Price" />
                               <Label prefHeight="30.0" prefWidth="109.0" text="Agency Commission" />
                            </children>
                         </VBox>
-                        <TableView fx:id="tvPackages" onMouseClicked="#displayPackageInfo" prefHeight="514.0" prefWidth="200.0">
-                          <columns>
-                            <TableColumn fx:id="tcPackageId" prefWidth="29.0" text="ID" />
-                            <TableColumn fx:id="tcPackageName" prefWidth="170.0" text="Name" />
-                          </columns>
-                        </TableView>
-                        <HBox layoutX="350.0" layoutY="474.0" prefHeight="25.0" prefWidth="227.0">
+                        <HBox layoutX="352.0" layoutY="432.0" prefHeight="25.0" prefWidth="193.0">
                            <children>
-                              <JFXButton fx:id="btnEdit" onAction="#editPackage" style="-fx-background-color: skyblue;" text="Edit">
+                              <JFXButton fx:id="btnEdit" onAction="#editPackage" style="-fx-background-color: #ffbb33;" text="Edit">
                                  <HBox.margin>
                                     <Insets right="30.0" />
                                  </HBox.margin>
                               </JFXButton>
-                              <JFXButton fx:id="btnSave" disable="true" onAction="#savePackage" style="-fx-background-color: skyblue;" text="Save">
+                              <JFXButton fx:id="btnAddPackage" onAction="#AddPackage" style="-fx-background-color: #3F729B;" text="Add">
                                  <HBox.margin>
                                     <Insets right="30.0" />
                                  </HBox.margin>
                               </JFXButton>
-                              <JFXButton fx:id="btnDelete" onAction="#deletePackage" style="-fx-background-color: skyblue;" text="Delete">
+                              <JFXButton fx:id="btnDelete" onAction="#deletePackage" style="-fx-background-color: #ff4444;" text="Delete">
                                  <HBox.margin>
-                                    <Insets right="30.0" />
+                                    <Insets />
                                  </HBox.margin>
                               </JFXButton>
                            </children>
                         </HBox>
-                        <HBox layoutX="233.0" layoutY="301.0" prefHeight="109.0" prefWidth="447.0">
+                        <HBox layoutX="236.0" layoutY="267.0" prefHeight="109.0" prefWidth="447.0">
                            <children>
                               <JFXListView fx:id="lvProductsInPackage" prefHeight="94.0" prefWidth="128.0" />
-                              <JFXListView fx:id="lvDbProducts" prefHeight="94.0" prefWidth="128.0" visible="false">
+                              <TableView fx:id="tvProductsSuppliers" prefHeight="109.0" prefWidth="307.0">
+                                <columns>
+                                  <TableColumn fx:id="tcProducts" prefWidth="153.0" text="C1" />
+                                  <TableColumn fx:id="tcSuppliers" prefWidth="152.0" text="C2" />
+                                </columns>
                                  <HBox.margin>
-                                    <Insets left="30.0" right="30.0" />
+                                    <Insets left="15.0" />
                                  </HBox.margin>
-                              </JFXListView>
-                              <JFXListView fx:id="lvDbSuppliers" prefHeight="94.0" prefWidth="128.0" visible="false" />
+                              </TableView>
                            </children>
                         </HBox>
-                        <Label layoutX="233.0" layoutY="275.0" text="Products In the Package" />
-                        <Label fx:id="lblProducts" layoutX="391.0" layoutY="275.0" text="Choose a Product" visible="false" />
-                        <Label fx:id="lblSuppliers" layoutX="550.0" layoutY="275.0" text="Choose a Supplier" visible="false" />
-                        <JFXButton fx:id="btnInsertProductIntoPkg" layoutX="336.0" layoutY="429.0" style="-fx-background-color: skyblue;" text="Insert the Product" visible="false" />
-                        <JFXButton fx:id="btnRemoveProductFromPkg" layoutX="459.0" layoutY="429.0" style="-fx-background-color: skyblue;" text="Remove the Product" visible="false" />
+                        <Label fx:id="lblProductsInPkg" layoutX="233.0" layoutY="250.0" text="Products In the Package" />
+                        <Label fx:id="lblProductsSuppliers" layoutX="392.0" layoutY="250.0" text="Choose a Product and a Supplier" />
+                        <JFXButton fx:id="btnInsertProductIntoPkg" layoutX="337.0" layoutY="390.0" style="-fx-background-color: skyblue;" text="Insert the Product" />
+                        <JFXButton fx:id="btnRemoveProductFromPkg" layoutX="456.0" layoutY="390.0" style="-fx-background-color: #9d8854;" text="Remove the Product" />
+                        <TableView fx:id="tvPackages" onMouseClicked="#selectPackage" prefHeight="513.0" prefWidth="200.0">
+                          <columns>
+                            <TableColumn fx:id="tcPkgId" prefWidth="36.0" text="C1" />
+                            <TableColumn fx:id="tcPkgName" prefWidth="163.0" text="C2" />
+                          </columns>
+                        </TableView>
+                        <JFXButton fx:id="btnSave" layoutX="614.0" layoutY="475.0" onAction="#savePackage" style="-fx-background-color: #00C851;" text="Save" />
                      </children>
                   </AnchorPane>
               </content>
