@@ -256,7 +256,8 @@ public class PackagesController implements Initializable{
 		// read lists from web server and set them to tables
     	readPackages();
     	tvPackages.setItems(packages1);    	
-    	//readPackagesProductsSuppliers();
+    	readPackagesProductsSuppliers();
+    	
     	
     	//======================= Bookings Tab ========================================
     	//traveler count field input validation: only allows numbers
@@ -387,6 +388,7 @@ public class PackagesController implements Initializable{
     		}
     	);
 
+
     	// =======================Corinne Mullan================================================
     	// Initialize the Products tab
     	
@@ -430,15 +432,18 @@ public class PackagesController implements Initializable{
     // methods for package tab
     
     // read package-product-suppliers list from web server
-    /*
+    
     private void readPackagesProductsSuppliers()
 	{
     	StringBuffer buffer = new StringBuffer();    	
     	try 
     	{
     		// reading json
-            URL url = new URL("http://localhost:8080/TravelExperts2/rs/db/getallpps");
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            //URL url = new URL("http://localhost:8080/TravelExperts2/rs/db/getallpackagesproductsuppliers");
+    		URL url = new URL("http://10.163.101.59:8080/TravelExperts2/rs/db/getallpackagesproductsuppliers");
+    		
+    		
+    		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestProperty("accept", "application/json");
             BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
             String line;
@@ -458,9 +463,12 @@ public class PackagesController implements Initializable{
             for (int i = 0; i < jsonArray.length(); i++)
             {
                 JSONObject jsonPps = (JSONObject) jsonArray.get(i);
-
+                
+                System.out.println(jsonPps.getString("id"));
+                /*
                 PackagesProductsSupplier pps= new PackagesProductsSupplier(jsonPps.getInt("packageId"), jsonPps.getInt("productSupplierId"));
                 ppsList.add(pps); 
+                */
             }
     	}
     	catch (Exception e)
@@ -468,7 +476,7 @@ public class PackagesController implements Initializable{
     		e.printStackTrace();    	
     	}		
 	}
-	*/
+	
 	// read packages from web server
     private void readPackages()
 	{    		
@@ -477,8 +485,9 @@ public class PackagesController implements Initializable{
     	try 
     	{
     		// reading json
-            URL url = new URL("http://localhost:8080/TravelExperts2/rs/db/getallpackages");
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            //URL url = new URL("http://localhost:8080/TravelExperts2/rs/db/getallpackages");
+    		URL url = new URL("http://10.163.101.59:8080/TravelExperts2/rs/db/getallpackages");
+    		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestProperty("accept", "application/json");
             BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
             String line;
@@ -515,7 +524,7 @@ public class PackagesController implements Initializable{
     		e.printStackTrace();    	
     	}
 	}
-
+    
 	@FXML
     void deletePackage(ActionEvent event) {
     	if (tvPackages.getSelectionModel().getSelectedItem()!=null)
@@ -534,7 +543,8 @@ public class PackagesController implements Initializable{
     		{	
 				try
 				{
-					URL url = new URL("http://localhost:8080/TravelExperts2/rs/db/deletepackage/"+tvPackages.getSelectionModel().getSelectedItem().getPackageId());
+					//URL url = new URL("http://localhost:8080/TravelExperts2/rs/db/deletepackage/"+tvPackages.getSelectionModel().getSelectedItem().getPackageId());
+					URL url = new URL("http://10.163.101.59:8080/TravelExperts2/rs/db/deletepackage/"+tvPackages.getSelectionModel().getSelectedItem().getPackageId());
 					HttpURLConnection httpCon = (HttpURLConnection) url.openConnection();
 	    			//httpCon.setDoOutput(true);
 	    			
@@ -634,7 +644,8 @@ public class PackagesController implements Initializable{
 	}
 
 	@FXML
-    void savePackage(ActionEvent event) {
+    void savePackage(ActionEvent event) 
+	{
 		if (validatePackage())
 		{
 			enableInputs(false);
@@ -663,7 +674,8 @@ public class PackagesController implements Initializable{
                 										+"\"pkgStartDate\":\""+newPkg.getPkgStartDate()+"\""
                 										+"}";
                 
-                String       postUrl       = "http://localhost:8080/TravelExperts2/rs/db/insertpackage";// put in your url
+                //String       postUrl       = "http://localhost:8080/TravelExperts2/rs/db/insertpackage";// put in your url
+                String       postUrl       = "http://10.163.101.59:8080/TravelExperts2/rs/db/insertpackage";// put in your url
                 HttpClient   httpClient    = HttpClientBuilder.create().build();
                 HttpPost     post          = new HttpPost(postUrl);
                 StringEntity postingString;
@@ -732,7 +744,8 @@ public class PackagesController implements Initializable{
                 										+"\"pkgStartDate\":\""+newPkg.getPkgStartDate()+"\""
                 										+"}";
                 
-                String       postUrl       = "http://localhost:8080/TravelExperts2/rs/db/updatepackage";
+                //String       postUrl       = "http://localhost:8080/TravelExperts2/rs/db/updatepackage";
+                String       postUrl       = "http://10.163.101.59:8080/TravelExperts2/rs/db/updatepackage";
                 HttpClient   httpClient    = HttpClientBuilder.create().build();
                 HttpPost     post          = new HttpPost(postUrl);
                 StringEntity postingString;
@@ -770,11 +783,7 @@ public class PackagesController implements Initializable{
 
 	    	}
 	    	// edit
-	    	else
-	    	{
-	    		//readPackagesProductsSuppliers();
-
-	    	}
+	    	
 	    	newPkg=null;
 	    	
         	btnSave1.setDisable(true);
@@ -802,7 +811,8 @@ public class PackagesController implements Initializable{
         	displayPackageInfo();
         	btnCancelPkg.setDisable(true);
 		}
-    }
+			
+	}
     // validate inputs on package tab before saving
     private boolean validatePackage()
 	{
@@ -922,6 +932,7 @@ public class PackagesController implements Initializable{
 		
 		
     }
+	
 	// =====================================================================================
 
 	// ==================================== Graeme =========================================
@@ -1111,7 +1122,7 @@ public class PackagesController implements Initializable{
 			e.printStackTrace();
 		}
     }
-}
+
 
 	
 	// =======================Corinne Mullan================================================
@@ -1318,7 +1329,9 @@ public class PackagesController implements Initializable{
             String json = gson.toJson(newProd, type);
             
             // Create the HTTP post request to send to the web server
-            String        postUrl       = "http://localhost:8080/TravelExperts2/rs/db/insertproduct";
+            //String        postUrl       = "http://localhost:8080/TravelExperts2/rs/db/insertproduct";
+            String        postUrl       = "http://10.163.101.59:8080/TravelExperts2/rs/db/insertproduct";
+
             HttpClient    httpClient    = HttpClientBuilder.create().build();
             HttpPost      post          = new HttpPost(postUrl);
             StringEntity  postingString;
@@ -1403,7 +1416,7 @@ public class PackagesController implements Initializable{
 	}
 	
 	// ====================================================================================
-
+	
 		
 	}
 
