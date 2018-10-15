@@ -17,16 +17,6 @@ public class PackagesProductsSupplier implements Serializable {
 	@EmbeddedId
 	private PackagesProductsSupplierPK id;
 
-	//bi-directional many-to-one association to Packag
-	@ManyToOne
-	@JoinColumn(name="PackageId")
-	private Packag packag;
-
-	//bi-directional many-to-one association to ProductsSupplier
-	@ManyToOne
-	@JoinColumn(name="ProductSupplierId")
-	private ProductsSupplier productsSupplier;
-
 	public PackagesProductsSupplier() {
 	}
 
@@ -36,22 +26,6 @@ public class PackagesProductsSupplier implements Serializable {
 
 	public void setId(PackagesProductsSupplierPK id) {
 		this.id = id;
-	}
-
-	public Packag getPackag() {
-		return this.packag;
-	}
-
-	public void setPackag(Packag packag) {
-		this.packag = packag;
-	}
-
-	public ProductsSupplier getProductsSupplier() {
-		return this.productsSupplier;
-	}
-
-	public void setProductsSupplier(ProductsSupplier productsSupplier) {
-		this.productsSupplier = productsSupplier;
 	}
 
 }
