@@ -20,10 +20,6 @@ public class Product implements Serializable {
 
 	private String prodName;
 
-	//bi-directional many-to-one association to ProductsSupplier
-	// Added "transient" -- Corinne Mullan
-	@OneToMany(mappedBy="product")
-	private transient List<ProductsSupplier> productsSuppliers;
 
 	public Product() {
 	}
@@ -42,28 +38,6 @@ public class Product implements Serializable {
 
 	public void setProdName(String prodName) {
 		this.prodName = prodName;
-	}
-
-	public List<ProductsSupplier> getProductsSuppliers() {
-		return this.productsSuppliers;
-	}
-
-	public void setProductsSuppliers(List<ProductsSupplier> productsSuppliers) {
-		this.productsSuppliers = productsSuppliers;
-	}
-
-	public ProductsSupplier addProductsSupplier(ProductsSupplier productsSupplier) {
-		getProductsSuppliers().add(productsSupplier);
-		productsSupplier.setProduct(this);
-
-		return productsSupplier;
-	}
-
-	public ProductsSupplier removeProductsSupplier(ProductsSupplier productsSupplier) {
-		getProductsSuppliers().remove(productsSupplier);
-		productsSupplier.setProduct(null);
-
-		return productsSupplier;
 	}
 
 }

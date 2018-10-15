@@ -19,15 +19,10 @@ public class ProductsSupplier implements Serializable {
 	private int productSupplierId;
 
 	private int supplierId;
+	
+	private int productId;
 
-	//bi-directional many-to-one association to Product
-	@ManyToOne
-	@JoinColumn(name="ProductId")
-	private Product product;
 
-	//bi-directional many-to-one association to PackagesProductsSupplier
-	@OneToMany(mappedBy="productsSupplier")
-	private transient List<PackagesProductsSupplier> packagesProductsSuppliers;
 
 	public ProductsSupplier() {
 	}
@@ -48,34 +43,13 @@ public class ProductsSupplier implements Serializable {
 		this.supplierId = supplierId;
 	}
 
-	public Product getProduct() {
-		return this.product;
+	public int getProductId() {
+		return this.productId;
 	}
 
-	public void setProduct(Product product) {
-		this.product = product;
+	public void setProductId(int productId) {
+		this.productId = productId;
 	}
 
-	public List<PackagesProductsSupplier> getPackagesProductsSuppliers() {
-		return this.packagesProductsSuppliers;
-	}
-
-	public void setPackagesProductsSuppliers(List<PackagesProductsSupplier> packagesProductsSuppliers) {
-		this.packagesProductsSuppliers = packagesProductsSuppliers;
-	}
-
-	public PackagesProductsSupplier addPackagesProductsSupplier(PackagesProductsSupplier packagesProductsSupplier) {
-		getPackagesProductsSuppliers().add(packagesProductsSupplier);
-		packagesProductsSupplier.setProductsSupplier(this);
-
-		return packagesProductsSupplier;
-	}
-
-	public PackagesProductsSupplier removePackagesProductsSupplier(PackagesProductsSupplier packagesProductsSupplier) {
-		getPackagesProductsSuppliers().remove(packagesProductsSupplier);
-		packagesProductsSupplier.setProductsSupplier(null);
-
-		return packagesProductsSupplier;
-	}
 
 }

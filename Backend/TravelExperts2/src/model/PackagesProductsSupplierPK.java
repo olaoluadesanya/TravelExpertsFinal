@@ -12,10 +12,10 @@ public class PackagesProductsSupplierPK implements Serializable {
 	//default serial version id, required for serializable classes.
 	private static final long serialVersionUID = 1L;
 
-	@Column(insertable=false, updatable=false)
+	@Column(name = "PackageId")
 	private int packageId;
 
-	@Column(insertable=false, updatable=false)
+	@Column(name = "ProductSupplierId")
 	private int productSupplierId;
 
 	public PackagesProductsSupplierPK() {

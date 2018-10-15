@@ -538,12 +538,12 @@ public class SimpleRestService {
 	}
 
 	
-	//http://localhost:8080/TravelExperts2/rs/db/insertpackage
+	//http://localhost:8080/TravelExperts2/rs/db/insertpackagesproductsupplier
 	@POST
-	@Path("/insertpackage")
+	@Path("/insertpackagesproductsupplier")
 	@Consumes({ MediaType.APPLICATION_JSON })
     @Produces(MediaType.TEXT_PLAIN)
-	public String postPackage(String jsonString, @FormParam("request") String request ,  @DefaultValue("1") @FormParam("version") int version) {
+	public String insertPackagesProductsSupplier(String jsonString, @FormParam("request") String request ,  @DefaultValue("1") @FormParam("version") int version) {
 
 		if (logger.isDebugEnabled()) {
 			logger.debug("Start postSomething");
@@ -562,13 +562,13 @@ public class SimpleRestService {
 	                EntityManager em = factory.createEntityManager();
 	                
 	                Gson gson = new Gson();
-	          	  	Packag packag = gson.fromJson(jsonString, Packag.class);
+	                PackagesProductsSupplier packageProductSupplier = gson.fromJson(jsonString, PackagesProductsSupplier.class);
 	                
 	                em.getTransaction().begin();
-	                em.persist(packag);
+	                em.persist(packageProductSupplier);
 	                em.getTransaction().commit();
 	                
-	                response = "Package created";
+	                response = "Package product supplier created";
 
                     break;
                 default: throw new Exception("Unsupported version: " + version);
@@ -580,76 +580,19 @@ public class SimpleRestService {
         
         if(logger.isDebugEnabled()){
             logger.debug("result: '"+response+"'");
-            logger.debug("End postSomething");
+            logger.debug("End postpackageProductSupplier");
         }
         return response;	
 	}
 
-	//http://localhost:8080/TravelExperts2/rs/db/updatepackage
-	@POST
-	@Path("/updatepackage")
-	@Consumes({ MediaType.APPLICATION_JSON })
-    @Produces(MediaType.TEXT_PLAIN)
-	public String updatePackage(String jsonString, @FormParam("request") String request ,  @DefaultValue("1") @FormParam("version") int version) {
 
-		if (logger.isDebugEnabled()) {
-			logger.debug("Start postSomething");
-			logger.debug("data: '" + request + "'");
-			logger.debug("version: '" + version + "'");
-		}
-
-		String response = null;
-
-        try{			
-            switch(version){
-	            case 1:
-	                if(logger.isDebugEnabled()) logger.debug("in version 1");
-	                
-	                EntityManagerFactory factory = Persistence.createEntityManagerFactory("TravelExperts2");
-	                EntityManager em = factory.createEntityManager();
-	                
-	                	                
-	                Gson gson = new Gson();
-	          	  	Packag newPackage = gson.fromJson(jsonString, Packag.class);
-	          	  	
-	          	  	Packag oldPackage = em.find(Packag.class, newPackage.getPackageId());
-	          	  	
-	                
-	                em.getTransaction().begin();
-	                oldPackage.setPkgAgencyCommission(newPackage.getPkgAgencyCommission());
-	                oldPackage.setPkgBasePrice(newPackage.getPkgBasePrice());
-	                oldPackage.setPkgDesc(newPackage.getPkgDesc());
-	                oldPackage.setPkgEndDate(newPackage.getPkgEndDate());
-	                oldPackage.setPkgName(newPackage.getPkgName());
-	                oldPackage.setPkgStartDate(newPackage.getPkgStartDate());
-	                em.getTransaction().commit();
-	                
-	                response = "Package Updated";
-	                
-	               
-
-                    break;
-                default: throw new Exception("Unsupported version: " + version);
-            }
-        }
-        catch(Exception e){
-        	response = e.getMessage().toString();
-        }
-        
-        if(logger.isDebugEnabled()){
-            logger.debug("result: '"+response+"'");
-            logger.debug("End putSomething");
-        }
-        return response;	
-	}
-
-	//http://localhost:8080/TravelExperts2/rs/db/deletepackage
+	//http://localhost:8080/TravelExperts2/rs/db/deletepackagesproductssupplier
 	@DELETE
-	@Path("/deletepackage/{packageid}")
-	public String deletePackage(@PathParam("packageid") int packageid, @FormParam("request") String request ,  @DefaultValue("1") @FormParam("version") int version) {
+	@Path("/deletepackagesproductssupplier/{packagesproductssupplierid}")
+	public String deletePackagesProductsSupplier(@PathParam("packagesproductssupplierid") int packagesproductssupplierid, @FormParam("request") String request ,  @DefaultValue("1") @FormParam("version") int version) {
 		
 		if (logger.isDebugEnabled()) {
-			logger.debug("Start deletePackage");
+			logger.debug("Start deletePackagesProductsSupplier");
 			logger.debug("data: '" + request + "'");
 			logger.debug("version: '" + version + "'");
 		}
@@ -663,13 +606,13 @@ public class SimpleRestService {
 	                EntityManagerFactory factory = Persistence.createEntityManagerFactory("TravelExperts2");
 	                EntityManager em = factory.createEntityManager();
 	                
-	                Packag delPackage = em.find(Packag.class, packageid);
+	                PackagesProductsSupplier delPackagesProductsSupplier = em.find(PackagesProductsSupplier.class, packagesproductssupplierid);
 	                	                
 	                em.getTransaction().begin();
-	                em.remove(delPackage);
+	                em.remove(delPackagesProductsSupplier);
 	                em.getTransaction().commit();
 	                
-	                response = "Package Deleted";
+	                response = "Package product supplier Deleted";
 	                
                     break;
                 default: throw new Exception("Unsupported version: " + version);
@@ -681,7 +624,7 @@ public class SimpleRestService {
         
         if(logger.isDebugEnabled()){
             logger.debug("result: '"+response+"'");
-            logger.debug("End deletePackage");
+            logger.debug("End deletePackagesProductsSupplier");
         }
         return response;
 	}
