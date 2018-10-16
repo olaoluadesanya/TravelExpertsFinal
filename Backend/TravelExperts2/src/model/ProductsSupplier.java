@@ -2,7 +2,6 @@ package model;
 
 import java.io.Serializable;
 import javax.persistence.*;
-import java.util.List;
 
 
 /**
@@ -18,11 +17,15 @@ public class ProductsSupplier implements Serializable {
 	@Id
 	private int productSupplierId;
 
-	private int supplierId;
-	
-	private int productId;
+	//bi-directional many-to-one association to Product
+	@ManyToOne
+	@JoinColumn(name="ProductId")
+	private Product product;
 
-
+	//bi-directional many-to-one association to Supplier
+	@ManyToOne
+	@JoinColumn(name="SupplierId")
+	private Supplier supplier;
 
 	public ProductsSupplier() {
 	}
@@ -35,21 +38,20 @@ public class ProductsSupplier implements Serializable {
 		this.productSupplierId = productSupplierId;
 	}
 
-	public int getSupplierId() {
-		return this.supplierId;
+	public Product getProduct() {
+		return this.product;
 	}
 
-	public void setSupplierId(int supplierId) {
-		this.supplierId = supplierId;
+	public void setProduct(Product product) {
+		this.product = product;
 	}
 
-	public int getProductId() {
-		return this.productId;
+	public Supplier getSupplier() {
+		return this.supplier;
 	}
 
-	public void setProductId(int productId) {
-		this.productId = productId;
+	public void setSupplier(Supplier supplier) {
+		this.supplier = supplier;
 	}
-
 
 }
