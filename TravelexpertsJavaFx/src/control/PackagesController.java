@@ -567,6 +567,45 @@ public class PackagesController implements Initializable{
 
     		if (result.orElse(cancel) == ok) 
     		{	
+    			// delete rows from PkgProductsSuppliers table first
+    			try
+				{
+					for (model.ProductsSupplier p : productsSuppliersInPkg )
+					{
+						model.PackagesProductsSupplier pps = new PackagesProductsSupplier(tvPackages.getSelectionModel().getSelectedItem().getPackageId(), p.getProductSupplierId());
+						// send json to web server
+		                // manually create json
+		                String myJson2= "{" 
+		                			+	"\"id\"" + ": {" 
+		                			+	"\"packageId\""+": "+ pps.getPackageId() + ", "
+		                        	+	"\"productSupplierId\"" +": "+ pps.getProductSupplierId()
+		                        	+	"}"
+		                        	+	"}";
+		                			
+		                String       postUrl2       = URLCONSTANT +"/TravelExperts2/rs/db/deletepackagesproductssupplier";
+		                HttpClient   httpClient2    = HttpClientBuilder.create().build();
+		                HttpPost     post2          = new HttpPost(postUrl2);
+		                StringEntity postingString2;
+		                HttpResponse  response2;
+		                
+						
+						postingString2 = new StringEntity(myJson2);
+						post2.setEntity(postingString2);
+						post2.setHeader("Content-type", "application/json");
+						response2 = httpClient2.execute(post2);							
+					}
+				}		
+				catch ( IOException e)
+				{
+					Alert alert2 = new Alert(AlertType.INFORMATION);
+	        		alert2.setTitle("Failure");
+		    		alert2.setHeaderText(null);
+		    		alert2.setContentText("There was a problem, and some products were not inserted");
+		    		alert2.showAndWait();
+					e.printStackTrace();
+				}
+    			
+    			// then delete the package from packages table
 				try
 				{
 					//URL url = new URL(URLCONSTANT +"/TravelExperts2/rs/db/deletepackage/"+tvPackages.getSelectionModel().getSelectedItem().getPackageId());
@@ -583,7 +622,7 @@ public class PackagesController implements Initializable{
 		    	    
 		    	    	    			
 	    			readPackages();
-	    			//readpp();
+	    			readPackagesProductsSuppliers();
 	    			tvPackages.getSelectionModel().select(0);
 	    			displayPackageInfo();
 				} catch (IOException e)
@@ -699,7 +738,6 @@ public class PackagesController implements Initializable{
                 										+"\"pkgStartDate\":\""+newPkg.getPkgStartDate()+"\","
                 										+"\"pkgImageFile\":\""+newPkg.getPkgImageFile()+"\""
                 										+"}";
-                System.out.println("json: "+ myJson);
                 
                 String       postUrl       = URLCONSTANT +"/TravelExperts2/rs/db/insertpackage";// put in your url
                 HttpClient   httpClient    = HttpClientBuilder.create().build();
@@ -802,62 +840,92 @@ public class PackagesController implements Initializable{
 				
 				// insert products into package
 				if (addedPsList.size()>0) // if any product has been added
-				{
-					for (model.ProductsSupplier p : addedPsList )
+				{	
+					try
 					{
-						model.PackagesProductsSupplier pps = new PackagesProductsSupplier(newPkg.getPackageId(), p.getProductSupplierId());
-						// send json to web server
-		                // manually create json
-		                String myJson2= "{" 
-		                			+	"\"id\"" + ": {" 
-		                			+	"\"packageId\""+": "+ pps.getPackageId() + ", "
-		                        	+	"\"productSupplierId\"" +": "+ pps.getProductSupplierId()
-		                        	+	"}"
-		                        	+	"}";
-		                			
-		                String       postUrl2       = URLCONSTANT +"/TravelExperts2/rs/db/insertpackagesproductsupplier";
-		                HttpClient   httpClient2    = HttpClientBuilder.create().build();
-		                HttpPost     post2          = new HttpPost(postUrl2);
-		                StringEntity postingString2;
-		                HttpResponse  response2;
-		                
-						try
+						for (model.ProductsSupplier p : addedPsList )
 						{
+							model.PackagesProductsSupplier pps = new PackagesProductsSupplier(newPkg.getPackageId(), p.getProductSupplierId());
+							// send json to web server
+			                // manually create json
+			                String myJson2= "{" 
+			                			+	"\"id\"" + ": {" 
+			                			+	"\"packageId\""+": "+ pps.getPackageId() + ", "
+			                        	+	"\"productSupplierId\"" +": "+ pps.getProductSupplierId()
+			                        	+	"}"
+			                        	+	"}";
+			                			
+			                String       postUrl2       = URLCONSTANT +"/TravelExperts2/rs/db/insertpackagesproductsupplier";
+			                HttpClient   httpClient2    = HttpClientBuilder.create().build();
+			                HttpPost     post2          = new HttpPost(postUrl2);
+			                StringEntity postingString2;
+			                HttpResponse  response2;
+			                
+							
 							postingString2 = new StringEntity(myJson2);
 							post2.setEntity(postingString2);
 							post2.setHeader("Content-type", "application/json");
-							response2 = httpClient.execute(post2);							
-						} catch ( IOException e)
-						{
-							Alert alert = new Alert(AlertType.INFORMATION);
-			        		alert.setTitle("Failure");
-				    		alert.setHeaderText(null);
-				    		alert.setContentText("There was a problem, and some products were not inserted");
-				    		alert.showAndWait();
-							e.printStackTrace();
+							response2 = httpClient2.execute(post2);							
 						}
-		            }     
-				}
+					}		
+					catch ( IOException e)
+					{
+						Alert alert = new Alert(AlertType.INFORMATION);
+		        		alert.setTitle("Failure");
+			    		alert.setHeaderText(null);
+			    		alert.setContentText("There was a problem, and some products were not inserted");
+			    		alert.showAndWait();
+						e.printStackTrace();
+					}
+		        }     
+				
 
 				// remove product from package
 				if (deletedPsList.size()>0) // if any product has been removed
 				{
-					
+					try
+					{
+						for (model.ProductsSupplier p : deletedPsList )
+						{
+							model.PackagesProductsSupplier pps = new PackagesProductsSupplier(newPkg.getPackageId(), p.getProductSupplierId());
+							// send json to web server
+			                // manually create json
+			                String myJson2= "{" 
+			                			+	"\"id\"" + ": {" 
+			                			+	"\"packageId\""+": "+ pps.getPackageId() + ", "
+			                        	+	"\"productSupplierId\"" +": "+ pps.getProductSupplierId()
+			                        	+	"}"
+			                        	+	"}";
+			                			
+			                String       postUrl2       = URLCONSTANT +"/TravelExperts2/rs/db/deletepackagesproductssupplier";
+			                HttpClient   httpClient2    = HttpClientBuilder.create().build();
+			                HttpPost     post2          = new HttpPost(postUrl2);
+			                StringEntity postingString2;
+			                HttpResponse  response2;
+			                
+							
+							postingString2 = new StringEntity(myJson2);
+							post2.setEntity(postingString2);
+							post2.setHeader("Content-type", "application/json");
+							response2 = httpClient2.execute(post2);							
+						}
+					}		
+					catch ( IOException e)
+					{
+						Alert alert = new Alert(AlertType.INFORMATION);
+		        		alert.setTitle("Failure");
+			    		alert.setHeaderText(null);
+			    		alert.setContentText("There was a problem, and some products were not inserted");
+			    		alert.showAndWait();
+						e.printStackTrace();
+					}
 				}
-				
-				
-				
-				
-				
-	        	
+
         		Alert alert = new Alert(AlertType.INFORMATION);
         		alert.setTitle("Success");
 	    		alert.setHeaderText(null);
 	    		alert.setContentText("The package has been successfully updated");
 	    		alert.showAndWait();
-	        	
-	        	      	
-
 	    	}
 	    	
 	    	newPkg=null;
@@ -1042,7 +1110,11 @@ public class PackagesController implements Initializable{
 		{
 			if (productsSuppliersInPkg.contains(selectedPs))
 			{
-				
+				Alert alert = new Alert(AlertType.INFORMATION);
+	    		alert.setTitle("Error");
+	    		alert.setHeaderText(null);
+	    		alert.setContentText("The package already contains the product from the selected supplier");
+	    		alert.showAndWait();
 			}
 			else
 			{
