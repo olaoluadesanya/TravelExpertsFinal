@@ -147,6 +147,122 @@ public class SimpleRestService {
         return response;	
 	}
 	
+<<<<<<< HEAD
+=======
+	//http://localhost:8080/TravelExperts2/rs/db/insertcustomer
+	@POST
+	@Path("/insertcustomer")
+	@Consumes({ MediaType.APPLICATION_JSON })
+    @Produces(MediaType.TEXT_PLAIN)
+	public String insertCustomer(String jsonString, @FormParam("request") String request ,  @DefaultValue("1") @FormParam("version") int version) {
+
+		if (logger.isDebugEnabled()) {
+			logger.debug("Start insertCustomer");
+			logger.debug("data: '" + request + "'");
+			logger.debug("version: '" + version + "'");
+		}
+
+		String response = null;
+
+        try{			
+            switch(version){
+	            case 1:
+	                if(logger.isDebugEnabled()) logger.debug("in version 1");
+	                
+	                EntityManagerFactory factory = Persistence.createEntityManagerFactory("TravelExperts2");
+	                EntityManager em = factory.createEntityManager();
+	                
+	                Gson gson = new Gson();
+	          	  	Customer customer = gson.fromJson(jsonString, Customer.class);
+	          	  	
+	                
+	                em.getTransaction().begin();
+	                em.persist(customer);
+	                em.getTransaction().commit();
+	                
+	                response = "Customer created";
+
+                    break;
+                default: throw new Exception("Unsupported version: " + version);
+            }
+        }
+        catch(Exception e){
+        	response = e.getMessage().toString();
+        }
+        
+        if(logger.isDebugEnabled()){
+            logger.debug("result: '"+response+"'");
+            logger.debug("End insertCustomer");
+        }
+        return response;	
+	}
+
+	//http://localhost:8080/TravelExperts2/rs/db/updatecustomer
+	@POST
+	@Path("/updatecustomer")
+	@Consumes({ MediaType.APPLICATION_JSON })
+    @Produces(MediaType.TEXT_PLAIN)
+	public String updateCustomer(String jsonString, @FormParam("request") String request ,  @DefaultValue("1") @FormParam("version") int version) {
+
+		if (logger.isDebugEnabled()) {
+			logger.debug("Start updateCustomer");
+			logger.debug("data: '" + request + "'");
+			logger.debug("version: '" + version + "'");
+		}
+
+		String response = null;
+
+        try{			
+            switch(version){
+	            case 1:
+	                if(logger.isDebugEnabled()) logger.debug("in version 1");
+	                
+	                EntityManagerFactory factory = Persistence.createEntityManagerFactory("TravelExperts2");
+	                EntityManager em = factory.createEntityManager();
+	                
+	                	                
+	                Gson gson = new Gson();
+	          	  	Customer newCustomer = gson.fromJson(jsonString, Customer.class);
+	          	  	
+	          	  	Customer oldCustomer = em.find(Customer.class, newCustomer.getCustomerId());
+	          	  	
+	                
+	                em.getTransaction().begin();
+	                oldCustomer.setCustAddress(newCustomer.getCustAddress());
+	                oldCustomer.setCustBusPhone(newCustomer.getCustBusPhone());
+	                oldCustomer.setCustCity(newCustomer.getCustCity());
+	                oldCustomer.setCustCountry(newCustomer.getCustCountry());
+	                oldCustomer.setCustEmail(newCustomer.getCustEmail());
+	                oldCustomer.setCustFirstName(newCustomer.getCustFirstName());
+	                oldCustomer.setCustHomePhone(newCustomer.getCustHomePhone());
+	                oldCustomer.setCustHomePhone(newCustomer.getCustHomePhone());
+	                oldCustomer.setCustLastName(newCustomer.getCustLastName());
+	                oldCustomer.setCustPostal(newCustomer.getCustPostal());
+	                oldCustomer.setCustProv(newCustomer.getCustProv());
+	                oldCustomer.setUserid(newCustomer.getUserid());
+	                oldCustomer.setPasswd(newCustomer.getPasswd());
+	                em.getTransaction().commit();
+	                
+	                response = "Customer Updated";
+	                
+	               
+
+                    break;
+                default: throw new Exception("Unsupported version: " + version);
+            }
+        }
+        catch(Exception e){
+        	response = e.getMessage().toString();
+        }
+        
+        if(logger.isDebugEnabled()){
+            logger.debug("result: '"+response+"'");
+            logger.debug("End updateCustomer");
+        }
+        return response;	
+	}
+		
+>>>>>>> master
 	
 	//http://localhost:8080/TravelExperts2/rs/db/getallpackages
 	
@@ -991,9 +1107,70 @@ public class SimpleRestService {
 	                                
 	                EntityManagerFactory factory = Persistence.createEntityManagerFactory("TravelExperts2");
 	                EntityManager em = factory.createEntityManager();    
-	          	  	Query query = em.createQuery("select pass from agents where AgtEmail=?1");
-	          	  	query.setParameter(1, email);
+	          	  	Query query = em.createQuery("select a.pass from Agent a where a.agtEmail= :email");
+	          	  	query.setParameter("email", email);
 	          	  	
+	          	    List<String> passwordList = query.getResultList();
+                    //check if list is empty, meaning that the username entered didn't return anything from database
+                    if (passwordList.isEmpty()){
+                        response = "false";
+                        break;
+                    }
+                    //check user entered pw against hashed pw
+                    boolean result = BCrypt.checkpw(password, passwordList.get(0));
+                    if (result == true) {
+                        response = "true";
+                        
+                    }
+                    else {
+                        response = "false";
+                    }
+                    break;
+                default: throw new Exception("Unsupported version: " + version);
+            }
+        }
+        catch(Exception e){
+        	response = e.getMessage().toString();
+        }
+        
+        if(logger.isDebugEnabled()){
+            logger.debug("result: '"+response+"'");
+            logger.debug("End postSomething");
+        }
+        return response;	
+	}
+	
+	//http://localhost:8080/TravelExperts2/rs/db/customerlogin
+	@POST
+	@Path("/customerlogin")
+	@Consumes({ MediaType.APPLICATION_JSON })
+    @Produces(MediaType.TEXT_PLAIN)
+	public String authenticateCustomer(String jsonString, @FormParam("request") String request ,  @DefaultValue("1") @FormParam("version") int version) {
+
+		if (logger.isDebugEnabled()) {
+			logger.debug("Start postCustomerLogin");
+			logger.debug("data: '" + request + "'");
+			logger.debug("version: '" + version + "'");
+		}
+
+		String response = null;
+
+        try{			
+            switch(version){
+	            case 1:
+	                if(logger.isDebugEnabled()) logger.debug("in version 1");	    
+	                
+	                JsonObject json = new JsonParser().parse(jsonString).getAsJsonObject();
+	          	  	String userid = json.get("userid").getAsString();
+	          	  	String password = json.get("passwd").getAsString();
+	                                
+	                EntityManagerFactory factory = Persistence.createEntityManagerFactory("TravelExperts2");
+	                EntityManager em = factory.createEntityManager();    
+	          	  	Query query = em.createQuery("select c.passwd from Customer c where c.userid= :userid");
+	          	  	query.setParameter("userid", userid);
+
+	          	  	
+<<<<<<< HEAD
 	          	  	String hashedPassword = (String) query.getSingleResult();
 	          	  	boolean result = BCrypt.checkpw(password, hashedPassword);
 	          	  	if (result == true) {
@@ -1003,6 +1180,23 @@ public class SimpleRestService {
 	          	  		response = "false";
 	          	  	}
 >>>>>>> 3c00e1b72c2c87520d331eb8d8dc87b3b06b9853
+=======
+	          	    List<String> passwordList = query.getResultList();
+                    //check if list is empty, meaning that the username entered didn't return anything from database
+                    if (passwordList.isEmpty()){
+                        response = "false";
+                        break;
+                    }
+                    //check user entered pw against hashed pw
+                    boolean result = BCrypt.checkpw(password, passwordList.get(0));
+                    if (result == true) {
+                        response = "true";
+                        
+                    }
+                    else {
+                        response = "false";
+                    }
+>>>>>>> master
                     break;
                 default: throw new Exception("Unsupported version: " + version);
             }
