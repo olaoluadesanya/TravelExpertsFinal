@@ -99,6 +99,14 @@ public class Packag implements Serializable {
 	public void setPkgStartDate(Date pkgStartDate) {
 		this.pkgStartDate = pkgStartDate;
 	}
+	
+	public String getPkgImageFile() {
+		return this.pkgImageFile;
+	}
+
+	public void setPkgImageFile(String pkgImageFile) {
+		this.pkgImageFile = pkgImageFile;
+	}
 
 	public List<Booking> getBookings() {
 		return this.bookings;

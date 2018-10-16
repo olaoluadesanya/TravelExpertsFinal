@@ -3,7 +3,7 @@
  * Author: Sunghyun Lee, Corinne Mullan
  * Created: 2018-10-01
  * 
- * Added prodName and supName
+ * Added product and supplier
  * Corinne Mullan
  * 2018-10-15
  */
@@ -14,18 +14,18 @@ public class ProductsSupplier
 {
 	private int productSupplierId;
 	private int productId;		
-	private String prodName;
+	private Product product;
 	private int supplierId;
-	private String supName;
+	private Supplier supplier;
 
-	public ProductsSupplier(int productSupplierId, int productId, String prodName, int supplierId, String supName)
+	public ProductsSupplier(int productSupplierId, int productId, Product product, int supplierId, Supplier supplier)
 	{
 		super();
 		this.productSupplierId = productSupplierId;
 		this.productId = productId;
-		this.prodName = prodName;
+		this.product = product;
 		this.supplierId = supplierId;
-		this.supName = supName;
+		this.supplier = supplier;
 	}
 	
 	public int getProductSupplierId()
@@ -48,14 +48,14 @@ public class ProductsSupplier
 		this.productId = productSupplierId;
 	}
 	
-	public String getProdName()
+	public Product getProduct()
 	{
-		return prodName;
+		return product;
 	}
 
-	public void setProdName(String prodName)
+	public void setProduct(Product product)
 	{
-		this.prodName = prodName;
+		this.product = product;
 	}
 
 	public int getSupplierId()
@@ -68,14 +68,14 @@ public class ProductsSupplier
 		this.supplierId = supplierId;
 	}
 	
-	public String getSupName()
+	public Supplier getSupplier()
 	{
-		return supName;
+		return supplier;
 	}
 
-	public void setSupName(String supName)
+	public void setSupplier(Supplier supplier)
 	{
-		this.supName = supName;
+		this.supplier = supplier;
 	}
 	
 }
