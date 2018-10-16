@@ -41,7 +41,9 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 
@@ -57,6 +59,7 @@ import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.TreeTableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
+import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import model.Product;
 import model.ProductsSupplier;
@@ -147,7 +150,7 @@ public class PackagesController implements Initializable{
     private JFXButton btnDelete1;
 
     @FXML
-    private TableView<ProductsSupplier> tvProductsInPackage;
+    private TableView<ProductsSupplier> tvProductsSuppliersInPackage;
 
     @FXML
     private TableColumn<ProductsSupplier, String> tcProductsInPkg;
@@ -177,7 +180,7 @@ public class PackagesController implements Initializable{
     private ObservableList<Packag> packages1;
     //private ObservableList<ProductsSupplier> psList;
     private ObservableList<PackagesProductsSupplier> ppsList;
-    private ObservableList<ProductsSupplier> productsInPkg;
+    private ObservableList<ProductsSupplier> productsSuppliersInPkg;
     
     private String pkgStatus="null"; // whether package is being added or edited
     private Packag newPkg; // package that is created or updated
@@ -265,7 +268,8 @@ public class PackagesController implements Initializable{
     	ppsList = FXCollections.observableArrayList();
     	addedPsList = new ArrayList<>();
     	deletedPsList=new ArrayList<>();
-    	productsInPkg = FXCollections.observableArrayList();
+    	productsSuppliersInPkg = FXCollections.observableArrayList();
+    	productsSuppliers = FXCollections.observableArrayList();
     	
     	// instantiate table columns
     	tcPkgId.setCellValueFactory(new PropertyValueFactory<>("PackageId"));
@@ -277,8 +281,12 @@ public class PackagesController implements Initializable{
     	
 		// read lists from web server and set them to tables
     	readPackages();
+    	readProductsSuppliers();
     	tvPackages.setItems(packages1);    	
     	readPackagesProductsSuppliers();
+    	tvProductsSuppliers1.setItems(productsSuppliers);
+    	tvProductsSuppliersInPackage.setItems(productsSuppliersInPkg);
+
     	
     	
     	//======================= Bookings Tab ========================================
@@ -428,7 +436,7 @@ public class PackagesController implements Initializable{
     	// Instantiate the lists
     	products = FXCollections.observableArrayList();
     	suppliers = FXCollections.observableArrayList();
-    	productsSuppliers = FXCollections.observableArrayList();
+    	
     	
     	// Instantiate the table columns
     	tcProductId.setCellValueFactory(new PropertyValueFactory<>("productId"));
@@ -439,19 +447,18 @@ public class PackagesController implements Initializable{
 		// Obtain the Products, Suppliers, and ProductsSuppliers from the web service
     	readProducts();
     	readSuppliers(); 	
-    	readProductsSuppliers();
     	tvProducts.setItems(products);   
     	tvProductsSuppliers2.setItems(productsSuppliers);
-    	
-    	// Hi Corinne, I will use this too -Sung
-    	//tvProductsSuppliers1.setItems(productsSuppliers);
     	
     	// Initialize the combo box containing supplier names
     	cboSuppliers.setItems(suppliers);
     	
     	// =====================================================================================
 
+    	//Window Drag
     	
+    	
+
     	
 	}
     // =====================Sunghyun Lee===================================================
@@ -539,7 +546,7 @@ public class PackagesController implements Initializable{
                 LocalDate ldEndDate=format.parse(endDate).toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
                 LocalDate ldStartDate=format.parse(startDate).toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 
-                Packag pkg= new Packag(jsonPkg.getInt("packageId"), jsonPkg.getDouble("pkgAgencyCommission"), jsonPkg.getDouble("pkgBasePrice"), jsonPkg.getString("pkgDesc"),ldEndDate, jsonPkg.getString("pkgName"), ldStartDate);
+                Packag pkg= new Packag(jsonPkg.getInt("packageId"), jsonPkg.getDouble("pkgAgencyCommission"), jsonPkg.getDouble("pkgBasePrice"), jsonPkg.getString("pkgDesc"),ldEndDate, jsonPkg.getString("pkgName"), ldStartDate, jsonPkg.getString("pkgImageFile"));
                 packages1.add(pkg); 
             }
     	}
@@ -565,6 +572,45 @@ public class PackagesController implements Initializable{
 
     		if (result.orElse(cancel) == ok) 
     		{	
+    			// delete rows from PkgProductsSuppliers table first
+    			try
+				{
+					for (model.ProductsSupplier p : productsSuppliersInPkg )
+					{
+						model.PackagesProductsSupplier pps = new PackagesProductsSupplier(tvPackages.getSelectionModel().getSelectedItem().getPackageId(), p.getProductSupplierId());
+						// send json to web server
+		                // manually create json
+		                String myJson2= "{" 
+		                			+	"\"id\"" + ": {" 
+		                			+	"\"packageId\""+": "+ pps.getPackageId() + ", "
+		                        	+	"\"productSupplierId\"" +": "+ pps.getProductSupplierId()
+		                        	+	"}"
+		                        	+	"}";
+		                			
+		                String       postUrl2       = URLCONSTANT +"/TravelExperts2/rs/db/deletepackagesproductssupplier";
+		                HttpClient   httpClient2    = HttpClientBuilder.create().build();
+		                HttpPost     post2          = new HttpPost(postUrl2);
+		                StringEntity postingString2;
+		                HttpResponse  response2;
+		                
+						
+						postingString2 = new StringEntity(myJson2);
+						post2.setEntity(postingString2);
+						post2.setHeader("Content-type", "application/json");
+						response2 = httpClient2.execute(post2);							
+					}
+				}		
+				catch ( IOException e)
+				{
+					Alert alert2 = new Alert(AlertType.INFORMATION);
+	        		alert2.setTitle("Failure");
+		    		alert2.setHeaderText(null);
+		    		alert2.setContentText("There was a problem, and some products were not inserted");
+		    		alert2.showAndWait();
+					e.printStackTrace();
+				}
+    			
+    			// then delete the package from packages table
 				try
 				{
 					//URL url = new URL(URLCONSTANT +"/TravelExperts2/rs/db/deletepackage/"+tvPackages.getSelectionModel().getSelectedItem().getPackageId());
@@ -581,7 +627,7 @@ public class PackagesController implements Initializable{
 		    	    
 		    	    	    			
 	    			readPackages();
-	    			//readpp();
+	    			readPackagesProductsSuppliers();
 	    			tvPackages.getSelectionModel().select(0);
 	    			displayPackageInfo();
 				} catch (IOException e)
@@ -639,18 +685,16 @@ public class PackagesController implements Initializable{
     	
     	// hide products-related controls
     	
-    	tvProductsInPackage.setVisible(false);
+    	tvProductsSuppliersInPackage.setVisible(false);
     	
     	lblProductsSuppliers.setVisible(false);
-    	//tvProductsSuppliers1.setVisible(false);	
+    	tvProductsSuppliers1.setVisible(false);	
     	btnInsertProductIntoPkg.setVisible(false);
     	btnRemoveProductFromPkg.setVisible(false);
     	
     	
     	emptyTxtFieldsInPkgTab();
     	
-    	System.out.println(pkgStatus);
-    	System.out.println(lblPackageId.getText());
     	
 
     }
@@ -684,7 +728,7 @@ public class PackagesController implements Initializable{
 	    	{
 	    		// create a new package               
                 //newPkg=new Packag(0, new BigDecimal( tfPkgAgencyCommission.getText()), new BigDecimal(tfPkgBasePrice.getText()), taPkgDesc.getText(), Date.from(dpPkgEndDate.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant()), tfPkgName.getText(), Date.from(dpPkgStartDate.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant()));                
-                newPkg=new Packag(0, Double.parseDouble( tfPkgAgencyCommission.getText()), Double.parseDouble(tfPkgBasePrice.getText()), taPkgDesc.getText(), dpPkgEndDate.getValue(), tfPkgName.getText(), dpPkgStartDate.getValue());                
+                newPkg=new Packag(0, Double.parseDouble( tfPkgAgencyCommission.getText()), Double.parseDouble(tfPkgBasePrice.getText()), taPkgDesc.getText(), dpPkgEndDate.getValue(), tfPkgName.getText(), dpPkgStartDate.getValue(),"no image");                
 
                 // send json to web server
                 Gson gson = new Gson();
@@ -696,10 +740,10 @@ public class PackagesController implements Initializable{
                 // manually modify json string to send date variables in a format that web server understands
                 String myJson= json.substring(0, idx+12)+"\""+newPkg.getPkgEndDate()+"\""+","
                 										+"\"pkgName\":\""+newPkg.getPkgName()+"\","
-                										+"\"pkgStartDate\":\""+newPkg.getPkgStartDate()+"\""
+                										+"\"pkgStartDate\":\""+newPkg.getPkgStartDate()+"\","
+                										+"\"pkgImageFile\":\""+newPkg.getPkgImageFile()+"\""
                 										+"}";
                 
-                //String       postUrl       = URLCONSTANT +"/TravelExperts2/rs/db/insertpackage";// put in your url
                 String       postUrl       = URLCONSTANT +"/TravelExperts2/rs/db/insertpackage";// put in your url
                 HttpClient   httpClient    = HttpClientBuilder.create().build();
                 HttpPost     post          = new HttpPost(postUrl);
@@ -718,7 +762,6 @@ public class PackagesController implements Initializable{
 					HttpEntity entity = response.getEntity();
 		    	    String responseString = null;
 		    	    responseString = EntityUtils.toString(entity, "UTF-8");
-		    	    System.out.println("Repoese: " + responseString);
 		    	    */
 		    	    
 		    	    
@@ -769,8 +812,11 @@ public class PackagesController implements Initializable{
                 // manually modify json string to send date variables in a format that web server understands
                 String myJson= json.substring(0, idx+12)+"\""+newPkg.getPkgEndDate()+"\""+","
                 										+"\"pkgName\":\""+newPkg.getPkgName()+"\","
-                										+"\"pkgStartDate\":\""+newPkg.getPkgStartDate()+"\""
+                										+"\"pkgStartDate\":\""+newPkg.getPkgStartDate()+"\","
+                										+"\"pkgImageFile\":\""+newPkg.getPkgImageFile()+"\""
                 										+"}";
+                
+               
                 
                 //String       postUrl       = URLCONSTANT +"/TravelExperts2/rs/db/updatepackage";
                 String       postUrl       = URLCONSTANT +"/TravelExperts2/rs/db/updatepackage";
@@ -799,62 +845,92 @@ public class PackagesController implements Initializable{
 				
 				// insert products into package
 				if (addedPsList.size()>0) // if any product has been added
-				{
-					for (model.ProductsSupplier p : addedPsList )
+				{	
+					try
 					{
-						model.PackagesProductsSupplier pps = new PackagesProductsSupplier(newPkg.getPackageId(), p.getProductSupplierId());
-						// send json to web server
-		                // manually create json
-		                String myJson2= "{" 
-		                			+	"\"id\"" + ": {" 
-		                			+	"\"packageId\""+": "+ pps.getPackageId() + ", "
-		                        	+	"\"productSupplierId\"" +": "+ pps.getProductSupplierId()
-		                        	+	"}"
-		                        	+	"}";
-		                			
-		                String       postUrl2       = URLCONSTANT +"/TravelExperts2/rs/db/insertpackagesproductsupplier";
-		                HttpClient   httpClient2    = HttpClientBuilder.create().build();
-		                HttpPost     post2          = new HttpPost(postUrl2);
-		                StringEntity postingString2;
-		                HttpResponse  response2;
-		                
-						try
+						for (model.ProductsSupplier p : addedPsList )
 						{
+							model.PackagesProductsSupplier pps = new PackagesProductsSupplier(newPkg.getPackageId(), p.getProductSupplierId());
+							// send json to web server
+			                // manually create json
+			                String myJson2= "{" 
+			                			+	"\"id\"" + ": {" 
+			                			+	"\"packageId\""+": "+ pps.getPackageId() + ", "
+			                        	+	"\"productSupplierId\"" +": "+ pps.getProductSupplierId()
+			                        	+	"}"
+			                        	+	"}";
+			                			
+			                String       postUrl2       = URLCONSTANT +"/TravelExperts2/rs/db/insertpackagesproductsupplier";
+			                HttpClient   httpClient2    = HttpClientBuilder.create().build();
+			                HttpPost     post2          = new HttpPost(postUrl2);
+			                StringEntity postingString2;
+			                HttpResponse  response2;
+			                
+							
 							postingString2 = new StringEntity(myJson2);
 							post2.setEntity(postingString2);
 							post2.setHeader("Content-type", "application/json");
-							response2 = httpClient.execute(post2);							
-						} catch ( IOException e)
-						{
-							Alert alert = new Alert(AlertType.INFORMATION);
-			        		alert.setTitle("Failure");
-				    		alert.setHeaderText(null);
-				    		alert.setContentText("There was a problem, and some products were not inserted");
-				    		alert.showAndWait();
-							e.printStackTrace();
+							response2 = httpClient2.execute(post2);							
 						}
-		            }     
-				}
+					}		
+					catch ( IOException e)
+					{
+						Alert alert = new Alert(AlertType.INFORMATION);
+		        		alert.setTitle("Failure");
+			    		alert.setHeaderText(null);
+			    		alert.setContentText("There was a problem, and some products were not inserted");
+			    		alert.showAndWait();
+						e.printStackTrace();
+					}
+		        }     
+				
 
 				// remove product from package
 				if (deletedPsList.size()>0) // if any product has been removed
 				{
-					
+					try
+					{
+						for (model.ProductsSupplier p : deletedPsList )
+						{
+							model.PackagesProductsSupplier pps = new PackagesProductsSupplier(newPkg.getPackageId(), p.getProductSupplierId());
+							// send json to web server
+			                // manually create json
+			                String myJson2= "{" 
+			                			+	"\"id\"" + ": {" 
+			                			+	"\"packageId\""+": "+ pps.getPackageId() + ", "
+			                        	+	"\"productSupplierId\"" +": "+ pps.getProductSupplierId()
+			                        	+	"}"
+			                        	+	"}";
+			                			
+			                String       postUrl2       = URLCONSTANT +"/TravelExperts2/rs/db/deletepackagesproductssupplier";
+			                HttpClient   httpClient2    = HttpClientBuilder.create().build();
+			                HttpPost     post2          = new HttpPost(postUrl2);
+			                StringEntity postingString2;
+			                HttpResponse  response2;
+			                
+							
+							postingString2 = new StringEntity(myJson2);
+							post2.setEntity(postingString2);
+							post2.setHeader("Content-type", "application/json");
+							response2 = httpClient2.execute(post2);							
+						}
+					}		
+					catch ( IOException e)
+					{
+						Alert alert = new Alert(AlertType.INFORMATION);
+		        		alert.setTitle("Failure");
+			    		alert.setHeaderText(null);
+			    		alert.setContentText("There was a problem, and some products were not inserted");
+			    		alert.showAndWait();
+						e.printStackTrace();
+					}
 				}
-				
-				
-				
-				
-				
-	        	
+
         		Alert alert = new Alert(AlertType.INFORMATION);
         		alert.setTitle("Success");
 	    		alert.setHeaderText(null);
 	    		alert.setContentText("The package has been successfully updated");
 	    		alert.showAndWait();
-	        	
-	        	      	
-
 	    	}
 	    	
 	    	newPkg=null;
@@ -862,7 +938,7 @@ public class PackagesController implements Initializable{
 	    	deletedPsList.clear();
 	    	
         	btnSave1.setDisable(true);
-    		tvProductsInPackage.setVisible(true);
+    		tvProductsSuppliersInPackage.setVisible(true);
 
         	//re-read data from web server
         	readPackagesProductsSuppliers();
@@ -962,20 +1038,14 @@ public class PackagesController implements Initializable{
 	    	tfPkgBasePrice.setText(selectedPackage.getPkgBasePrice()+"");
 	    	tfPkgAgencyCommission.setText(selectedPackage.getPkgAgencyCommission()+"");
 	    	
-	    	//displayProductsInPkg();
-	    	for (PackagesProductsSupplier p: ppsList)
-	    	{
-	    		if (p.getPackageId()==tvPackages.getSelectionModel().getSelectedItem().getPackageId())
-	    			System.out.println(p.getProductSupplierId());
-	    	}
-	    	
-
+	    	displayProductsInPkg();	    	
 	    	
     	}
     }
     // when a package is selected, display the products included in the package on tvProductsInPkg
 	private void displayProductsInPkg()
 	{
+		productsSuppliersInPkg.clear();
 		List<Integer> productsSupplierIds = new ArrayList<>(); 
     	
 		// first using packagesProductsSupplier list, find productsSupplier ids that are associated with the package.
@@ -992,7 +1062,7 @@ public class PackagesController implements Initializable{
     	for (ProductsSupplier p : productsSuppliers)
     	{
     		if (productsSupplierIds.contains(p.getProductSupplierId()))
-    			productsInPkg.add(p);
+    			productsSuppliersInPkg.add(p);
     	}
 	}
 	private void enableInputs(boolean myBool)
@@ -1028,7 +1098,7 @@ public class PackagesController implements Initializable{
     	newPkg=null;
     	
     	btnSave1.setDisable(true);
-		tvProductsInPackage.setVisible(true);
+		tvProductsSuppliersInPackage.setVisible(true);
 		
 		displayPackageInfo();
 		pkgStatus="null";
@@ -1043,24 +1113,36 @@ public class PackagesController implements Initializable{
 		ProductsSupplier selectedPs = tvProductsSuppliers1.getSelectionModel().getSelectedItem();
 		if (selectedPs!= null)
 		{
-			
-			if (deletedPsList.contains(selectedPs))
+			if (productsSuppliersInPkg.contains(selectedPs))
 			{
-				deletedPsList.remove(selectedPs);
+				Alert alert = new Alert(AlertType.INFORMATION);
+	    		alert.setTitle("Error");
+	    		alert.setHeaderText(null);
+	    		alert.setContentText("The package already contains the product from the selected supplier");
+	    		alert.showAndWait();
 			}
-			else 
+			else
 			{
-				addedPsList.add(selectedPs);
+				if (deletedPsList.contains(selectedPs))
+				{
+					deletedPsList.remove(selectedPs);
+				}
+				else 
+				{
+					addedPsList.add(selectedPs);
+				}
+				
+				productsSuppliersInPkg.add(selectedPs);
 			}
 			
-			productsInPkg.add(selectedPs);
+			
 		}
 
     }
 
     @FXML
     void removeProductFromPkg(ActionEvent event) {
-    	ProductsSupplier selectedPs = tvProductsInPackage.getSelectionModel().getSelectedItem();
+    	ProductsSupplier selectedPs = tvProductsSuppliersInPackage.getSelectionModel().getSelectedItem();
 		if (selectedPs!= null)
 		{
 			if (addedPsList.contains(selectedPs))
@@ -1073,7 +1155,7 @@ public class PackagesController implements Initializable{
 
 			}
 			
-			productsInPkg.remove(selectedPs);
+			productsSuppliersInPkg.remove(selectedPs);
 		}
 
     }

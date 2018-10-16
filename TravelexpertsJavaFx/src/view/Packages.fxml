@@ -68,12 +68,12 @@
                         </HBox>
                         <HBox layoutX="236.0" layoutY="267.0" prefHeight="109.0" prefWidth="447.0">
                            <children>
-                              <TableView fx:id="tvProductsInPackage" prefHeight="109.0" prefWidth="124.0">
+                              <TableView fx:id="tvProductsSuppliersInPackage" prefHeight="109.0" prefWidth="124.0">
                                 <columns>
                                   <TableColumn fx:id="tcProductsInPkg" prefWidth="123.0" text="Products In Package" />
                                 </columns>
                               </TableView>
-                              <TableView fx:id="tvProductsSuppliers" prefHeight="109.0" prefWidth="307.0">
+                              <TableView fx:id="tvProductsSuppliers1" prefHeight="109.0" prefWidth="307.0">
                                 <columns>
                                   <TableColumn fx:id="tcProductsPkgTab" prefWidth="153.0" sortable="false" text="Products" />
                                   <TableColumn fx:id="tcSuppliersPkgTab" prefWidth="152.0" sortable="false" text="Suppliers" />
