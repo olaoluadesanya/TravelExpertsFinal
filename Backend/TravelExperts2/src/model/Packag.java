@@ -34,6 +34,8 @@ public class Packag implements Serializable {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date pkgStartDate;
 	
+	private String pkgImageFile;
+	
 
 	//bi-directional many-to-one association to Booking
 	@OneToMany(mappedBy="packag")
@@ -96,6 +98,14 @@ public class Packag implements Serializable {
 
 	public void setPkgStartDate(Date pkgStartDate) {
 		this.pkgStartDate = pkgStartDate;
+	}
+	
+	public String getPkgImageFile() {
+		return this.pkgImageFile;
+	}
+
+	public void setPkgImageFile(String pkgImageFile) {
+		this.pkgImageFile = pkgImageFile;
 	}
 
 	public List<Booking> getBookings() {
