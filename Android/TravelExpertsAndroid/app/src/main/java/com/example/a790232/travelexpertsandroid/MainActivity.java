@@ -44,6 +44,12 @@ public class MainActivity extends Activity {
 
     Customer customer;
 
+    // Define a constant for the IP address of the web service
+    // Use 10.0.2.2 when running an emulator, and the web service is running on the same machine
+    // (this IP bridges from the emulated device to the machine it is running on)
+    static final String IP_ADDRESS = "10.0.2.2";
+    //static final String IP_ADDRESS = "10.163.101.59";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -92,7 +98,7 @@ public class MainActivity extends Activity {
 
                 // This URL is used to retrieve all packages with start dates in the future
                 // from the web service.
-                URL url = new URL("http://10.163.101.59:8080/TravelExperts2/rs/db/getcurrentpackages");
+                URL url = new URL("http://" + IP_ADDRESS + ":8080/TravelExperts2/rs/db/getcurrentpackages");
 
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestProperty("accept", "application/json");
