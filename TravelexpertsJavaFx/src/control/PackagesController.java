@@ -1285,13 +1285,8 @@ public class PackagesController implements Initializable{
     	btnSaveProd.setDisable(false);
     	btnRefreshProd.setDisable(false);
     	
-<<<<<<< HEAD
     	// Set the product status to "add" for use by the saveProduct method
     	statusProd = "add";
-=======
-    	// Set the status to "add" for use by the saveProduct method
-    	pkgStatus="add";
->>>>>>> master
     }
 
     @FXML
@@ -1332,13 +1327,8 @@ public class PackagesController implements Initializable{
     	btnSaveProd.setDisable(false);
     	btnRefreshProd.setDisable(false);
     	
-<<<<<<< HEAD
     	// Set the product status to "edit" for use by the saveProduct method
     	statusProd = "edit";
-=======
-    	// Set the status to "edit" for use by the saveProduct method
-    	pkgStatus="edit";
->>>>>>> master
     }
 
     @FXML
@@ -1361,11 +1351,7 @@ public class PackagesController implements Initializable{
     @FXML
     void saveProduct(ActionEvent event) {
     	
-<<<<<<< HEAD
     	if (statusProd=="add")
-=======
-    	if (pkgStatus=="add")
->>>>>>> master
     	{
     		// Create a new product          
             Product newProd = new Product(0, tfProdName.getText());                
@@ -1539,11 +1525,7 @@ public class PackagesController implements Initializable{
     	tvProducts.setDisable(false);
     	btnSaveProd.setDisable(true);
     	
-<<<<<<< HEAD
     	statusProd = "";
-=======
-    	pkgStatus = "";
->>>>>>> master
 
     	readProducts();
     	readSuppliers();

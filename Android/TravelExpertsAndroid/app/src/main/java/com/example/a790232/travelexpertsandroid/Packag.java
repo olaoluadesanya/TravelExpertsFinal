@@ -25,12 +25,13 @@ public class Packag implements Serializable {
     private Date pkgEndDate;
     private String pkgName;
     private Date pkgStartDate;
+    private String pkgImageFile;
 
     // Constructors
     public Packag() {
     }
 
-    public Packag(int packageId, BigDecimal pkgAgencyCommission, BigDecimal pkgBasePrice, String pkgDesc, Date pkgEndDate, String pkgName, Date pkgStartDate) {
+    public Packag(int packageId, BigDecimal pkgAgencyCommission, BigDecimal pkgBasePrice, String pkgDesc, Date pkgEndDate, String pkgName, Date pkgStartDate, String pkgImageFile) {
         this.packageId = packageId;
         this.pkgAgencyCommission = pkgAgencyCommission;
         this.pkgBasePrice = pkgBasePrice;
@@ -38,6 +39,7 @@ public class Packag implements Serializable {
         this.pkgEndDate = pkgEndDate;
         this.pkgName = pkgName;
         this.pkgStartDate = pkgStartDate;
+        this.pkgImageFile = pkgImageFile;
     }
 
     // Getters and setters
@@ -92,6 +94,15 @@ public class Packag implements Serializable {
     public Date getPkgStartDate() {
         return pkgStartDate;
     }
+
+    public String getPkgImageFile() {
+        return pkgImageFile;
+    }
+
+    public void setPkgImageFile(String pkgImageFile) {
+        this.pkgImageFile = pkgImageFile;
+    }
+
 
     // The getDates() method returns the start and end dates of the package together
     // as a single string in the format "2018-01-15 to 2018-01-20"
