@@ -147,8 +147,9 @@ public class MainActivity extends Activity {
                     int idx = imgFileName.indexOf('.');
                     imgName = imgFileName.substring(0, idx);
                 }
+                imgName = "R.drawable." + imgName;
 
-                map.put("pkgimagefile", imgName + "");
+                map.put("pkgimagefile", imgName);
                 pkgMaps.add(map);
             }
             int resource = R.layout.package_item;

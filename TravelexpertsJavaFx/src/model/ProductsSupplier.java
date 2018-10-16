@@ -14,68 +14,70 @@ public class ProductsSupplier
 {
 	private int productSupplierId;
 	private int productId;		
-	private Product product;
+	private String prodName;
 	private int supplierId;
-	private Supplier supplier;
-
-	public ProductsSupplier(int productSupplierId, int productId, Product product, int supplierId, Supplier supplier)
-	{
+	private String supName;
+	
+	
+	public ProductsSupplier(int productSupplierId, int productId, String prodName, int supplierId, String supName) {
 		super();
 		this.productSupplierId = productSupplierId;
 		this.productId = productId;
-		this.product = product;
+		this.prodName = prodName;
 		this.supplierId = supplierId;
-		this.supplier = supplier;
+		this.supName = supName;
 	}
-	
-	public int getProductSupplierId()
-	{
+
+
+	public int getProductSupplierId() {
 		return productSupplierId;
 	}
 
-	public void setProductSupplierId(int productSupplierId)
-	{
+
+	public void setProductSupplierId(int productSupplierId) {
 		this.productSupplierId = productSupplierId;
 	}
-	
-	public int getProductId()
-	{
+
+
+	public int getProductId() {
 		return productId;
 	}
 
-	public void setProductId(int productSupplierId)
-	{
-		this.productId = productSupplierId;
-	}
-	
-	public Product getProduct()
-	{
-		return product;
+
+	public void setProductId(int productId) {
+		this.productId = productId;
 	}
 
-	public void setProduct(Product product)
-	{
-		this.product = product;
+
+	public String getProdName() {
+		return prodName;
 	}
 
-	public int getSupplierId()
-	{
+
+	public void setProdName(String prodName) {
+		this.prodName = prodName;
+	}
+
+
+	public int getSupplierId() {
 		return supplierId;
 	}
 
-	public void setSupplierId(int supplierId)
-	{
+
+	public void setSupplierId(int supplierId) {
 		this.supplierId = supplierId;
 	}
-	
-	public Supplier getSupplier()
-	{
-		return supplier;
+
+
+	public String getSupName() {
+		return supName;
 	}
 
-	public void setSupplier(Supplier supplier)
-	{
-		this.supplier = supplier;
+
+	public void setSupName(String supName) {
+		this.supName = supName;
 	}
+
 	
 }
+	

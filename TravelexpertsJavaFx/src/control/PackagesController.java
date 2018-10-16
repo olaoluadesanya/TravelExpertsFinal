@@ -217,10 +217,10 @@ public class PackagesController implements Initializable{
      private TableView<ProductsSupplier> tvProductsSuppliers2;
      
      @FXML
-     private TableColumn<Product, String> tcProducts2;
+     private TableColumn<ProductsSupplier, String> tcProducts2;
 
      @FXML
-     private TableColumn<Product, String> tcSuppliers2;
+     private TableColumn<ProductsSupplier, String> tcSuppliers2;
 
      @FXML
      private JFXButton btnAddProdSupplier;
@@ -432,8 +432,8 @@ public class PackagesController implements Initializable{
     	// Instantiate the table columns
     	tcProductId.setCellValueFactory(new PropertyValueFactory<>("productId"));
 		tcProdName.setCellValueFactory(new PropertyValueFactory<>("prodName"));
-		tcProducts2.setCellValueFactory(new PropertyValueFactory<>("product.prodName"));
-		tcSuppliers2.setCellValueFactory(new PropertyValueFactory<>("supplier.supName"));
+		tcProducts2.setCellValueFactory(new PropertyValueFactory<>("prodName"));
+		tcSuppliers2.setCellValueFactory(new PropertyValueFactory<>("supName"));
     	
 		// Obtain the Products, Suppliers, and ProductsSuppliers from the web service
     	readProducts();
@@ -1377,27 +1377,30 @@ public class PackagesController implements Initializable{
     	
     	try 
     	{
-    		/*// Obtain the products from the JSON array and put them into the products list
+    		// Obtain the products from the JSON array and put them into the products list
             JSONArray jsonArray = new JSONArray(buffer.toString());
             for (int i = 0; i < jsonArray.length(); i++)
             {
                 JSONObject jsonProdSup = (JSONObject) jsonArray.get(i);
                 ProductsSupplier prodSup = new ProductsSupplier(jsonProdSup.getInt("productSupplierId"),
-                		                                        jsonProdSup.getInt("productId"), 
-                		                                        jsonProdSup.getString("prodName"),
-                		                                        jsonProdSup.getInt("supplierId"),
-                		                                        jsonProdSup.getString("supName"));
+                		                                        jsonProdSup.getJSONObject("product").getInt("productId"),
+                		                                        jsonProdSup.getJSONObject("product").getString("prodName"),
+                		                                        jsonProdSup.getJSONObject("supplier").getInt("supplierId"),
+                		                                        jsonProdSup.getJSONObject("supplier").getString("supName"));
+                //System.out.println(jsonProdSup.getJSONObject("product").getString("prodName"));
                 productsSuppliers.add(prodSup);
                 
                 
-            }*/
+            }
             
-            // Obtain the list of product-suppliers from the JSON data in "buffer" that was
+            /*// Obtain the list of product-suppliers from the JSON data in "buffer" that was
             // returned by the web service, using the fromJson() method that is part of
             // the Gson package.
             Gson gson = new Gson();
             Type category = new TypeToken<List<ProductsSupplier>>(){}.getType();
-            productsSuppliers = gson.fromJson(buffer.toString(), category);
+            ArrayList<ProductsSupplier> arrayList = gson.fromJson(buffer.toString(), category);
+             
+            //productsSuppliers*/
             
     	}
     	catch (Exception e)
