@@ -1,5 +1,6 @@
 /*
- * Author: Sunghyun Lee
+ * This file has many authors
+ * Author: Sunghyun Lee, Corinne Mullan
  * Created: 2018-10-01
  * 
  * Added prodName and supName
