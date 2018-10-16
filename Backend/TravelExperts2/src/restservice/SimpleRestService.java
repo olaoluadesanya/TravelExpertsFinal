@@ -5,7 +5,6 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 
 import java.lang.reflect.Type;
 import java.util.List;
@@ -31,10 +30,13 @@ import model.Agent;
 import model.Booking;
 import model.Customer;
 import model.Packag;
-import model.PackagesProductsSupplier;
 import model.Product;
+<<<<<<< HEAD
 import model.ProductsSupplier;
 import model.Supplier;
+=======
+import model.Triptype;
+>>>>>>> Graeme-Service
 
 
 @Path("/db")
@@ -42,10 +44,8 @@ public class SimpleRestService {
 
 	private final transient Logger logger = Logger.getLogger(SimpleRestService.class);
 	
-	/*
-	 * This block of code does crud operations on customers
-	 */
 	//http://localhost:8080/TravelExperts2/rs/db/getallcustomers
+
 	@GET
 	@Path("/getallcustomers")
     @Produces(MediaType.APPLICATION_JSON)
@@ -90,12 +90,12 @@ public class SimpleRestService {
         return response;	
 	}
 	
-	//http://localhost:8080/TravelExperts2/rs/db/getcustomer
+	//http://localhost:8080/TravelExperts2/rs/db/getallproducts
+	
 	@GET
-	@Path("/getcustomer/{ custid }")
+	@Path("/getallproducts")
     @Produces(MediaType.APPLICATION_JSON)
-	public String getCustomer(@PathParam("custid") int custid,
-			@QueryParam("request") String request ,
+	public String getAllProducts(@QueryParam("request") String request ,
 			 @DefaultValue("1") @QueryParam("version") int version) {
 
 		if (logger.isDebugEnabled()) {
@@ -114,12 +114,12 @@ public class SimpleRestService {
 	                EntityManagerFactory factory = Persistence.createEntityManagerFactory("TravelExperts2");
 	                EntityManager em = factory.createEntityManager();
 	                
-	                Query query = em.createQuery("select c from Customer c where c.customerId=" + custid);
-	                Customer cust = (Customer) query.getSingleResult();
+	                Query query = em.createQuery("select p from Product p");
+	                List<Product> list = query.getResultList();
 	                
 	                Gson gson = new Gson();
-	                Type type = new TypeToken<Customer>() {}.getType();
-	                response = gson.toJson(cust, type);
+	                Type type = new TypeToken<List<Product>>() {}.getType();
+	                response = gson.toJson(list, type);
 
 	                break;
                 default: throw new Exception("Unsupported version: " + version);
@@ -136,119 +136,9 @@ public class SimpleRestService {
         return response;	
 	}
 	
-	//http://localhost:8080/TravelExperts2/rs/db/insertcustomer
-	@POST
-	@Path("/insertcustomer")
-	@Consumes({ MediaType.APPLICATION_JSON })
-    @Produces(MediaType.TEXT_PLAIN)
-	public String insertCustomer(String jsonString, @FormParam("request") String request ,  @DefaultValue("1") @FormParam("version") int version) {
-
-		if (logger.isDebugEnabled()) {
-			logger.debug("Start insertCustomer");
-			logger.debug("data: '" + request + "'");
-			logger.debug("version: '" + version + "'");
-		}
-
-		String response = null;
-
-        try{			
-            switch(version){
-	            case 1:
-	                if(logger.isDebugEnabled()) logger.debug("in version 1");
-	                
-	                EntityManagerFactory factory = Persistence.createEntityManagerFactory("TravelExperts2");
-	                EntityManager em = factory.createEntityManager();
-	                
-	                Gson gson = new Gson();
-	          	  	Customer customer = gson.fromJson(jsonString, Customer.class);
-	                
-	                em.getTransaction().begin();
-	                em.persist(customer);
-	                em.getTransaction().commit();
-	                
-	                response = "Customer created";
-
-                    break;
-                default: throw new Exception("Unsupported version: " + version);
-            }
-        }
-        catch(Exception e){
-        	response = e.getMessage().toString();
-        }
-        
-        if(logger.isDebugEnabled()){
-            logger.debug("result: '"+response+"'");
-            logger.debug("End insertCustomer");
-        }
-        return response;	
-	}
-
-	//http://localhost:8080/TravelExperts2/rs/db/updatecustomer
-	@POST
-	@Path("/updatecustomer")
-	@Consumes({ MediaType.APPLICATION_JSON })
-    @Produces(MediaType.TEXT_PLAIN)
-	public String updateCustomer(String jsonString, @FormParam("request") String request ,  @DefaultValue("1") @FormParam("version") int version) {
-
-		if (logger.isDebugEnabled()) {
-			logger.debug("Start updateCustomer");
-			logger.debug("data: '" + request + "'");
-			logger.debug("version: '" + version + "'");
-		}
-
-		String response = null;
-
-        try{			
-            switch(version){
-	            case 1:
-	                if(logger.isDebugEnabled()) logger.debug("in version 1");
-	                
-	                EntityManagerFactory factory = Persistence.createEntityManagerFactory("TravelExperts2");
-	                EntityManager em = factory.createEntityManager();
-	                
-	                	                
-	                Gson gson = new Gson();
-	          	  	Customer newCustomer = gson.fromJson(jsonString, Customer.class);
-	          	  	
-	          	  	Customer oldCustomer = em.find(Customer.class, newCustomer.getCustomerId());
-	          	  	
-	                
-	                em.getTransaction().begin();
-	                oldCustomer.setCustAddress(newCustomer.getCustAddress());
-	                oldCustomer.setCustBusPhone(newCustomer.getCustBusPhone());
-	                oldCustomer.setCustCity(newCustomer.getCustCity());
-	                oldCustomer.setCustCountry(newCustomer.getCustCountry());
-	                oldCustomer.setCustEmail(newCustomer.getCustEmail());
-	                oldCustomer.setCustFirstName(newCustomer.getCustFirstName());
-	                oldCustomer.setCustHomePhone(newCustomer.getCustHomePhone());
-	                oldCustomer.setCustHomePhone(newCustomer.getCustHomePhone());
-	                oldCustomer.setCustLastName(newCustomer.getCustLastName());
-	                oldCustomer.setCustPostal(newCustomer.getCustPostal());
-	                oldCustomer.setCustProv(newCustomer.getCustProv());
-	                em.getTransaction().commit();
-	                
-	                response = "Customer Updated";
-	                
-	               
-
-                    break;
-                default: throw new Exception("Unsupported version: " + version);
-            }
-        }
-        catch(Exception e){
-        	response = e.getMessage().toString();
-        }
-        
-        if(logger.isDebugEnabled()){
-            logger.debug("result: '"+response+"'");
-            logger.debug("End updateCustomer");
-        }
-        return response;	
-	}
-		
 	
+	//http://localhost:8080/TravelExperts2/rs/db/getallpackages
 	
-	//http://localhost:8080/TravelExperts2/rs/db/getallpackages	
 	@GET
 	@Path("/getallpackages")
     @Produces(MediaType.APPLICATION_JSON)
@@ -293,11 +183,12 @@ public class SimpleRestService {
         return response;	
 	}
 	
-	//http://localhost:8080/TravelExperts2/rs/db/getcurrentpackages	
+	//http://localhost:8080/TravelExperts2/rs/db/getallbookings
+	
 	@GET
-	@Path("/getcurrentpackages")
+	@Path("/getallbookings")
     @Produces(MediaType.APPLICATION_JSON)
-	public String getCurrentPackages(@QueryParam("request") String request ,
+	public String getAllBookings(@QueryParam("request") String request ,
 			 @DefaultValue("1") @QueryParam("version") int version) {
 
 		if (logger.isDebugEnabled()) {
@@ -316,12 +207,11 @@ public class SimpleRestService {
 	                EntityManagerFactory factory = Persistence.createEntityManagerFactory("TravelExperts2");
 	                EntityManager em = factory.createEntityManager();
 	                
-	                Query query = em.createQuery("select p from Packag p "
-	                		+ "WHERE p.pkgStartDate > CURRENT_DATE");
-	                List<Packag> list = query.getResultList();
+	                Query query = em.createQuery("select b from Booking b");
+	                List<Booking> list = query.getResultList();
 	                
 	                Gson gson = new Gson();
-	                Type type = new TypeToken<List<Packag>>() {}.getType();
+	                Type type = new TypeToken<List<Booking>>() {}.getType();
 	                response = gson.toJson(list, type);
 	                
                     break;
@@ -339,15 +229,16 @@ public class SimpleRestService {
         return response;	
 	}
 	
-	//http://localhost:8080/TravelExperts2/rs/db/insertpackage
-	@POST
-	@Path("/insertpackage")
-	@Consumes({ MediaType.APPLICATION_JSON })
+	//http://localhost:8080/TravelExperts2/rs/db/getallagents
+	
+	@GET
+	@Path("/getallagents")
     @Produces(MediaType.TEXT_PLAIN)
-	public String insertPackage(String jsonString, @FormParam("request") String request ,  @DefaultValue("1") @FormParam("version") int version) {
+	public String getAllAgents(@QueryParam("request") String request ,
+			 @DefaultValue("1") @QueryParam("version") int version) {
 
 		if (logger.isDebugEnabled()) {
-			logger.debug("Start postSomething");
+			logger.debug("Start getSomething");
 			logger.debug("data: '" + request + "'");
 			logger.debug("version: '" + version + "'");
 		}
@@ -358,19 +249,17 @@ public class SimpleRestService {
             switch(version){
 	            case 1:
 	                if(logger.isDebugEnabled()) logger.debug("in version 1");
-	                
+		                
 	                EntityManagerFactory factory = Persistence.createEntityManagerFactory("TravelExperts2");
 	                EntityManager em = factory.createEntityManager();
-	                
+		                
+	                Query query = em.createQuery("select a from Agent a");
+	                List<Agent> list = query.getResultList();
+		                
 	                Gson gson = new Gson();
-	          	  	Packag packag = gson.fromJson(jsonString, Packag.class);
-	                
-	                em.getTransaction().begin();
-	                em.persist(packag);
-	                em.getTransaction().commit();
-	                
-	                response = "Package created";
-
+	                Type type = new TypeToken<List<Agent>>() {}.getType();
+	                response = gson.toJson(list, type);
+		                
                     break;
                 default: throw new Exception("Unsupported version: " + version);
             }
@@ -378,128 +267,121 @@ public class SimpleRestService {
         catch(Exception e){
         	response = e.getMessage().toString();
         }
-        
+	        
         if(logger.isDebugEnabled()){
             logger.debug("result: '"+response+"'");
-            logger.debug("End postSomething");
+            logger.debug("End getSomething");
         }
         return response;	
 	}
-
-	//http://localhost:8080/TravelExperts2/rs/db/updatepackage
-	@POST
-	@Path("/updatepackage")
-	@Consumes({ MediaType.APPLICATION_JSON })
-    @Produces(MediaType.TEXT_PLAIN)
-	public String updatePackage(String jsonString, @FormParam("request") String request ,  @DefaultValue("1") @FormParam("version") int version) {
-
-		if (logger.isDebugEnabled()) {
-			logger.debug("Start postSomething");
-			logger.debug("data: '" + request + "'");
-			logger.debug("version: '" + version + "'");
-		}
-
-		String response = null;
-
-        try{			
-            switch(version){
-	            case 1:
-	                if(logger.isDebugEnabled()) logger.debug("in version 1");
-	                
-	                EntityManagerFactory factory = Persistence.createEntityManagerFactory("TravelExperts2");
-	                EntityManager em = factory.createEntityManager();
-	                
-	                	                
-	                Gson gson = new Gson();
-	          	  	Packag newPackage = gson.fromJson(jsonString, Packag.class);
-	          	  	
-	          	  	Packag oldPackage = em.find(Packag.class, newPackage.getPackageId());
-	          	  	
-	                
-	                em.getTransaction().begin();
-	                oldPackage.setPkgAgencyCommission(newPackage.getPkgAgencyCommission());
-	                oldPackage.setPkgBasePrice(newPackage.getPkgBasePrice());
-	                oldPackage.setPkgDesc(newPackage.getPkgDesc());
-	                oldPackage.setPkgEndDate(newPackage.getPkgEndDate());
-	                oldPackage.setPkgName(newPackage.getPkgName());
-	                oldPackage.setPkgStartDate(newPackage.getPkgStartDate());
-	                em.getTransaction().commit();
-	                
-	                response = "Package Updated";
-	                
-	               
-
-                    break;
-                default: throw new Exception("Unsupported version: " + version);
-            }
-        }
-        catch(Exception e){
-        	response = e.getMessage().toString();
-        }
-        
-        if(logger.isDebugEnabled()){
-            logger.debug("result: '"+response+"'");
-            logger.debug("End putSomething");
-        }
-        return response;	
-	}
-
-	//http://localhost:8080/TravelExperts2/rs/db/deletepackage
-	@DELETE
-	@Path("/deletepackage/{packageid}")
-	public String deletePackage(@PathParam("packageid") int packageid, @FormParam("request") String request ,  @DefaultValue("1") @FormParam("version") int version) {
 		
+	//http://localhost:8080/TravelExperts2/rs/db/getallclasses	
+	@GET
+	@Path("/getallclasses")
+    @Produces(MediaType.APPLICATION_JSON)
+	public String getAllClasses(@QueryParam("request") String request ,
+			 @DefaultValue("1") @QueryParam("version") int version) {
+
 		if (logger.isDebugEnabled()) {
-			logger.debug("Start deletePackage");
+			logger.debug("Start getSomething");
 			logger.debug("data: '" + request + "'");
 			logger.debug("version: '" + version + "'");
 		}
 
 		String response = null;
+
         try{			
             switch(version){
 	            case 1:
 	                if(logger.isDebugEnabled()) logger.debug("in version 1");
-	                
+
 	                EntityManagerFactory factory = Persistence.createEntityManagerFactory("TravelExperts2");
 	                EntityManager em = factory.createEntityManager();
-	                
-	                Packag delPackage = em.find(Packag.class, packageid);
-	                	                
-	                em.getTransaction().begin();
-	                em.remove(delPackage);
-	                em.getTransaction().commit();
-	                
-	                response = "Package Deleted";
-	                
-                    break;
+		                
+	                Query query = em.createQuery("SELECT c FROM Clas c");
+	                List<Clas> list = query.getResultList();
+		                
+	                Gson gson = new Gson();
+	                Type type = new TypeToken<List<Clas>>() {}.getType();
+	                response = gson.toJson(list, type);
+
+	                break;
                 default: throw new Exception("Unsupported version: " + version);
             }
         }
         catch(Exception e){
         	response = e.getMessage().toString();
         }
-        
+	        
         if(logger.isDebugEnabled()){
             logger.debug("result: '"+response+"'");
-            logger.debug("End deletePackage");
+            logger.debug("End getSomething");
         }
-        return response;
+        return response;	
+	}
+		
+	//http://localhost:8080/TravelExperts2/rs/db/getallfees
+	@GET
+	@Path("/getallfees")
+    @Produces(MediaType.APPLICATION_JSON)
+	public String getAllFees(@QueryParam("request") String request ,
+			 @DefaultValue("1") @QueryParam("version") int version) {
+
+		if (logger.isDebugEnabled()) {
+			logger.debug("Start getSomething");
+			logger.debug("data: '" + request + "'");
+			logger.debug("version: '" + version + "'");
+		}
+
+		String response = null;
+
+        try{			
+            switch(version){
+	            case 1:
+	                if(logger.isDebugEnabled()) logger.debug("in version 1");
+
+	                EntityManagerFactory factory = Persistence.createEntityManagerFactory("TravelExperts2");
+	                EntityManager em = factory.createEntityManager();
+			                
+	                Query query = em.createQuery("SELECT f FROM Fee f");
+	                List<Fee> list = query.getResultList();
+			                
+	                Gson gson = new Gson();
+	                Type type = new TypeToken<List<Fee>>() {}.getType();
+	                response = gson.toJson(list, type);
+
+	                break;
+                default: throw new Exception("Unsupported version: " + version);
+            }
+        }
+        catch(Exception e){
+        	response = e.getMessage().toString();
+        }
+		        
+        if(logger.isDebugEnabled()){
+            logger.debug("result: '"+response+"'");
+            logger.debug("End getSomething");
+        }
+        return response;	
 	}
 	
+<<<<<<< HEAD
 	/*
 	 * This block of code does crud operations on packagesproductssuppliers
 	 */
 	
 	//http://localhost:8080/TravelExperts2/rs/db/getallpackagesproductsuppliers	
+=======
+	//http://localhost:8080/TravelExperts2/rs/db/getalltriptypes
+>>>>>>> Graeme-Service
 	@GET
-	@Path("/getallpackagesproductsuppliers")
+	@Path("/getalltriptypes")
     @Produces(MediaType.APPLICATION_JSON)
-	public String getAllPackagesProductsSuppliers(@QueryParam("request") String request ,
+	public String getAllTripTypes(@QueryParam("request") String request ,
 			 @DefaultValue("1") @QueryParam("version") int version) {
 
 		if (logger.isDebugEnabled()) {
-			logger.debug("Start getAllPackagesProductsSuppliers");
+			logger.debug("Start getSomething");
 			logger.debug("data: '" + request + "'");
 			logger.debug("version: '" + version + "'");
 		}
@@ -510,36 +392,41 @@ public class SimpleRestService {
             switch(version){
 	            case 1:
 	                if(logger.isDebugEnabled()) logger.debug("in version 1");
-	                
+
 	                EntityManagerFactory factory = Persistence.createEntityManagerFactory("TravelExperts2");
 	                EntityManager em = factory.createEntityManager();
-	                
-	                Query query = em.createQuery("SELECT p FROM PackagesProductsSupplier p");
-	                List<PackagesProductsSupplier> list = query.getResultList();
-	                
+			                
+	                Query query = em.createQuery("SELECT t FROM Triptype t");
+	                List<Triptype> list = query.getResultList();
+			                
 	                Gson gson = new Gson();
-	                Type type = new TypeToken<List<PackagesProductsSupplier>>() {}.getType();
+	                Type type = new TypeToken<List<Triptype>>() {}.getType();
 	                response = gson.toJson(list, type);
-	                
-                    break;
+
+	                break;
                 default: throw new Exception("Unsupported version: " + version);
             }
         }
         catch(Exception e){
         	response = e.getMessage().toString();
         }
-        
+		        
         if(logger.isDebugEnabled()){
             logger.debug("result: '"+response+"'");
-            logger.debug("End getPackagesProductsSuppliers");
+            logger.debug("End getSomething");
         }
         return response;	
 	}
-
 	
+<<<<<<< HEAD
 	//http://localhost:8080/TravelExperts2/rs/db/insertpackagesproductsupplier
 	@POST
 	@Path("/insertpackagesproductsupplier")
+=======
+	//http://localhost:8080/TravelExperts2/rs/db/postpackage
+	@POST
+	@Path("/postpackage")
+>>>>>>> Graeme-Service
 	@Consumes({ MediaType.APPLICATION_JSON })
     @Produces(MediaType.TEXT_PLAIN)
 	public String insertPackagesProductsSupplier(String jsonString, @FormParam("request") String request ,  @DefaultValue("1") @FormParam("version") int version) {
@@ -583,7 +470,17 @@ public class SimpleRestService {
         }
         return response;	
 	}
+<<<<<<< HEAD
 
+=======
+	
+	//http://localhost:8080/TravelExperts2/rs/db/postbooking
+	@POST
+	@Path("/postbooking")
+	@Consumes({ MediaType.APPLICATION_JSON })
+    @Produces(MediaType.TEXT_PLAIN)
+	public String postBooking(String jsonString, @FormParam("request") String request ,  @DefaultValue("1") @FormParam("version") int version) {
+>>>>>>> Graeme-Service
 
 	//http://localhost:8080/TravelExperts2/rs/db/deletepackagesproductssupplier
 	@POST
@@ -604,6 +501,7 @@ public class SimpleRestService {
 	                
 	                EntityManagerFactory factory = Persistence.createEntityManagerFactory("TravelExperts2");
 	                EntityManager em = factory.createEntityManager();
+<<<<<<< HEAD
 	                
 	                Gson gson = new Gson();
 	                
@@ -666,6 +564,35 @@ public class SimpleRestService {
 	                Type type = new TypeToken<List<Booking>>() {}.getType();
 	                response = gson.toJson(list, type);
 	                
+=======
+		                
+	                Gson gson = new Gson();
+	          	  	Booking booking = gson.fromJson(jsonString, Booking.class);
+	          	  	//add current date to booking object	
+	          	  	SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	          	  	Date date = format.parse(format.format(new Date()));
+	          	  	booking.setBookingDate(date);	
+	          	  	//add customer id 
+	          	  	Customer cust = gson.fromJson(jsonString, Customer.class);
+	          	  	booking.setCustomer(cust);
+	          	  	System.out.println("JSON = " + jsonString);	          	  	
+	          	  	//add package id
+	          	  	Packag pack = gson.fromJson(jsonString, Packag.class);
+	          	  	booking.setPackag(pack);
+	          	  	//add booking detail
+	          	  	Bookingdetail detail = gson.fromJson(jsonString, Bookingdetail.class);	
+	          	  	detail.setBooking(booking);
+	          	  	List<Bookingdetail> detailsList = new ArrayList();
+	          	  	detailsList.add(detail);
+	          	    booking.setBookingdetails(detailsList);         	  	
+	          	  	//insert booking
+	                em.getTransaction().begin();
+	                em.persist(booking);	                
+	                em.getTransaction().commit();	                
+	                
+	                response = "Booking and Detail created";
+
+>>>>>>> Graeme-Service
                     break;
                 default: throw new Exception("Unsupported version: " + version);
             }
@@ -673,6 +600,7 @@ public class SimpleRestService {
         catch(Exception e){
         	response = e.getMessage().toString();
         }
+<<<<<<< HEAD
         
         if(logger.isDebugEnabled()){
             logger.debug("result: '"+response+"'");
@@ -775,10 +703,17 @@ public class SimpleRestService {
         if(logger.isDebugEnabled()){
             logger.debug("result: '"+response+"'");
             logger.debug("End getSomething");
+=======
+	        
+        if(logger.isDebugEnabled()){
+            logger.debug("result: '"+response+"'");
+            logger.debug("End postSomething");
+>>>>>>> Graeme-Service
         }
         return response;	
 	}
 	
+<<<<<<< HEAD
 
 	// Added postProduct() -- Corinne Mullan
 	// http://localhost:8080/TravelExperts2/rs/db/insertproduct
@@ -790,12 +725,24 @@ public class SimpleRestService {
 
 		if (logger.isDebugEnabled()) {
 			logger.debug("Start postProduct");
+=======
+	//http://localhost:8080/TravelExperts2/rs/db/agentlogin
+	@POST
+	@Path("/agentlogin")
+	@Consumes({ MediaType.APPLICATION_JSON })
+	@Produces(MediaType.TEXT_PLAIN)
+	public String authenticateAgent(String jsonString, @FormParam("request") String request ,  @DefaultValue("1") @FormParam("version") int version) {
+
+		if (logger.isDebugEnabled()) {
+			logger.debug("Start postSomething");
+>>>>>>> Graeme-Service
 			logger.debug("data: '" + request + "'");
 			logger.debug("version: '" + version + "'");
 		}
 
 		String response = null;
 
+<<<<<<< HEAD
         try{			
             switch(version){
 	            case 1:
@@ -886,11 +833,65 @@ public class SimpleRestService {
 
 		if (logger.isDebugEnabled()) {
 			logger.debug("Start getAllProductsSuppliers");
+=======
+	    try{			
+	        switch(version){
+	            case 1:
+	                if(logger.isDebugEnabled()) logger.debug("in version 1");	    
+		                
+	                JsonObject json = new JsonParser().parse(jsonString).getAsJsonObject();
+	          	  	String email = json.get("username").getAsString();
+	          	  	String password = json.get("password").getAsString();          
+	          	    
+	                EntityManagerFactory factory = Persistence.createEntityManagerFactory("TravelExperts2");
+	                EntityManager em = factory.createEntityManager();    
+	          	  	Query query = em.createQuery("SELECT a.Pass FROM Agent a where a.agtEmail=?1");
+	          	  	query.setParameter(1, email);	   
+	          	  	
+		          	List<String> list = query.getResultList();   
+		          	if (list.isEmpty()) {
+		          		response = "Username is incorrect";
+		          	}
+	          	  	else {
+	          	  		String hashedPassword = list.get(0);
+	          	  		boolean result = BCrypt.checkpw(password, hashedPassword);	          	  		
+	          	  		if (result) {
+	          	  			response = "IStrue";
+	          	  		}
+	          	  		
+	          	  		else response = "IsFalse";	          	  		
+	          	  	}
+	          	  	
+	          	  	
+	                break;
+	            default: throw new Exception("Unsupported version: " + version);
+	        }
+	    }
+	    catch(Exception e){
+	      	response = e.getMessage().toString();
+	    }
+	        
+	    if(logger.isDebugEnabled()){
+	        logger.debug("result: '"+response+"'");
+	        logger.debug("End agentlogin");
+	    }
+	    return response;	
+	}
+	
+	@PUT
+	@Path("/putpackage")
+	@Consumes({ MediaType.APPLICATION_JSON })
+    @Produces(MediaType.TEXT_PLAIN)
+	public String putPackage(String jsonString, @FormParam("request") String request ,  @DefaultValue("1") @FormParam("version") int version) {
+		if (logger.isDebugEnabled()) {
+			logger.debug("Start putSomething");
+>>>>>>> Graeme-Service
 			logger.debug("data: '" + request + "'");
 			logger.debug("version: '" + version + "'");
 		}
 
 		String response = null;
+<<<<<<< HEAD
 
         try{			
             switch(version){
@@ -930,4 +931,75 @@ public class SimpleRestService {
         return response;	
 	}
 
+=======
+
+        try{			
+            switch(version){
+	            case 1:
+	                if(logger.isDebugEnabled()) logger.debug("in version 1");
+	                
+	                EntityManagerFactory factory = Persistence.createEntityManagerFactory("TravelExperts2");
+	                EntityManager em = factory.createEntityManager();
+	                
+	                Gson gson = new Gson();
+	          	  	Packag newPackage = gson.fromJson(jsonString, Packag.class);
+	          	  	
+	          	  	Packag oldPackage = em.find(Packag.class, newPackage.getPackageId());
+	                
+	                em.getTransaction().begin();
+	                oldPackage.setPackageId(newPackage.getPackageId());
+	                oldPackage.setPkgAgencyCommission(newPackage.getPkgAgencyCommission());
+	                oldPackage.setPkgBasePrice(newPackage.getPkgBasePrice());
+	                oldPackage.setPkgDesc(newPackage.getPkgDesc());
+	                oldPackage.setPkgEndDate(newPackage.getPkgEndDate());
+	                oldPackage.setPkgName(newPackage.getPkgName());
+	                oldPackage.setPkgStartDate(newPackage.getPkgStartDate());
+	                em.getTransaction().commit();
+	                
+	                response = "Package updated";
+
+                    break;
+                default: throw new Exception("Unsupported version: " + version);
+            }
+        }
+        catch(Exception e){
+        	response = e.getMessage().toString();
+        }
+        
+        if(logger.isDebugEnabled()){
+            logger.debug("result: '"+response+"'");
+            logger.debug("End putSomething");
+        }
+        return response;	
+	}
+
+	@DELETE
+	@Path("/<add method name here>")
+	public void deleteSomething(@FormParam("request") String request ,  @DefaultValue("1") @FormParam("version") int version) {
+		
+		if (logger.isDebugEnabled()) {
+			logger.debug("Start deleteSomething");
+			logger.debug("data: '" + request + "'");
+			logger.debug("version: '" + version + "'");
+		}
+
+
+        try{			
+            switch(version){
+	            case 1:
+	                if(logger.isDebugEnabled()) logger.debug("in version 1");
+
+                    break;
+                default: throw new Exception("Unsupported version: " + version);
+            }
+        }
+        catch(Exception e){
+        	e.printStackTrace();
+        }
+        
+        if(logger.isDebugEnabled()){
+            logger.debug("End deleteSomething");
+        }
+	}
+>>>>>>> Graeme-Service
 }
