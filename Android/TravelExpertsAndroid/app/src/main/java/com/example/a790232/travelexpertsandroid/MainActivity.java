@@ -135,17 +135,25 @@ public class MainActivity extends Activity {
 
             // Display all of these packages in the list view on the main activity.
             // Use the package_item.xml layout for each item in the list view.
-            // ***** TO DO *****:  also display an image for each package
             ArrayList<HashMap<String,String>> pkgMaps = new ArrayList<>();
             for (Packag up : upcomingPackages) {
                 HashMap<String,String> map = new HashMap<>();
                 map.put("pkgname", up.getPkgName() + "");
                 map.put("pkgdates", up.getDates() + "");
+
+                String imgFileName = up.getPkgImageFile();
+                String imgName = "";
+                if (imgFileName != null) {
+                    int idx = imgFileName.indexOf('.');
+                    imgName = imgFileName.substring(0, idx);
+                }
+
+                map.put("pkgimagefile", imgName + "");
                 pkgMaps.add(map);
             }
             int resource = R.layout.package_item;
-            String [] from = {"pkgname", "pkgdates"};
-            int [] to = {R.id.tvPkgName, R.id.tvPkgDates};
+            String [] from = {"pkgname", "pkgdates", "pkgimagefile"};
+            int [] to = {R.id.tvPkgName, R.id.tvPkgDates, R.id.ivPackage};
             SimpleAdapter adapter = new SimpleAdapter(getApplicationContext(), pkgMaps, resource, from, to);
             lvPackages.setAdapter(adapter);
         }
