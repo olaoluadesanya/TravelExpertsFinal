@@ -83,6 +83,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
@@ -94,16 +95,15 @@ import org.json.JSONObject;
 
 public class PackagesController implements Initializable{
 	
-	private String URLCONSTANT= "http://10.163.101.59:8080";
-	//private String URLCONSTANT="http://localhost:8080";
+	//private String URLCONSTANT= "http://10.163.101.59:8080";
+	private String URLCONSTANT="http://localhost:8080";
 	
 	// ===================Sunghyun Lee =====================================================
 	// controls and variables for package tab
 	@FXML
     private Label lblPackageId;
 	
-	@FXML
-    private Label lblProductsInPkg;
+	
 
     @FXML
     private JFXTextField tfPkgName;
@@ -131,6 +131,12 @@ public class PackagesController implements Initializable{
 
     @FXML
     private TableColumn<Packag, String> tcPkgName;
+    
+    @FXML
+    private TableColumn<ProductsSupplier, String> tcProductsPkgTab;
+
+    @FXML
+    private TableColumn<ProductsSupplier, String> tcSuppliersPkgTab;
 
     @FXML
     private JFXButton btnEdit1;
@@ -142,10 +148,13 @@ public class PackagesController implements Initializable{
     private JFXButton btnDelete1;
 
     @FXML
-    private JFXListView<model.Product> lvProductsInPackage;
+    private TableView<ProductsSupplier> tvProductsInPackage;
 
     @FXML
-    private TableView<ProductsSupplier> tvProductsSuppliers;
+    private TableColumn<ProductsSupplier, String> tcProductsInPkg;
+
+    @FXML
+    private TableView<ProductsSupplier> tvProductsSuppliers1;
 
     @FXML
     private Label lblProductsSuppliers;
@@ -166,14 +175,17 @@ public class PackagesController implements Initializable{
 
     //private StringBuffer buffer;
     
-    private ObservableList<model.Product> productsInPackage;
     private ObservableList<Packag> packages1;
-    private ObservableList<ProductsSupplier> psList;
+    //private ObservableList<ProductsSupplier> psList;
     private ObservableList<PackagesProductsSupplier> ppsList;
+    private ObservableList<ProductsSupplier> productsInPkg;
     
     private String pkgStatus="null"; // whether package is being added or edited
+    private Packag newPkg; // package that is created or updated
+    // productsSupplier that are to be added into or deleted from package
+    private List<ProductsSupplier> addedPsList;
+    private List<ProductsSupplier> deletedPsList;
     
-    private Packag newPkg;
     
  // =====================================================================================
 	
@@ -248,13 +260,19 @@ public class PackagesController implements Initializable{
     	
     	// instantiate lists
     	packages1 = FXCollections.observableArrayList();
-    	productsInPackage = FXCollections.observableArrayList();
-    	psList = FXCollections.observableArrayList();
+    	//psList = FXCollections.observableArrayList();
     	ppsList = FXCollections.observableArrayList();
+    	addedPsList = new ArrayList<>();
+    	deletedPsList=new ArrayList<>();
+    	productsInPkg = FXCollections.observableArrayList();
     	
     	// instantiate table columns
     	tcPkgId.setCellValueFactory(new PropertyValueFactory<>("PackageId"));
 		tcPkgName.setCellValueFactory(new PropertyValueFactory<>("PkgName"));
+		tcProductsPkgTab.setCellValueFactory(new PropertyValueFactory<>("prodName"));
+		tcSuppliersPkgTab.setCellValueFactory(new PropertyValueFactory<>("supName"));
+		tcProductsInPkg.setCellValueFactory(new PropertyValueFactory<>("prodName"));
+		
     	
 		// read lists from web server and set them to tables
     	readPackages();
@@ -422,6 +440,9 @@ public class PackagesController implements Initializable{
     	readProductsSuppliers();
     	tvProducts.setItems(products);   
     	tvProductsSuppliers2.setItems(productsSuppliers);
+    	
+    	// Hi Corinne, I will use this too -Sung
+    	tvProductsSuppliers1.setItems(productsSuppliers);
     	
     	// Initialize the combo box containing supplier names
     	cboSuppliers.setItems(suppliers);
@@ -618,11 +639,10 @@ public class PackagesController implements Initializable{
     	
     	// hide products-related controls
     	
-    	lvProductsInPackage.setVisible(false);
-    	lblProductsInPkg.setVisible(false);
+    	tvProductsInPackage.setVisible(false);
     	
     	lblProductsSuppliers.setVisible(false);
-    	tvProductsSuppliers.setVisible(false);	
+    	tvProductsSuppliers1.setVisible(false);	
     	btnInsertProductIntoPkg.setVisible(false);
     	btnRemoveProductFromPkg.setVisible(false);
     	
@@ -734,6 +754,9 @@ public class PackagesController implements Initializable{
 	    		newPkg.setPkgName(tfPkgName.getText());
 	    		newPkg.setPkgEndDate(dpPkgEndDate.getValue());
 	    		newPkg.setPkgStartDate(dpPkgStartDate.getValue());
+	    		
+	    		// update package
+	    		
                 // send json to web server
                 Gson gson = new Gson();
                 Type type = new TypeToken<Packag>() {}.getType();
@@ -767,6 +790,27 @@ public class PackagesController implements Initializable{
 				{
 					e.printStackTrace();
 				}
+				
+				// insert product into package
+				
+				if (addedPsList.size()>0) // if any product has been added
+				{
+					for (model.ProductsSupplier p : addedPsList )
+					{
+						model.PackagesProductsSupplier pps = new PackagesProductsSupplier(newPkg.getPackageId(), p.getProductSupplierId());
+						// send it to web server
+					}
+				}
+				
+				// remove product from package
+				if (deletedPsList.size()>0) // if any product has been removed
+				{
+					
+				}
+				
+				
+				
+				
 				if (success1==200)
 	        	{
 	        		Alert alert = new Alert(AlertType.INFORMATION);
@@ -785,17 +829,18 @@ public class PackagesController implements Initializable{
 	        	}        	
 
 	    	}
-	    	// edit
 	    	
 	    	newPkg=null;
+	    	addedPsList.clear();
+	    	deletedPsList.clear();
 	    	
         	btnSave1.setDisable(true);
-    		lvProductsInPackage.setVisible(true);
-        	lblProductsInPkg.setVisible(true);
+    		tvProductsInPackage.setVisible(true);
 
         	//re-read data from web server
-        	//readPackagesProductsSuppliers();
+        	readPackagesProductsSuppliers();
         	readPackages();
+        	readProductsSuppliers();
         	
         	// select the package just created or updated
         	if (pkgStatus=="add")
@@ -889,11 +934,35 @@ public class PackagesController implements Initializable{
 	    	taPkgDesc.setText(selectedPackage.getPkgDesc());
 	    	tfPkgBasePrice.setText(selectedPackage.getPkgBasePrice()+"");
 	    	tfPkgAgencyCommission.setText(selectedPackage.getPkgAgencyCommission()+"");
+	    	
+	    	displayProductsInPkg();
+	    	
 
 	    	
     	}
     }
-
+    // when a package is selected, display the products included in the package on tvProductsInPkg
+	private void displayProductsInPkg()
+	{
+		List<Integer> productsSupplierIds = new ArrayList<>(); 
+    	
+		// first using packagesProductsSupplier list, find productsSupplier ids that are associated with the package.
+		// Then, put the ids into the temporary list
+    	for (PackagesProductsSupplier p : ppsList)
+    	{
+    		if (p.getPackageId() == tvPackages.getSelectionModel().getSelectedItem().getPackageId())
+    		{
+    			productsSupplierIds.add(p.getProductSupplierId());
+    		}
+    	}
+    	
+    	// then using ids in the temporary list, find the productSupplier objects that should be displayed on tvProductsInPkg
+    	for (ProductsSupplier p : productsSuppliers)
+    	{
+    		if (productsSupplierIds.contains(p.getProductSupplierId()))
+    			productsInPkg.add(p);
+    	}
+	}
 	private void enableInputs(boolean myBool)
     {
     	tfPkgName.setEditable(myBool);
@@ -904,7 +973,7 @@ public class PackagesController implements Initializable{
     	dpPkgEndDate.setDisable(!myBool);
     	
     	lblProductsSuppliers.setVisible(myBool);
-    	tvProductsSuppliers.setVisible(myBool);
+    	tvProductsSuppliers1.setVisible(myBool);
     	
     	btnInsertProductIntoPkg.setVisible(myBool);
     	btnRemoveProductFromPkg.setVisible(myBool);
@@ -927,13 +996,36 @@ public class PackagesController implements Initializable{
     	newPkg=null;
     	
     	btnSave1.setDisable(true);
-		lvProductsInPackage.setVisible(true);
-    	lblProductsInPkg.setVisible(true);
+		tvProductsInPackage.setVisible(true);
 		
 		displayPackageInfo();
 		pkgStatus="null";
+		addedPsList.clear();
+		deletedPsList.clear();
 		
 		
+    }
+	
+	@FXML
+    void insertProductIntoPkg(ActionEvent event) {
+		ProductsSupplier selectedPs = tvProductsSuppliers1.getSelectionModel().getSelectedItem();
+		if (selectedPs!= null)
+		{
+			addedPsList.add(selectedPs);
+			productsInPkg.add(selectedPs);
+		}
+
+    }
+
+    @FXML
+    void removeProductFromPkg(ActionEvent event) {
+    	ProductsSupplier selectedPs = tvProductsInPackage.getSelectionModel().getSelectedItem();
+		if (selectedPs!= null)
+		{
+			deletedPsList.add(selectedPs);
+			productsInPkg.remove(selectedPs);
+		}
+
     }
 	
 	// =====================================================================================
