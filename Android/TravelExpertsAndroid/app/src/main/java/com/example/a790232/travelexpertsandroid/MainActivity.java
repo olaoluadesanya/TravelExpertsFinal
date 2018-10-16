@@ -44,12 +44,6 @@ public class MainActivity extends Activity {
 
     Customer customer;
 
-    // Define a constant for the IP address of the web service
-    // Use 10.0.2.2 when running an emulator, and the web service is running on the same machine
-    // (this IP bridges from the emulated device to the machine it is running on)
-    static final String IP_ADDRESS = "10.0.2.2";
-    //static final String IP_ADDRESS = "10.163.101.59";
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -98,7 +92,7 @@ public class MainActivity extends Activity {
 
                 // This URL is used to retrieve all packages with start dates in the future
                 // from the web service.
-                URL url = new URL("http://" + IP_ADDRESS + ":8080/TravelExperts2/rs/db/getcurrentpackages");
+                URL url = new URL("http://10.163.101.59:8080/TravelExperts2/rs/db/getcurrentpackages");
 
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestProperty("accept", "application/json");
@@ -135,25 +129,17 @@ public class MainActivity extends Activity {
 
             // Display all of these packages in the list view on the main activity.
             // Use the package_item.xml layout for each item in the list view.
+            // ***** TO DO *****:  also display an image for each package
             ArrayList<HashMap<String,String>> pkgMaps = new ArrayList<>();
             for (Packag up : upcomingPackages) {
                 HashMap<String,String> map = new HashMap<>();
                 map.put("pkgname", up.getPkgName() + "");
                 map.put("pkgdates", up.getDates() + "");
-
-                String imgFileName = up.getPkgImageFile();
-                String imgName = "";
-                if (imgFileName != null) {
-                    int idx = imgFileName.indexOf('.');
-                    imgName = imgFileName.substring(0, idx);
-                }
-
-                map.put("pkgimagefile", imgName + "");
                 pkgMaps.add(map);
             }
             int resource = R.layout.package_item;
-            String [] from = {"pkgname", "pkgdates", "pkgimagefile"};
-            int [] to = {R.id.tvPkgName, R.id.tvPkgDates, R.id.ivPackage};
+            String [] from = {"pkgname", "pkgdates"};
+            int [] to = {R.id.tvPkgName, R.id.tvPkgDates};
             SimpleAdapter adapter = new SimpleAdapter(getApplicationContext(), pkgMaps, resource, from, to);
             lvPackages.setAdapter(adapter);
         }

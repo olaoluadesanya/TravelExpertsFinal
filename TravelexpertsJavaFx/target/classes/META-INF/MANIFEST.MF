@@ -1,15 +1,5 @@
 Manifest-Version: 1.0
-<<<<<<< HEAD
 Built-By: 790232
 Build-Jdk: 1.8.0_161
-=======
-<<<<<<< HEAD
-Built-By: 773646
-Build-Jdk: 1.8.0_171
-=======
-Built-By: 71374
-Build-Jdk: 1.8.0_181
->>>>>>> origin/Corinne2
->>>>>>> Ola
 Created-By: Maven Integration for Eclipse
 
