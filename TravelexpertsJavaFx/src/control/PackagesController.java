@@ -442,7 +442,7 @@ public class PackagesController implements Initializable{
     	tvProductsSuppliers2.setItems(productsSuppliers);
     	
     	// Hi Corinne, I will use this too -Sung
-    	tvProductsSuppliers1.setItems(productsSuppliers);
+    	//tvProductsSuppliers1.setItems(productsSuppliers);
     	
     	// Initialize the combo box containing supplier names
     	cboSuppliers.setItems(suppliers);
@@ -642,14 +642,15 @@ public class PackagesController implements Initializable{
     	tvProductsInPackage.setVisible(false);
     	
     	lblProductsSuppliers.setVisible(false);
-    	tvProductsSuppliers1.setVisible(false);	
+    	//tvProductsSuppliers1.setVisible(false);	
     	btnInsertProductIntoPkg.setVisible(false);
     	btnRemoveProductFromPkg.setVisible(false);
     	
     	
     	emptyTxtFieldsInPkgTab();
     	
-    	
+    	System.out.println(pkgStatus);
+    	System.out.println(lblPackageId.getText());
     	
 
     }
@@ -664,6 +665,7 @@ public class PackagesController implements Initializable{
 		taPkgDesc.setText("");
 		dpPkgEndDate.setValue(new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
 		dpPkgStartDate.setValue(new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+		System.out.println("emptied stuff");
 	}
 
 	@FXML
@@ -973,7 +975,7 @@ public class PackagesController implements Initializable{
     	dpPkgEndDate.setDisable(!myBool);
     	
     	lblProductsSuppliers.setVisible(myBool);
-    	tvProductsSuppliers1.setVisible(myBool);
+    	//tvProductsSuppliers1.setVisible(myBool);
     	
     	btnInsertProductIntoPkg.setVisible(myBool);
     	btnRemoveProductFromPkg.setVisible(myBool);
