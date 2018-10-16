@@ -169,6 +169,7 @@ public class SimpleRestService {
 	                
 	                Gson gson = new Gson();
 	          	  	Customer customer = gson.fromJson(jsonString, Customer.class);
+	          	  	
 	                
 	                em.getTransaction().begin();
 	                em.persist(customer);
@@ -233,6 +234,8 @@ public class SimpleRestService {
 	                oldCustomer.setCustLastName(newCustomer.getCustLastName());
 	                oldCustomer.setCustPostal(newCustomer.getCustPostal());
 	                oldCustomer.setCustProv(newCustomer.getCustProv());
+	                oldCustomer.setUserid(newCustomer.getUserid());
+	                oldCustomer.setPasswd(newCustomer.getPasswd());
 	                em.getTransaction().commit();
 	                
 	                response = "Customer Updated";
@@ -958,24 +961,86 @@ public class SimpleRestService {
 	                                
 	                EntityManagerFactory factory = Persistence.createEntityManagerFactory("TravelExperts2");
 	                EntityManager em = factory.createEntityManager();    
-	          	  	Query query = em.createQuery("SELECT a.pass FROM Agent a where a.agtEmail= :email");
+
+	          	  	Query query = em.createQuery("select a.pass from Agent a where a.agtEmail= :email");
 	          	  	query.setParameter("email", email);
 	          	  	
-	          	  	List<String> passwordList = query.getResultList();
-	          	  	//check if list is empty, meaning that the username entered didn't return anything from database
-	          	  	if (passwordList.isEmpty()){
-	          	  		response = "false";
-	          	  		break;
-	          	  	}
-	          	  	//check user entered pw against hashed pw
-	          	  	boolean result = BCrypt.checkpw(password, passwordList.get(0));
-	          	  	if (result == true) {
-	          	  		response = "true";
-	          	  	}
-	          	  	else {
-	          	  		response = "false";
-	          	  	}
-	          	  	break;
+	          	    List<String> passwordList = query.getResultList();
+                    //check if list is empty, meaning that the username entered didn't return anything from database
+                    if (passwordList.isEmpty()){
+                        response = "false";
+                        break;
+                    }
+                    //check user entered pw against hashed pw
+                    boolean result = BCrypt.checkpw(password, passwordList.get(0));
+                    if (result == true) {
+                        response = "true";
+                        
+                    }
+                    else {
+                        response = "false";
+                    }
+                    break;
+                default: throw new Exception("Unsupported version: " + version);
+            }
+        }
+        catch(Exception e){
+        	response = e.getMessage().toString();
+        }
+        
+        if(logger.isDebugEnabled()){
+            logger.debug("result: '"+response+"'");
+            logger.debug("End postSomething");
+        }
+        return response;	
+	}
+	
+	//http://localhost:8080/TravelExperts2/rs/db/customerlogin
+	@POST
+	@Path("/customerlogin")
+	@Consumes({ MediaType.APPLICATION_JSON })
+    @Produces(MediaType.TEXT_PLAIN)
+	public String authenticateCustomer(String jsonString, @FormParam("request") String request ,  @DefaultValue("1") @FormParam("version") int version) {
+
+		if (logger.isDebugEnabled()) {
+			logger.debug("Start postCustomerLogin");
+			logger.debug("data: '" + request + "'");
+			logger.debug("version: '" + version + "'");
+		}
+
+		String response = null;
+
+        try{			
+            switch(version){
+	            case 1:
+	                if(logger.isDebugEnabled()) logger.debug("in version 1");	    
+	                
+	                JsonObject json = new JsonParser().parse(jsonString).getAsJsonObject();
+	          	  	String userid = json.get("userid").getAsString();
+	          	  	String password = json.get("passwd").getAsString();
+	                                
+	                EntityManagerFactory factory = Persistence.createEntityManagerFactory("TravelExperts2");
+	                EntityManager em = factory.createEntityManager();    
+	          	  	Query query = em.createQuery("select c.passwd from Customer c where c.userid= :userid");
+	          	  	query.setParameter("userid", userid);
+
+	          	  	
+	          	    List<String> passwordList = query.getResultList();
+                    //check if list is empty, meaning that the username entered didn't return anything from database
+                    if (passwordList.isEmpty()){
+                        response = "false";
+                        break;
+                    }
+                    //check user entered pw against hashed pw
+                    boolean result = BCrypt.checkpw(password, passwordList.get(0));
+                    if (result == true) {
+                        response = "true";
+                        
+                    }
+                    else {
+                        response = "false";
+                    }
+                    break;
                 default: throw new Exception("Unsupported version: " + version);
             }
         }
