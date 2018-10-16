@@ -68,7 +68,6 @@ import model.Customer;
 import model.FeeType;
 
 import model.Supplier;
-
 import model.Packag;
 import model.PackagesProductsSupplier;
 
@@ -185,6 +184,7 @@ public class PackagesController implements Initializable{
     // productsSupplier that are to be added into or deleted from package
     private List<ProductsSupplier> addedPsList;
     private List<ProductsSupplier> deletedPsList;
+    
     
     
  // =====================================================================================
@@ -488,11 +488,9 @@ public class PackagesController implements Initializable{
             {
                 JSONObject jsonPps = (JSONObject) jsonArray.get(i);
                 
-                System.out.println(jsonPps.getString("id"));
-                /*
-                PackagesProductsSupplier pps= new PackagesProductsSupplier(jsonPps.getInt("packageId"), jsonPps.getInt("productSupplierId"));
-                ppsList.add(pps); 
-                */
+                ppsList.add(new PackagesProductsSupplier(jsonPps.getJSONObject("id").getInt("packageId"), jsonPps.getJSONObject("id").getInt("productSupplierId")));
+                
+                
             }
     	}
     	catch (Exception e)
@@ -779,31 +777,63 @@ public class PackagesController implements Initializable{
                 StringEntity postingString;
                 HttpResponse  response;
                 
-                int success1=0; // status code that tells whether updatepackage request was successful or not
 				try
 				{
 					postingString = new StringEntity(myJson);
 					post.setEntity(postingString);
 					post.setHeader("Content-type", "application/json");
 					response = httpClient.execute(post);
-					success1=response.getStatusLine().getStatusCode();
 					
 				} catch ( IOException e)
 				{
 					e.printStackTrace();
+					Alert alert = new Alert(AlertType.INFORMATION);
+	        		alert.setTitle("Failure");
+		    		alert.setHeaderText(null);
+		    		alert.setContentText("There was a problem, and the package was not updated");
+		    		alert.showAndWait();
+					e.printStackTrace();
 				}
 				
-				// insert product into package
-				
+				// insert products into package
 				if (addedPsList.size()>0) // if any product has been added
 				{
 					for (model.ProductsSupplier p : addedPsList )
 					{
 						model.PackagesProductsSupplier pps = new PackagesProductsSupplier(newPkg.getPackageId(), p.getProductSupplierId());
-						// send it to web server
-					}
+						// send json to web server
+		                // manually create json
+		                String myJson2= "{" 
+		                			+	"\"id\"" + ": {" 
+		                			+	"\"packageId\""+": "+ pps.getPackageId() + ", "
+		                        	+	"\"productSupplierId\"" +": "+ pps.getProductSupplierId()
+		                        	+	"}"
+		                        	+	"}";
+		                			
+		                String       postUrl2       = URLCONSTANT +"/TravelExperts2/rs/db/insertpackagesproductsupplier";
+		                HttpClient   httpClient2    = HttpClientBuilder.create().build();
+		                HttpPost     post2          = new HttpPost(postUrl2);
+		                StringEntity postingString2;
+		                HttpResponse  response2;
+		                
+						try
+						{
+							postingString2 = new StringEntity(myJson2);
+							post2.setEntity(postingString2);
+							post2.setHeader("Content-type", "application/json");
+							response2 = httpClient.execute(post2);							
+						} catch ( IOException e)
+						{
+							Alert alert = new Alert(AlertType.INFORMATION);
+			        		alert.setTitle("Failure");
+				    		alert.setHeaderText(null);
+				    		alert.setContentText("There was a problem, and some products were not inserted");
+				    		alert.showAndWait();
+							e.printStackTrace();
+						}
+		            }     
 				}
-				
+
 				// remove product from package
 				if (deletedPsList.size()>0) // if any product has been removed
 				{
@@ -813,22 +843,15 @@ public class PackagesController implements Initializable{
 				
 				
 				
-				if (success1==200)
-	        	{
-	        		Alert alert = new Alert(AlertType.INFORMATION);
-	        		alert.setTitle("Success");
-		    		alert.setHeaderText(null);
-		    		alert.setContentText("The package has been successfully updated");
-		    		alert.showAndWait();
-	        	}
-	        	else
-	        	{
-	        		Alert alert = new Alert(AlertType.INFORMATION);
-	        		alert.setTitle("Failure");
-		    		alert.setHeaderText(null);
-		    		alert.setContentText("There was a problem, and the package was not updated");
-		    		alert.showAndWait();
-	        	}        	
+				
+	        	
+        		Alert alert = new Alert(AlertType.INFORMATION);
+        		alert.setTitle("Success");
+	    		alert.setHeaderText(null);
+	    		alert.setContentText("The package has been successfully updated");
+	    		alert.showAndWait();
+	        	
+	        	      	
 
 	    	}
 	    	
@@ -937,7 +960,12 @@ public class PackagesController implements Initializable{
 	    	tfPkgBasePrice.setText(selectedPackage.getPkgBasePrice()+"");
 	    	tfPkgAgencyCommission.setText(selectedPackage.getPkgAgencyCommission()+"");
 	    	
-	    	displayProductsInPkg();
+	    	//displayProductsInPkg();
+	    	for (PackagesProductsSupplier p: ppsList)
+	    	{
+	    		if (p.getPackageId()==tvPackages.getSelectionModel().getSelectedItem().getPackageId())
+	    			System.out.println(p.getProductSupplierId());
+	    	}
 	    	
 
 	    	
@@ -1013,7 +1041,16 @@ public class PackagesController implements Initializable{
 		ProductsSupplier selectedPs = tvProductsSuppliers1.getSelectionModel().getSelectedItem();
 		if (selectedPs!= null)
 		{
-			addedPsList.add(selectedPs);
+			
+			if (deletedPsList.contains(selectedPs))
+			{
+				deletedPsList.remove(selectedPs);
+			}
+			else 
+			{
+				addedPsList.add(selectedPs);
+			}
+			
 			productsInPkg.add(selectedPs);
 		}
 
@@ -1024,7 +1061,16 @@ public class PackagesController implements Initializable{
     	ProductsSupplier selectedPs = tvProductsInPackage.getSelectionModel().getSelectedItem();
 		if (selectedPs!= null)
 		{
-			deletedPsList.add(selectedPs);
+			if (addedPsList.contains(selectedPs))
+			{
+				addedPsList.remove(selectedPs);
+			}
+			else 
+			{
+				deletedPsList.add(selectedPs);
+
+			}
+			
 			productsInPkg.remove(selectedPs);
 		}
 
