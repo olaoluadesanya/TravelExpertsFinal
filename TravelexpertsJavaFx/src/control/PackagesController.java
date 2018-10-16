@@ -147,7 +147,7 @@ public class PackagesController implements Initializable{
     private JFXButton btnDelete1;
 
     @FXML
-    private TableView<ProductsSupplier> tvProductsInPackage;
+    private TableView<ProductsSupplier> tvProductsSuppliersInPackage;
 
     @FXML
     private TableColumn<ProductsSupplier, String> tcProductsInPkg;
@@ -177,7 +177,7 @@ public class PackagesController implements Initializable{
     private ObservableList<Packag> packages1;
     //private ObservableList<ProductsSupplier> psList;
     private ObservableList<PackagesProductsSupplier> ppsList;
-    private ObservableList<ProductsSupplier> productsInPkg;
+    private ObservableList<ProductsSupplier> productsSuppliersInPkg;
     
     private String pkgStatus="null"; // whether package is being added or edited
     private Packag newPkg; // package that is created or updated
@@ -265,7 +265,8 @@ public class PackagesController implements Initializable{
     	ppsList = FXCollections.observableArrayList();
     	addedPsList = new ArrayList<>();
     	deletedPsList=new ArrayList<>();
-    	productsInPkg = FXCollections.observableArrayList();
+    	productsSuppliersInPkg = FXCollections.observableArrayList();
+    	productsSuppliers = FXCollections.observableArrayList();
     	
     	// instantiate table columns
     	tcPkgId.setCellValueFactory(new PropertyValueFactory<>("PackageId"));
@@ -277,8 +278,12 @@ public class PackagesController implements Initializable{
     	
 		// read lists from web server and set them to tables
     	readPackages();
+    	readProductsSuppliers();
     	tvPackages.setItems(packages1);    	
     	readPackagesProductsSuppliers();
+    	tvProductsSuppliers1.setItems(productsSuppliers);
+    	tvProductsSuppliersInPackage.setItems(productsSuppliersInPkg);
+
     	
     	
     	//======================= Bookings Tab ========================================
@@ -427,7 +432,7 @@ public class PackagesController implements Initializable{
     	// Instantiate the lists
     	products = FXCollections.observableArrayList();
     	suppliers = FXCollections.observableArrayList();
-    	productsSuppliers = FXCollections.observableArrayList();
+    	
     	
     	// Instantiate the table columns
     	tcProductId.setCellValueFactory(new PropertyValueFactory<>("productId"));
@@ -438,12 +443,10 @@ public class PackagesController implements Initializable{
 		// Obtain the Products, Suppliers, and ProductsSuppliers from the web service
     	readProducts();
     	readSuppliers(); 	
-    	readProductsSuppliers();
     	tvProducts.setItems(products);   
     	tvProductsSuppliers2.setItems(productsSuppliers);
     	
-    	// Hi Corinne, I will use this too -Sung
-    	//tvProductsSuppliers1.setItems(productsSuppliers);
+
     	
     	// Initialize the combo box containing supplier names
     	cboSuppliers.setItems(suppliers);
@@ -538,7 +541,7 @@ public class PackagesController implements Initializable{
                 LocalDate ldEndDate=format.parse(endDate).toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
                 LocalDate ldStartDate=format.parse(startDate).toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 
-                Packag pkg= new Packag(jsonPkg.getInt("packageId"), jsonPkg.getDouble("pkgAgencyCommission"), jsonPkg.getDouble("pkgBasePrice"), jsonPkg.getString("pkgDesc"),ldEndDate, jsonPkg.getString("pkgName"), ldStartDate);
+                Packag pkg= new Packag(jsonPkg.getInt("packageId"), jsonPkg.getDouble("pkgAgencyCommission"), jsonPkg.getDouble("pkgBasePrice"), jsonPkg.getString("pkgDesc"),ldEndDate, jsonPkg.getString("pkgName"), ldStartDate, jsonPkg.getString("pkgImageFile"));
                 packages1.add(pkg); 
             }
     	}
@@ -638,18 +641,16 @@ public class PackagesController implements Initializable{
     	
     	// hide products-related controls
     	
-    	tvProductsInPackage.setVisible(false);
+    	tvProductsSuppliersInPackage.setVisible(false);
     	
     	lblProductsSuppliers.setVisible(false);
-    	//tvProductsSuppliers1.setVisible(false);	
+    	tvProductsSuppliers1.setVisible(false);	
     	btnInsertProductIntoPkg.setVisible(false);
     	btnRemoveProductFromPkg.setVisible(false);
     	
     	
     	emptyTxtFieldsInPkgTab();
     	
-    	System.out.println(pkgStatus);
-    	System.out.println(lblPackageId.getText());
     	
 
     }
@@ -683,7 +684,7 @@ public class PackagesController implements Initializable{
 	    	{
 	    		// create a new package               
                 //newPkg=new Packag(0, new BigDecimal( tfPkgAgencyCommission.getText()), new BigDecimal(tfPkgBasePrice.getText()), taPkgDesc.getText(), Date.from(dpPkgEndDate.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant()), tfPkgName.getText(), Date.from(dpPkgStartDate.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant()));                
-                newPkg=new Packag(0, Double.parseDouble( tfPkgAgencyCommission.getText()), Double.parseDouble(tfPkgBasePrice.getText()), taPkgDesc.getText(), dpPkgEndDate.getValue(), tfPkgName.getText(), dpPkgStartDate.getValue());                
+                newPkg=new Packag(0, Double.parseDouble( tfPkgAgencyCommission.getText()), Double.parseDouble(tfPkgBasePrice.getText()), taPkgDesc.getText(), dpPkgEndDate.getValue(), tfPkgName.getText(), dpPkgStartDate.getValue(),"no image");                
 
                 // send json to web server
                 Gson gson = new Gson();
@@ -695,10 +696,11 @@ public class PackagesController implements Initializable{
                 // manually modify json string to send date variables in a format that web server understands
                 String myJson= json.substring(0, idx+12)+"\""+newPkg.getPkgEndDate()+"\""+","
                 										+"\"pkgName\":\""+newPkg.getPkgName()+"\","
-                										+"\"pkgStartDate\":\""+newPkg.getPkgStartDate()+"\""
+                										+"\"pkgStartDate\":\""+newPkg.getPkgStartDate()+"\","
+                										+"\"pkgImageFile\":\""+newPkg.getPkgImageFile()+"\""
                 										+"}";
+                System.out.println("json: "+ myJson);
                 
-                //String       postUrl       = URLCONSTANT +"/TravelExperts2/rs/db/insertpackage";// put in your url
                 String       postUrl       = URLCONSTANT +"/TravelExperts2/rs/db/insertpackage";// put in your url
                 HttpClient   httpClient    = HttpClientBuilder.create().build();
                 HttpPost     post          = new HttpPost(postUrl);
@@ -717,7 +719,6 @@ public class PackagesController implements Initializable{
 					HttpEntity entity = response.getEntity();
 		    	    String responseString = null;
 		    	    responseString = EntityUtils.toString(entity, "UTF-8");
-		    	    System.out.println("Repoese: " + responseString);
 		    	    */
 		    	    
 		    	    
@@ -768,8 +769,11 @@ public class PackagesController implements Initializable{
                 // manually modify json string to send date variables in a format that web server understands
                 String myJson= json.substring(0, idx+12)+"\""+newPkg.getPkgEndDate()+"\""+","
                 										+"\"pkgName\":\""+newPkg.getPkgName()+"\","
-                										+"\"pkgStartDate\":\""+newPkg.getPkgStartDate()+"\""
+                										+"\"pkgStartDate\":\""+newPkg.getPkgStartDate()+"\","
+                										+"\"pkgImageFile\":\""+newPkg.getPkgImageFile()+"\""
                 										+"}";
+                
+               
                 
                 //String       postUrl       = URLCONSTANT +"/TravelExperts2/rs/db/updatepackage";
                 String       postUrl       = URLCONSTANT +"/TravelExperts2/rs/db/updatepackage";
@@ -861,7 +865,7 @@ public class PackagesController implements Initializable{
 	    	deletedPsList.clear();
 	    	
         	btnSave1.setDisable(true);
-    		tvProductsInPackage.setVisible(true);
+    		tvProductsSuppliersInPackage.setVisible(true);
 
         	//re-read data from web server
         	readPackagesProductsSuppliers();
@@ -961,20 +965,14 @@ public class PackagesController implements Initializable{
 	    	tfPkgBasePrice.setText(selectedPackage.getPkgBasePrice()+"");
 	    	tfPkgAgencyCommission.setText(selectedPackage.getPkgAgencyCommission()+"");
 	    	
-	    	//displayProductsInPkg();
-	    	for (PackagesProductsSupplier p: ppsList)
-	    	{
-	    		if (p.getPackageId()==tvPackages.getSelectionModel().getSelectedItem().getPackageId())
-	    			System.out.println(p.getProductSupplierId());
-	    	}
-	    	
-
+	    	displayProductsInPkg();	    	
 	    	
     	}
     }
     // when a package is selected, display the products included in the package on tvProductsInPkg
 	private void displayProductsInPkg()
 	{
+		productsSuppliersInPkg.clear();
 		List<Integer> productsSupplierIds = new ArrayList<>(); 
     	
 		// first using packagesProductsSupplier list, find productsSupplier ids that are associated with the package.
@@ -991,7 +989,7 @@ public class PackagesController implements Initializable{
     	for (ProductsSupplier p : productsSuppliers)
     	{
     		if (productsSupplierIds.contains(p.getProductSupplierId()))
-    			productsInPkg.add(p);
+    			productsSuppliersInPkg.add(p);
     	}
 	}
 	private void enableInputs(boolean myBool)
@@ -1004,7 +1002,7 @@ public class PackagesController implements Initializable{
     	dpPkgEndDate.setDisable(!myBool);
     	
     	lblProductsSuppliers.setVisible(myBool);
-    	//tvProductsSuppliers1.setVisible(myBool);
+    	tvProductsSuppliers1.setVisible(myBool);
     	
     	btnInsertProductIntoPkg.setVisible(myBool);
     	btnRemoveProductFromPkg.setVisible(myBool);
@@ -1027,7 +1025,7 @@ public class PackagesController implements Initializable{
     	newPkg=null;
     	
     	btnSave1.setDisable(true);
-		tvProductsInPackage.setVisible(true);
+		tvProductsSuppliersInPackage.setVisible(true);
 		
 		displayPackageInfo();
 		pkgStatus="null";
@@ -1042,24 +1040,32 @@ public class PackagesController implements Initializable{
 		ProductsSupplier selectedPs = tvProductsSuppliers1.getSelectionModel().getSelectedItem();
 		if (selectedPs!= null)
 		{
-			
-			if (deletedPsList.contains(selectedPs))
+			if (productsSuppliersInPkg.contains(selectedPs))
 			{
-				deletedPsList.remove(selectedPs);
+				
 			}
-			else 
+			else
 			{
-				addedPsList.add(selectedPs);
+				if (deletedPsList.contains(selectedPs))
+				{
+					deletedPsList.remove(selectedPs);
+				}
+				else 
+				{
+					addedPsList.add(selectedPs);
+				}
+				
+				productsSuppliersInPkg.add(selectedPs);
 			}
 			
-			productsInPkg.add(selectedPs);
+			
 		}
 
     }
 
     @FXML
     void removeProductFromPkg(ActionEvent event) {
-    	ProductsSupplier selectedPs = tvProductsInPackage.getSelectionModel().getSelectedItem();
+    	ProductsSupplier selectedPs = tvProductsSuppliersInPackage.getSelectionModel().getSelectedItem();
 		if (selectedPs!= null)
 		{
 			if (addedPsList.contains(selectedPs))
@@ -1072,7 +1078,7 @@ public class PackagesController implements Initializable{
 
 			}
 			
-			productsInPkg.remove(selectedPs);
+			productsSuppliersInPkg.remove(selectedPs);
 		}
 
     }
