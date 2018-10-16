@@ -63,6 +63,12 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
     StringBuffer buffer = new StringBuffer();
     Customer customer = new Customer();
 
+    // Define a constant for the IP address of the web service
+    // Use 10.0.2.2 when running an emulator, and the web service is running on the same machine
+    // (this IP bridges from the emulated device to the machine it is running on)
+    static final String IP_ADDRESS = "10.0.2.2";
+    //static final String IP_ADDRESS = "10.163.101.59";
+
     /**
      * Id to identity READ_CONTACTS permission request.
      */
@@ -328,13 +334,13 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
 
             // Authorize the entered credentials against the userid and password in the
             // Customers table in the TravelExperts database, using the web service
-            try {
+            /*try {
                 // If the login credentials are correct, the web service will return the associated
                 // Customer object, as a JSON object in "buffer".  If incorrect, "buffer" will be null.
 
                 // ***** TO DO: ***** What is correct url?  How to pass credentials (post)?
                 // Check how null return value is handled.
-                URL url = new URL("http://10.163.101.59:8080/TravelExperts2/rs/db/validatecustomer");
+                URL url = new URL("http://" + IP_ADDRESS + ":8080/TravelExperts2/rs/db/validatecustomer");
 
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestProperty("accept", "application/json");
@@ -353,23 +359,23 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
             } catch (java.io.IOException e) {
                 e.printStackTrace();
             }
-
+*/
             // Code for testing with dummy credentials commented out below
-            /* try {
+            try {
                 // Simulate network access.
                 Thread.sleep(2000);
             } catch (InterruptedException e) {
                 return false;
-            } */
+            }
 
             // Code for allowing dummy credentials for testing
-            /*for (String credential : DUMMY_CREDENTIALS) {
+            for (String credential : DUMMY_CREDENTIALS) {
                 String[] pieces = credential.split(":");
                 if (pieces[0].equals(mEmail)) {
                     // Account exists, return true if the password matches.
                     return pieces[1].equals(mPassword);
                 }
-            }*/
+            }
 
             // TODO: register the new account here.
             return false;
@@ -384,12 +390,12 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
             if (success) {
                 finish();
 
-                // Obtain the Customer object from the JSON data in "buffer" that was
+                /*// Obtain the Customer object from the JSON data in "buffer" that was
                 // returned by the web service, using the fromJson() method that is part of
                 // the Gson package.
                 Gson gson = new Gson();
                 Type category = new TypeToken<Customer>(){}.getType();
-                customer = gson.fromJson(buffer.toString(), category);
+                customer = gson.fromJson(buffer.toString(), category);*/
 
                 // Start the main activity using an intent.  Pass the Customer object using the
                 // intent.
