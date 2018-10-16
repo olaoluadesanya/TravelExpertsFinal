@@ -40,6 +40,9 @@ import org.apache.http.util.EntityUtils;
 
 public class LoginController implements Initializable {
 		
+	//private String URLCONSTANT = "http://10.163.101.59:8080";
+	private String URLCONSTANT ="http://localhost:8080";
+	
     @FXML
     private JFXPasswordField tfPass;
 
@@ -70,53 +73,55 @@ public class LoginController implements Initializable {
         	//runlater to avoid gui hanging
             Platform.runLater(new Runnable() {
                 public void run() {
+                	//create json to send to service
                     JsonObject json = new JsonObject();
                     json.addProperty("username", tfUser.getText());
                     json.addProperty("password", tfPass.getText());
 
-                    String postUrl = "http://localhost:8080/TravelExperts2/rs/db/agentlogin";// put in your url
+                    //connect to service
+                    String postUrl = URLCONSTANT + "/TravelExperts2/rs/db/agentlogin";// put in your url
                     Gson gson = new Gson();
                     HttpClient httpClient = HttpClientBuilder.create().build();
                     HttpPost post = new HttpPost(postUrl);
-                    StringEntity postingString = null;
+                    StringEntity postingString = null;                    
                     try {
-                        postingString = new StringEntity(gson.toJson(json));
-                    } catch (UnsupportedEncodingException e) {
-                        e.printStackTrace();
-                    }
-                    post.setEntity(postingString);
-                    post.setHeader("Content-type", "application/json");
-                    HttpResponse response = null;
-                    try {
-                        response = httpClient.execute(post);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-
-                    HttpEntity entity = response.getEntity();
-                    String responseString = null;
-                    try {
-                        responseString = EntityUtils.toString(entity, "UTF-8");
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                   
-                    //change from login to main page 
-                    try {                    	                   	
-						Parent mainPageParent = FXMLLoader.load(getClass().getClassLoader().getResource("view/Packages.fxml"));
-						Scene mainPageScene = new Scene(mainPageParent);
-						Stage app_stage = (Stage) ((Node)event.getSource()).getScene().getWindow();
-						//center stage
-						double width = 640;
-                        double height = 575;	
-                        Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
-                        app_stage.setX((screenBounds.getWidth() - width) / 2); 
-                        app_stage.setY((screenBounds.getHeight() - height) / 2); 
-                        
-						app_stage.setScene(mainPageScene);
+                    	//send json to service
+						postingString = new StringEntity(gson.toJson(json));
+						post.setEntity(postingString);
+	                    post.setHeader("Content-type", "application/json");
+	                    HttpResponse response = null;
+	                    response = httpClient.execute(post);  
+	                    //receive response form service
+	                    HttpEntity entity = response.getEntity();
+	                    String responseString = "false";
+	                    responseString = EntityUtils.toString(entity, "UTF-8");
+	                    System.out.println(responseString);    
+	                    //successful login
+	                    if (responseString.equals("true")) {
+	                    	//change from login to main page 
+							Parent mainPageParent = FXMLLoader.load(getClass().getClassLoader().getResource("view/Packages.fxml"));
+							Scene mainPageScene = new Scene(mainPageParent);
+							Stage mainStage = Main.getStage();
+							//center stage on screen
+							double width = 640;
+		                    double height = 575;
+		                    Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
+		                    mainStage.setX((screenBounds.getWidth() - width) / 2); 
+		                    mainStage.setY((screenBounds.getHeight() - height) / 2);
+							mainStage.setScene(mainPageScene);
+	                    }
+	                    //failed login
+	                    else {
+	                    	Alert alert = new Alert(Alert.AlertType.ERROR);
+	                        alert.setTitle("Incorrect username or password");
+	                        alert.setHeaderText(null);
+	                        alert.setContentText("Incorrect username or password.");
+	                        alert.showAndWait();
+	                    }	                    	
 					} catch (IOException e) {
+						// TODO Auto-generated catch block
 						e.printStackTrace();
-					}
+					}		
                 }
             });
         }
@@ -134,7 +139,6 @@ public class LoginController implements Initializable {
         alert.setTitle("Empty input field");
         alert.setHeaderText(null);
         alert.setContentText(warning);
-
         alert.showAndWait();
     }
 

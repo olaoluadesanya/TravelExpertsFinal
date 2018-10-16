@@ -958,18 +958,24 @@ public class SimpleRestService {
 	                                
 	                EntityManagerFactory factory = Persistence.createEntityManagerFactory("TravelExperts2");
 	                EntityManager em = factory.createEntityManager();    
-	          	  	Query query = em.createQuery("select pass from agents where AgtEmail=?1");
-	          	  	query.setParameter(1, email);
+	          	  	Query query = em.createQuery("SELECT a.pass FROM Agent a where a.agtEmail= :email");
+	          	  	query.setParameter("email", email);
 	          	  	
-	          	  	String hashedPassword = (String) query.getSingleResult();
-	          	  	boolean result = BCrypt.checkpw(password, hashedPassword);
+	          	  	List<String> passwordList = query.getResultList();
+	          	  	//check if list is empty, meaning that the username entered didn't return anything from database
+	          	  	if (passwordList.isEmpty()){
+	          	  		response = "false";
+	          	  		break;
+	          	  	}
+	          	  	//check user entered pw against hashed pw
+	          	  	boolean result = BCrypt.checkpw(password, passwordList.get(0));
 	          	  	if (result == true) {
 	          	  		response = "true";
 	          	  	}
 	          	  	else {
 	          	  		response = "false";
 	          	  	}
-                    break;
+	          	  	break;
                 default: throw new Exception("Unsupported version: " + version);
             }
         }

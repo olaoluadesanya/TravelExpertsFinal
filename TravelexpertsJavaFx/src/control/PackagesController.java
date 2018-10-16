@@ -41,7 +41,9 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 
@@ -57,6 +59,7 @@ import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.TreeTableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
+import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import model.Product;
 import model.ProductsSupplier;
@@ -442,14 +445,17 @@ public class PackagesController implements Initializable{
     	tvProductsSuppliers2.setItems(productsSuppliers);
     	
     	// Hi Corinne, I will use this too -Sung
-    	tvProductsSuppliers1.setItems(productsSuppliers);
+    	//tvProductsSuppliers1.setItems(productsSuppliers);
     	
     	// Initialize the combo box containing supplier names
     	cboSuppliers.setItems(suppliers);
     	
     	// =====================================================================================
 
+    	//Window Drag
     	
+    	
+
     	
 	}
     // =====================Sunghyun Lee===================================================
@@ -973,7 +979,7 @@ public class PackagesController implements Initializable{
     	dpPkgEndDate.setDisable(!myBool);
     	
     	lblProductsSuppliers.setVisible(myBool);
-    	tvProductsSuppliers1.setVisible(myBool);
+    	//tvProductsSuppliers1.setVisible(myBool);
     	
     	btnInsertProductIntoPkg.setVisible(myBool);
     	btnRemoveProductFromPkg.setVisible(myBool);
