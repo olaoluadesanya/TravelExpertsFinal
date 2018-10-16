@@ -1,6 +1,6 @@
 /*
  * This file has many authors
- * Authors: Sunghyun Lee, Graeme
+ * Authors: Sunghyun Lee, Graeme, Corinne Mullan
  * created: 2018-10-01
  */
 
@@ -426,6 +426,7 @@ public class PackagesController implements Initializable{
     	btnAddProd.setDisable(false);
     	btnEditProd.setDisable(false);
     	btnSaveProd.setDisable(true);
+    	btnAddProdSupplier.setDisable(true);
     	tcProductId.setSortable(false);
     	tcProdName.setSortable(false);
     	tfProdName.setDisable(true);
@@ -1516,10 +1517,11 @@ public class PackagesController implements Initializable{
     @FXML
     void addProductSupplier(ActionEvent event) {
     	
-    	// Disable the Edit and Add buttons, disable the product name input, 
+    	// Disable the Edit, Add and AddProdSupplier buttons, disable the product name input, 
     	// disable the products table, and enable the save and reset buttons
     	btnEditProd.setDisable(true);
     	btnAddProd.setDisable(true);
+    	btnAddProdSupplier.setDisable(true);
     	tfProdName.setDisable(true);
     	tvProducts.setDisable(true);
     	btnSaveProd.setDisable(false);
@@ -1565,6 +1567,7 @@ public class PackagesController implements Initializable{
     		btnAddProd.setDisable(false);
         	btnEditProd.setDisable(false);
         	btnSaveProd.setDisable(true);
+        	btnAddProdSupplier.setDisable(true);
         	tvProducts.setDisable(false);
         	tfProdName.setDisable(true);	
         	
@@ -1642,7 +1645,7 @@ public class PackagesController implements Initializable{
             Type type = new TypeToken<Product>() {}.getType();
             String json = gson.toJson(updProd, type);
             
-            String        postUrl       = "http://localhost:8080/TravelExperts2/rs/db/updateproduct";
+            String        postUrl       = URLCONSTANT + "/TravelExperts2/rs/db/updateproduct";
             HttpClient    httpClient    = HttpClientBuilder.create().build();
             HttpPost      post          = new HttpPost(postUrl);
             StringEntity  postingString;
@@ -1684,19 +1687,26 @@ public class PackagesController implements Initializable{
     		// Obtain the data for the new products_suppliers record.  The product ID can be 
         	// obtained from the label in the detail product view, and the supplier ID is the 
         	// ID of the supplier selected in the combo box.
-        	int newProductId = Integer.parseInt(lblProductId.getText());
-        	int newSupplierId = cboSuppliers.getSelectionModel().getSelectedItem().getSupplierId();
+        	Product newProduct = tvProducts.getSelectionModel().getSelectedItem();
+        	Supplier newSupplier = cboSuppliers.getSelectionModel().getSelectedItem();
         	
-        	// Create a new product-supplier object  
-            ProductsSupplier newProdSup = new ProductsSupplier(0, newProductId, null, newSupplierId, null);                
-
-            // Create the JSON object for the new product
-            Gson gson = new Gson();
-            Type type = new TypeToken<Product>() {}.getType();
-            String json = gson.toJson(newProdSup, type);
+        	// Create the JSON string for the new product supplier.  The JSON must match the
+        	// ProductsSupplier JPA entity class in the web service, which consists of the 
+        	// productSupplierId as well as the Product and Supplier objects corresponding to the
+        	// product-supplier record.
+        	// Use 0 for the productSupplierId since this is auto-incremented by the database
+            String json= "{" 
+        			+	"\"productSupplierId\":" + "0," 
+        			+	"\"product\""+":{\"productId\":"+ newProduct.getProductId() + ","
+        			+   "\"prodName\":\"" + newProduct.getProdName() + "\"},"
+        			+	"\"supplier\""+":{\"supplierId\":"+ newSupplier.getSupplierId() + ","
+        			+   "\"supName\":\"" + newSupplier.getSupName() + "\"}"
+                	+	"}"; 
+            
+            
             
             // Create the HTTP post request to send to the web server
-            String        postUrl       = "http://localhost:8080/TravelExperts2/rs/db/insertproductsupplier";
+            String        postUrl       = URLCONSTANT + "/TravelExperts2/rs/db/insertproductsupplier";
             HttpClient    httpClient    = HttpClientBuilder.create().build();
             HttpPost      post          = new HttpPost(postUrl);
             StringEntity  postingString;
@@ -1756,9 +1766,16 @@ public class PackagesController implements Initializable{
     	readProductsSuppliers();
     }
     
+    // When a product is selected from the products table, display its information in the
+    // detail display.
     @FXML
     void selectProduct(MouseEvent event) {
     	displayProductInfo();
+    	
+    	// If a supplier is also selected, then enable the Add Product Supplier button
+		if (cboSuppliers.getSelectionModel().getSelectedItem() != null) {
+			btnAddProdSupplier.setDisable(false);
+	    }
     }
     
     
@@ -1771,6 +1788,15 @@ public class PackagesController implements Initializable{
 	    	tfProdName.setText("" + selectedProduct.getProdName());
     	}
 	}
+	
+	@FXML
+    void onSupplierSelected(ActionEvent event) {
+		
+		// If a product is also selected, then enable the Add Product Supplier button
+		if (tvProducts.getSelectionModel().getSelectedItem() != null) {
+			btnAddProdSupplier.setDisable(false);
+		}
+    }
 	
 	// ====================================================================================
 	

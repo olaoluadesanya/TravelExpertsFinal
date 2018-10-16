@@ -791,13 +791,13 @@ public class SimpleRestService {
 	}
 	
 
-	// Added postProduct() -- Corinne Mullan
+	// Added insertProduct() -- Corinne Mullan
 	// http://localhost:8080/TravelExperts2/rs/db/insertproduct
 	@POST
 	@Path("/insertproduct")
 	@Consumes({ MediaType.APPLICATION_JSON })
     @Produces(MediaType.TEXT_PLAIN)
-	public String postProduct(String jsonString, @FormParam("request") String request ,  @DefaultValue("1") @FormParam("version") int version) {
+	public String insertProduct(String jsonString, @FormParam("request") String request ,  @DefaultValue("1") @FormParam("version") int version) {
 
 		if (logger.isDebugEnabled()) {
 			logger.debug("Start postProduct");
@@ -838,6 +838,59 @@ public class SimpleRestService {
         }
         return response;	
 	}
+	
+	// http://localhost:8080/TravelExperts2/rs/db/updateproduct
+	// Added updateProduct() -- Corinne Mullan
+	@POST
+	@Path("/updateproduct")
+	@Consumes({ MediaType.APPLICATION_JSON })
+    @Produces(MediaType.TEXT_PLAIN)
+	public String updateProduct(String jsonString, @FormParam("request") String request ,  @DefaultValue("1") @FormParam("version") int version) {
+
+		if (logger.isDebugEnabled()) {
+			logger.debug("Start updateProduct");
+			logger.debug("data: '" + request + "'");
+			logger.debug("version: '" + version + "'");
+		}
+
+		String response = null;
+
+        try{			
+            switch(version){
+	            case 1:
+	                if(logger.isDebugEnabled()) logger.debug("in version 1");
+	                
+	                EntityManagerFactory factory = Persistence.createEntityManagerFactory("TravelExperts2");
+	                EntityManager em = factory.createEntityManager();
+	                
+	                	                
+	                Gson gson = new Gson();
+	          	  	Product newProduct = gson.fromJson(jsonString, Product.class);
+	          	  	
+	          	  	Product oldProduct = em.find(Product.class, newProduct.getProductId());
+	          	  	
+	                
+	                em.getTransaction().begin();
+	                oldProduct.setProdName(newProduct.getProdName());
+	                em.getTransaction().commit();
+	                
+	                response = "Product Updated";
+	                
+                    break;
+                default: throw new Exception("Unsupported version: " + version);
+            }
+        }
+        catch(Exception e){
+        	response = e.getMessage().toString();
+        }
+        
+        if(logger.isDebugEnabled()){
+            logger.debug("result: '"+response+"'");
+            logger.debug("End updateProduct");
+        }
+        return response;	
+	}
+			
 	
 	// Added /getallsuppliers -- Corinne Mullan
 	// http://localhost:8080/TravelExperts2/rs/db/getallsuppliers
@@ -933,6 +986,54 @@ public class SimpleRestService {
             logger.debug("End getAllProductsSuppliers");
         }
         return response;	
+	}
+	
+	// Added /insertproductsupplier -- Corinne Mullan
+	//http://localhost:8080/TravelExperts2/rs/db/insertproductsupplier
+	@POST
+	@Path("/insertproductsupplier")
+	@Consumes({ MediaType.APPLICATION_JSON })
+    @Produces(MediaType.TEXT_PLAIN)
+	public String insertProductSupplier(String jsonString, @FormParam("request") String request ,  @DefaultValue("1") @FormParam("version") int version) {
+
+		if (logger.isDebugEnabled()) {
+			logger.debug("Start insertProductSupplier");
+			logger.debug("data: '" + request + "'");
+			logger.debug("version: '" + version + "'");
+		}
+
+		String response = null;
+
+        try{			
+            switch(version){
+	            case 1:
+	                if(logger.isDebugEnabled()) logger.debug("in version 1");
+	                
+	                EntityManagerFactory factory = Persistence.createEntityManagerFactory("TravelExperts2");
+	                EntityManager em = factory.createEntityManager();
+	                
+	                Gson gson = new Gson();
+	          	  	ProductsSupplier prodSup = gson.fromJson(jsonString, ProductsSupplier.class);
+	                
+	                em.getTransaction().begin();
+	                em.persist(prodSup);
+	                em.getTransaction().commit();
+	                
+	                response = "Product Supplier created";
+
+                    break;
+                default: throw new Exception("Unsupported version: " + version);
+            }
+        }
+        catch(Exception e){
+        	response = e.getMessage().toString();
+        }
+        
+        if(logger.isDebugEnabled()){
+            logger.debug("result: '"+response+"'");
+            logger.debug("End insertProductSupplier");
+        }
+        return response;
 	}
 	
 	//http://localhost:8080/TravelExperts2/rs/db/agentlogin
