@@ -28,6 +28,7 @@ import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -41,13 +42,16 @@ import android.widget.TextView;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+
+
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -332,43 +336,70 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
             mPassword = password;
         }
 
+
         @Override
         protected Boolean doInBackground(Void... params) {
 
+
+
             JsonObject json = new JsonObject();
-            json.addProperty("username", mEmail);
-            json.addProperty("password", mPassword);
+            json.addProperty("userid", mEmail);
+            json.addProperty("passwd", mPassword);
+
 
             String postUrl = "http://" + IP_ADDRESS + ":8080/TravelExperts2/rs/db/customerlogin";// put in your url
+            OkHttpClient client = new OkHttpClient();
             Gson gson = new Gson();
-            HttpClient httpClient = HttpClientBuilder.create().build();
-            HttpPost post = new HttpPost(postUrl);
-            StringEntity postingString = null;
+
+            String jsonStr = gson.toJson(json);
+
+            RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), jsonStr);
+
+            Request request = new Request.Builder()
+                    .url(postUrl)
+                    .post(body)
+                    .build();
+
+
+            Response response = null;
             try {
-                postingString = new StringEntity(gson.toJson(json));
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            }
-            post.setEntity(postingString);
-            post.setHeader("Content-type", "application/json");
-            HttpResponse response = null;
-            try {
-                response = httpClient.execute(post);
+                response = client.newCall(request).execute();
+                String resBody = response.body().toString();
+                if(response.body().string()=="true"){
+                    return true;
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
 
-            HttpEntity entity = response.getEntity();
-            String responseString = "false";
-            try {
-                responseString = EntityUtils.toString(entity, "UTF-8");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            if(responseString.equals("true")){
-                return true;
-            }
+//            HttpClient httpClient = HttpClientBuilder.create().build();
+//            HttpPost post = new HttpPost(postUrl);
+//            StringEntity postingString = null;
+//            try {
+//                postingString = new StringEntity(gson.toJson(json));
+//            } catch (UnsupportedEncodingException e) {
+//                e.printStackTrace();
+//            }
+//            post.setEntity(postingString);
+//            post.setHeader("Content-type", "application/json");
+//            HttpResponse response = null;
+//            try {
+//                response = httpClient.execute(post);
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//
+//            HttpEntity entity = response.getEntity();
+//            String responseString = "false";
+//            try {
+//                responseString = EntityUtils.toString(entity, "UTF-8");
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//
+//            if(responseString.equals("true")){
+//                return true;
+//            }
             return false;
         }
 
