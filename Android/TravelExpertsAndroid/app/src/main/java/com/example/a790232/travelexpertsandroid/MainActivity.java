@@ -9,9 +9,7 @@
 package com.example.a790232.travelexpertsandroid;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -61,7 +59,6 @@ public class MainActivity extends Activity {
 
         // Obtain the currently logged in customer from the intent
         Intent intent = getIntent();
-
         customer = (Customer) intent.getSerializableExtra("customer");
 
         // Obtain a reference to the list view on the main activity that will list all
@@ -203,13 +200,6 @@ public class MainActivity extends Activity {
             case R.id.miLogOut:
                 // ***** TO DO *****
                 // (How does logging out work?  Clear the customer object and return to login
-                // delete token
-
-                SharedPreferences preferences = getSharedPreferences("MY_APP", Context.MODE_PRIVATE);
-                preferences.edit().putString("token",null).apply(); //set token to empty string
-                preferences.edit().putString("custJson",null).apply();
-                Intent activityIntent = new Intent(this, LoginActivity.class);
-                startActivity(activityIntent);
                 // activity??)
                 return true;
             default:

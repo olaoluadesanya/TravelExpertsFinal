@@ -1119,33 +1119,28 @@ public class SimpleRestService {
 	                JsonObject json = new JsonParser().parse(jsonString).getAsJsonObject();
 	          	  	String userid = json.get("userid").getAsString();
 	          	  	String password = json.get("passwd").getAsString();
-	                              
-	          	  	Customer c = null;
+	                                
 	                EntityManagerFactory factory = Persistence.createEntityManagerFactory("TravelExperts2");
 	                EntityManager em = factory.createEntityManager();    
-	          	  	Query query = em.createQuery("select c from Customer c where c.userid= :userid");
+	          	  	Query query = em.createQuery("select c.passwd from Customer c where c.userid= :userid");
 	          	  	query.setParameter("userid", userid);
 
-	          	  	c = (Customer)query.getSingleResult();
-
+	          	  	
+	          	    List<String> passwordList = query.getResultList();
                     //check if list is empty, meaning that the username entered didn't return anything from database
-                    if (c == null){
+                    if (passwordList.isEmpty()){
                         response = "false";
                         break;
                     }
-                    else {
-                        if (BCrypt.checkpw(password, c.getPasswd())) {
-                        	
-                        	Gson gson = new Gson();
-        	                Type type = new TypeToken<Customer>() {}.getType();
-        	                response = gson.toJson(c, type);
-                            
-                        }
-                        else {
-                            response = "false";
-                        }
+                    //check user entered pw against hashed pw
+                    boolean result = BCrypt.checkpw(password, passwordList.get(0));
+                    if (result == true) {
+                        response = "true";
+                        
                     }
-
+                    else {
+                        response = "false";
+                    }
                     break;
                 default: throw new Exception("Unsupported version: " + version);
             }
