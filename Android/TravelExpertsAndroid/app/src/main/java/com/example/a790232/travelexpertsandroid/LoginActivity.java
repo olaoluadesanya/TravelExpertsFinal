@@ -20,9 +20,18 @@ import android.support.annotation.NonNull;
 
 import android.app.Activity;
 import android.app.LoaderManager.LoaderCallbacks;
+<<<<<<< HEAD
+import android.content.Context;
+=======
 
+>>>>>>> origin/Corinne2
 import android.content.CursorLoader;
 import android.content.Loader;
+<<<<<<< HEAD
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+=======
+>>>>>>> origin/Corinne2
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -40,6 +49,7 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
@@ -51,6 +61,7 @@ import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import static android.Manifest.permission.READ_CONTACTS;
@@ -323,6 +334,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
 
         private final String mEmail;
         private final String mPassword;
+        private String custJSon;
 
         UserLoginTask(String email, String password) {
             mEmail = email;
@@ -352,8 +364,18 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
                     buffer.append(line);
                 }
 
+<<<<<<< HEAD
+            Response response = null;
+            try {
+                response = client.newCall(request).execute();
+                String resBody = response.body().string();
+                if(resBody.contains("customer")){
+                    custJSon = resBody;
+                    return true;
+=======
                 if (buffer == null) {
                     return false;
+>>>>>>> origin/Corinne2
                 }
 
             } catch (java.io.IOException e) {
@@ -390,12 +412,20 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
             if (success) {
                 finish();
 
-                /*// Obtain the Customer object from the JSON data in "buffer" that was
+                // Obtain the Customer object from the JSON data in "buffer" that was
                 // returned by the web service, using the fromJson() method that is part of
                 // the Gson package.
                 Gson gson = new Gson();
                 Type category = new TypeToken<Customer>(){}.getType();
-                customer = gson.fromJson(buffer.toString(), category);*/
+                customer = gson.fromJson(custJSon, category);
+
+
+
+                String token = "loggedin";
+                SharedPreferences preferences = getSharedPreferences("MY_APP", Context.MODE_PRIVATE);
+                preferences.edit().putString("token",token).apply();
+                preferences.edit().putString("custJson",custJSon).apply();
+
 
                 // Start the main activity using an intent.  Pass the Customer object using the
                 // intent.
