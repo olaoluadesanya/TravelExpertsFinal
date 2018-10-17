@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.1" xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
+	<persistence-unit name="TravelExperts2" transaction-type="RESOURCE_LOCAL">
+		<class>model.Bookingdetail</class>
+		<class>model.Booking</class>
+		<class>model.Customer</class>
+		<class>model.Packag</class>
+		<class>model.PackagesProductsSupplier</class>
+		<class>model.PackagesProductsSupplierPK</class>
+		<class>model.Agent</class>
+		<class>model.Product</class>
+		<class>model.ProductsSupplier</class>
+		<class>model.Supplier</class>
+		<class>model.Clas</class>
+		<class>model.Fee</class>
+		<class>model.Triptype</class>
+		<properties>
+			<property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/travelexperts"/>
+			<property name="javax.persistence.jdbc.user" value="root"/>
+			<property name="javax.persistence.jdbc.driver" value="org.mariadb.jdbc.Driver"/>
+		</properties>
+	</persistence-unit>
+</persistence>
