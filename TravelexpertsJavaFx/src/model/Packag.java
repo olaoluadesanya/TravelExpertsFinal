@@ -27,9 +27,11 @@ public class Packag
 	private String pkgName;
 
 	private LocalDate pkgStartDate;
+	
+	private String pkgImageFile;
 
 	public Packag(int packageId, double pkgAgencyCommission, double pkgBasePrice, String pkgDesc, LocalDate pkgEndDate,
-			String pkgName, LocalDate pkgStartDate)
+			String pkgName, LocalDate pkgStartDate, String pkgImageFile)
 	{
 		super();
 		this.packageId = packageId;
@@ -39,8 +41,9 @@ public class Packag
 		this.pkgEndDate = pkgEndDate;
 		this.pkgName = pkgName;
 		this.pkgStartDate = pkgStartDate;
+		this.pkgImageFile = pkgImageFile;
 	}
-
+	
 	public int getPackageId()
 	{
 		return packageId;
@@ -110,10 +113,16 @@ public class Packag
 	{
 		this.pkgStartDate = pkgStartDate;
 	}
-	
-	
 
-	
+	public String getPkgImageFile()
+	{
+		return pkgImageFile;
+	}
+
+	public void setPkgImageFile(String pkgImageFile)
+	{
+		this.pkgImageFile = pkgImageFile;
+	}
 
 	@Override
 	public String toString()

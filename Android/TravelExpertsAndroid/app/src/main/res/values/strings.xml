@@ -25,6 +25,35 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="my_bookings">My Bookings</string>
+    <string name="first_name">First Name</string>
+    <string name="last_name">Last Name</string>
+    <string name="address">Address</string>
+    <string name="city">City</string>
+    <string name="province">Province</string>
+    <string name="postal_code">Postal Code</string>
+    <string name="country">Country</string>
+    <string name="home_phone">Home Phone</string>
+    <string name="bus_phone">Bus. Phone</string>
+    <string name="email">Email</string>
+    <string name="canada">Canada</string>
+    <string name="edit">Edit</string>
+    <string name="save">Save</string>
+    <string-array name="provinces">
+        <item>Select Province...</item>
+        <item>AB</item>
+        <item>BC</item>
+        <item>MB</item>
+        <item>NB</item>
+        <item>NL</item>
+        <item>NS</item>
+        <item>NT</item>
+        <item>NU</item>
+        <item>ON</item>
+        <item>PE</item>
+        <item>QC</item>
+        <item>SK</item>
+        <item>YT</item>
+    </string-array>
 
     <!-- Items used to populate the spinner for the number of travellers -->
     <string-array name="array_num_travellers">

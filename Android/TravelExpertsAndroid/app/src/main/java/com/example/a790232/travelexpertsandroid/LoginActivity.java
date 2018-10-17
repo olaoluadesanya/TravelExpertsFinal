@@ -83,7 +83,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
     // Use 10.0.2.2 when running an emulator, and the web service is running on the same machine
     // (this IP bridges from the emulated device to the machine it is running on)
     static final String IP_ADDRESS = "10.0.2.2";
-    //static final String IP_ADDRESS = "10.163.101.59";
+    //static final String IP_ADDRESS = "10.187.212.89";
 
     /**
      * Id to identity READ_CONTACTS permission request.

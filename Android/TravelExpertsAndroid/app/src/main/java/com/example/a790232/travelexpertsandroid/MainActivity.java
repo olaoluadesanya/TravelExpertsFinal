@@ -19,6 +19,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ImageView;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
@@ -50,7 +52,7 @@ public class MainActivity extends Activity {
     // Use 10.0.2.2 when running an emulator, and the web service is running on the same machine
     // (this IP bridges from the emulated device to the machine it is running on)
     static final String IP_ADDRESS = "10.0.2.2";
-    //static final String IP_ADDRESS = "10.163.101.59";
+    //static final String IP_ADDRESS = "10.187.212.89";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,6 +84,7 @@ public class MainActivity extends Activity {
                 Packag packag = upcomingPackages.get(position);
                 Intent intent = new Intent(getApplicationContext(), DetailActivity.class);
                 intent.putExtra("packag", packag);
+                intent.putExtra("customer", customer);
                 startActivity(intent);
             }
         });
@@ -150,14 +153,25 @@ public class MainActivity extends Activity {
                     int idx = imgFileName.indexOf('.');
                     imgName = imgFileName.substring(0, idx);
                 }
+                //imgName = "R.drawable." + imgName;
 
-                map.put("pkgimagefile", imgName + "");
+                map.put("pkgimagefile", imgName);
                 pkgMaps.add(map);
             }
             int resource = R.layout.package_item;
             String [] from = {"pkgname", "pkgdates", "pkgimagefile"};
             int [] to = {R.id.tvPkgName, R.id.tvPkgDates, R.id.ivPackage};
-            SimpleAdapter adapter = new SimpleAdapter(getApplicationContext(), pkgMaps, resource, from, to);
+            SimpleAdapter adapter = new SimpleAdapter(getApplicationContext(), pkgMaps, resource, from, to) {
+
+                // The following code allows the adapter to load the correct image in the image view
+                // for each item in the list view
+                @Override
+                public void setViewImage(ImageView v, String value) {
+                    int resID = getResources().getIdentifier(value, "drawable", getPackageName());
+                    v.setImageResource(resID);
+                }
+            };
+
             lvPackages.setAdapter(adapter);
         }
     }
@@ -183,20 +197,19 @@ public class MainActivity extends Activity {
                 // Pass the Customer object in the intent to start the activity
                 return true;
             case R.id.miMyAccount:
-                // ***** TO DO *****
-                // Pass the Customer object in the intent to start the activity
-                return true;
-            case R.id.miLogOut:
-                // ***** TO DO *****
-                // (How does logging out work?  Clear the customer object and return to login
-                // delete token
+                Intent acctIntent = new Intent(getApplicationContext(), AccountActivity.class);
+                acctIntent.putExtra("customer", customer);
+                startActivity(acctIntent);
 
+                return true;
+
+            case R.id.miLogOut:
                 SharedPreferences preferences = getSharedPreferences("MY_APP", Context.MODE_PRIVATE);
                 preferences.edit().putString("token",null).apply(); //set token to empty string
                 preferences.edit().putString("custJson",null).apply();
                 Intent activityIntent = new Intent(this, LoginActivity.class);
                 startActivity(activityIntent);
-                // activity??)
+
                 return true;
             default:
                 return false;

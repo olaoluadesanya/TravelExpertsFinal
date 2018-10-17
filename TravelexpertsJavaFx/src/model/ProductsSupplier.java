@@ -3,7 +3,7 @@
  * Author: Sunghyun Lee, Corinne Mullan
  * Created: 2018-10-01
  * 
- * Added prodName and supName
+ * Added product and supplier
  * Corinne Mullan
  * 2018-10-15
  */
@@ -17,9 +17,9 @@ public class ProductsSupplier
 	private String prodName;
 	private int supplierId;
 	private String supName;
-
-	public ProductsSupplier(int productSupplierId, int productId, String prodName, int supplierId, String supName)
-	{
+	
+	
+	public ProductsSupplier(int productSupplierId, int productId, String prodName, int supplierId, String supName) {
 		super();
 		this.productSupplierId = productSupplierId;
 		this.productId = productId;
@@ -27,55 +27,57 @@ public class ProductsSupplier
 		this.supplierId = supplierId;
 		this.supName = supName;
 	}
-	
-	public int getProductSupplierId()
-	{
+
+
+	public int getProductSupplierId() {
 		return productSupplierId;
 	}
 
-	public void setProductSupplierId(int productSupplierId)
-	{
+
+	public void setProductSupplierId(int productSupplierId) {
 		this.productSupplierId = productSupplierId;
 	}
-	
-	public int getProductId()
-	{
+
+
+	public int getProductId() {
 		return productId;
 	}
 
-	public void setProductId(int productSupplierId)
-	{
-		this.productId = productSupplierId;
+
+	public void setProductId(int productId) {
+		this.productId = productId;
 	}
-	
-	public String getProdName()
-	{
+
+
+	public String getProdName() {
 		return prodName;
 	}
 
-	public void setProdName(String prodName)
-	{
+
+	public void setProdName(String prodName) {
 		this.prodName = prodName;
 	}
 
-	public int getSupplierId()
-	{
+
+	public int getSupplierId() {
 		return supplierId;
 	}
 
-	public void setSupplierId(int supplierId)
-	{
+
+	public void setSupplierId(int supplierId) {
 		this.supplierId = supplierId;
 	}
-	
-	public String getSupName()
-	{
+
+
+	public String getSupName() {
 		return supName;
 	}
 
-	public void setSupName(String supName)
-	{
+
+	public void setSupName(String supName) {
 		this.supName = supName;
 	}
+
 	
 }
+	
