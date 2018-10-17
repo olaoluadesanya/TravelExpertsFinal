@@ -11,6 +11,7 @@ package com.example.a790232.travelexpertsandroid;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -28,7 +29,9 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
+import org.json.JSONObject;
 
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
@@ -97,13 +100,55 @@ public class DetailActivity extends Activity {
         // Create an event listener on the "Book" button
         btnBook.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v)
+            {
                 // Check if the number of travellers has been set using the spinner.
                 // If not, generate an error message.
                 // If so, proceed with the booking.
-                Booking booking = new Booking(customer.getCustomerId(), "",packag.getPackageId(),
-                        "",Integer.parseInt(spNumTravellers.getSelectedItem().toString()),"",
-                        "","");
+                Log.i("sung", customer.getCustomerId()+", "+packag.getPackageId()+", "+spNumTravellers.getSelectedItem().toString());
+                Booking booking = new Booking(120, "FST",packag.getPackageId(),
+                        "B",1,"BK",
+                        "VANCOUVER","some description");
+                /*
+                try
+                {
+                    URL url = new URL(URLCONSTANT +"/TravelExperts2/rs/db/postbooking");
+                    Log.i("q", URLCONSTANT +"/TravelExperts2/rs/db/postbooking");
+                    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                    conn.setRequestMethod("POST");
+                    conn.setRequestProperty("Content-Type", "application/json;charset=UTF-8");
+                    conn.setRequestProperty("Accept","application/json");
+                    conn.setDoOutput(true);
+                    conn.setDoInput(true);
+
+                    JSONObject jsonParam = new JSONObject();
+                    jsonParam.put("customerId", 120);
+                    jsonParam.put("classId", booking.getClassId());
+                    jsonParam.put("packageId", booking.getPackageId());
+                    jsonParam.put("tripTypeId", booking.getTripTypeId());
+                    jsonParam.put("travelerCount", booking.getTravelerCount());
+                    jsonParam.put("feeId", booking.getFeeId());
+                    jsonParam.put("destination", booking.getDestination());
+                    jsonParam.put("description", "I MUST DELETE THIS");
+
+                    Log.i("JSON", jsonParam.toString());
+                    DataOutputStream os = new DataOutputStream(conn.getOutputStream());
+                    //os.writeBytes(URLEncoder.encode(jsonParam.toString(), "UTF-8"));
+                    os.writeBytes(jsonParam.toString());
+
+                    os.flush();
+                    os.close();
+
+                    Log.i("STATUS", String.valueOf(conn.getResponseCode()));
+                    Log.i("MSG" , conn.getResponseMessage());
+
+                    conn.disconnect();
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
+                    Log.i("sung", "error happened");
+                }
+                */
 
 
                 // send json to web server
@@ -130,6 +175,7 @@ public class DetailActivity extends Activity {
 
                 } catch ( IOException e)
                 {
+                    Log.i("sung", "error happened");
                     e.printStackTrace();
                 }
 
