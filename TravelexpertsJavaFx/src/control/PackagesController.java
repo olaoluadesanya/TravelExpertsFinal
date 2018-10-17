@@ -1326,7 +1326,7 @@ public class PackagesController implements Initializable{
         										//+"\"pkgName\":\""+newPkg.getPkgName()+"\","
         										//+"\"pkgStartDate\":\""+newPkg.getPkgStartDate()+"\""
         										//+"}";
-        
+        System.out.println(json);
         String       postUrl       = URLCONSTANT +"/TravelExperts2/rs/db/postbooking";// put in your url
         HttpClient   httpClient    = HttpClientBuilder.create().build();
         HttpPost     post          = new HttpPost(postUrl);
