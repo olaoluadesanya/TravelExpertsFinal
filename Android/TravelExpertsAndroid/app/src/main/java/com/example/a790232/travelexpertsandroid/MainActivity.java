@@ -81,6 +81,7 @@ public class MainActivity extends Activity {
                 Packag packag = upcomingPackages.get(position);
                 Intent intent = new Intent(getApplicationContext(), DetailActivity.class);
                 intent.putExtra("packag", packag);
+                intent.putExtra("customer", customer);
                 startActivity(intent);
             }
         });
