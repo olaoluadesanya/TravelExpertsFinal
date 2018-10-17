@@ -14,22 +14,19 @@ package com.example.a790232.travelexpertsandroid;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.support.annotation.NonNull;
-
 import android.app.Activity;
 import android.app.LoaderManager.LoaderCallbacks;
-
 import android.content.CursorLoader;
+import android.content.Intent;
 import android.content.Loader;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
-
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -43,6 +40,21 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+
+
+import org.apache.http.impl.client.HttpClientBuilder;
+
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import com.google.gson.reflect.TypeToken;
 
 import java.io.BufferedReader;
@@ -62,6 +74,12 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
 
     StringBuffer buffer = new StringBuffer();
     Customer customer = new Customer();
+
+    // Define a constant for the IP address of the web service
+    // Use 10.0.2.2 when running an emulator, and the web service is running on the same machine
+    // (this IP bridges from the emulated device to the machine it is running on)
+    static final String IP_ADDRESS = "10.0.2.2";
+    //static final String IP_ADDRESS = "10.163.101.59";
 
     /**
      * Id to identity READ_CONTACTS permission request.
@@ -178,6 +196,8 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
         boolean cancel = false;
         View focusView = null;
 
+
+
         // Check for a valid password, if the user entered one.
         if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
             mPasswordView.setError(getString(R.string.error_invalid_password));
@@ -211,7 +231,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
 
     private boolean isEmailValid(String email) {
         //TODO: Replace this with your own logic
-        return email.contains("@");
+        return email.contains("");
     }
 
     private boolean isPasswordValid(String password) {
@@ -323,55 +343,43 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
             mPassword = password;
         }
 
+
         @Override
         protected Boolean doInBackground(Void... params) {
 
-            // Authorize the entered credentials against the userid and password in the
-            // Customers table in the TravelExperts database, using the web service
+
+
+            JsonObject json = new JsonObject();
+            json.addProperty("userid", mEmail);
+            json.addProperty("passwd", mPassword);
+
+
+            String postUrl = "http://" + IP_ADDRESS + ":8080/TravelExperts2/rs/db/customerlogin";// put in your url
+            OkHttpClient client = new OkHttpClient();
+            Gson gson = new Gson();
+
+            String jsonStr = gson.toJson(json);
+
+            RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), jsonStr);
+
+            Request request = new Request.Builder()
+                    .url(postUrl)
+                    .post(body)
+                    .build();
+
+
+            Response response = null;
             try {
-                // If the login credentials are correct, the web service will return the associated
-                // Customer object, as a JSON object in "buffer".  If incorrect, "buffer" will be null.
-
-                // ***** TO DO: ***** What is correct url?  How to pass credentials (post)?
-                // Check how null return value is handled.
-                URL url = new URL("http://10.163.101.59:8080/TravelExperts2/rs/db/validatecustomer");
-
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setRequestProperty("accept", "application/json");
-                BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-
-                String line;
-                while ((line = br.readLine()) != null)
-                {
-                    buffer.append(line);
+                response = client.newCall(request).execute();
+                String resBody = response.body().string();
+                if(resBody.equals("true")){
+                    return true;
                 }
-
-                if (buffer == null) {
-                    return false;
-                }
-
-            } catch (java.io.IOException e) {
+            } catch (IOException e) {
                 e.printStackTrace();
             }
 
-            // Code for testing with dummy credentials commented out below
-            /* try {
-                // Simulate network access.
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                return false;
-            } */
 
-            // Code for allowing dummy credentials for testing
-            /*for (String credential : DUMMY_CREDENTIALS) {
-                String[] pieces = credential.split(":");
-                if (pieces[0].equals(mEmail)) {
-                    // Account exists, return true if the password matches.
-                    return pieces[1].equals(mPassword);
-                }
-            }*/
-
-            // TODO: register the new account here.
             return false;
         }
 
@@ -384,12 +392,12 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
             if (success) {
                 finish();
 
-                // Obtain the Customer object from the JSON data in "buffer" that was
+                /*// Obtain the Customer object from the JSON data in "buffer" that was
                 // returned by the web service, using the fromJson() method that is part of
                 // the Gson package.
                 Gson gson = new Gson();
                 Type category = new TypeToken<Customer>(){}.getType();
-                customer = gson.fromJson(buffer.toString(), category);
+                customer = gson.fromJson(buffer.toString(), category);*/
 
                 // Start the main activity using an intent.  Pass the Customer object using the
                 // intent.
