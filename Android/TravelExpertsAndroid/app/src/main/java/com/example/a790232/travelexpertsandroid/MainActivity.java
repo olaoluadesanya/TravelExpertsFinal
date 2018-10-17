@@ -9,7 +9,9 @@
 package com.example.a790232.travelexpertsandroid;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -17,6 +19,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ImageView;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
@@ -47,8 +51,8 @@ public class MainActivity extends Activity {
     // Define a constant for the IP address of the web service
     // Use 10.0.2.2 when running an emulator, and the web service is running on the same machine
     // (this IP bridges from the emulated device to the machine it is running on)
-    static final String IP_ADDRESS = "10.0.2.2";
-    //static final String IP_ADDRESS = "10.163.101.59";
+    //static final String IP_ADDRESS = "10.0.2.2";
+    static final String IP_ADDRESS = "10.187.212.89";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +61,7 @@ public class MainActivity extends Activity {
 
         // Obtain the currently logged in customer from the intent
         Intent intent = getIntent();
+
         customer = (Customer) intent.getSerializableExtra("customer");
 
         // Obtain a reference to the list view on the main activity that will list all
@@ -79,6 +84,7 @@ public class MainActivity extends Activity {
                 Packag packag = upcomingPackages.get(position);
                 Intent intent = new Intent(getApplicationContext(), DetailActivity.class);
                 intent.putExtra("packag", packag);
+                intent.putExtra("customer", customer);
                 startActivity(intent);
             }
         });
@@ -147,7 +153,7 @@ public class MainActivity extends Activity {
                     int idx = imgFileName.indexOf('.');
                     imgName = imgFileName.substring(0, idx);
                 }
-                imgName = "R.drawable." + imgName;
+                //imgName = "R.drawable." + imgName;
 
                 map.put("pkgimagefile", imgName);
                 pkgMaps.add(map);
@@ -155,7 +161,17 @@ public class MainActivity extends Activity {
             int resource = R.layout.package_item;
             String [] from = {"pkgname", "pkgdates", "pkgimagefile"};
             int [] to = {R.id.tvPkgName, R.id.tvPkgDates, R.id.ivPackage};
-            SimpleAdapter adapter = new SimpleAdapter(getApplicationContext(), pkgMaps, resource, from, to);
+            SimpleAdapter adapter = new SimpleAdapter(getApplicationContext(), pkgMaps, resource, from, to) {
+
+                // The following code allows the adapter to load the correct image in the image view
+                // for each item in the list view
+                @Override
+                public void setViewImage(ImageView v, String value) {
+                    int resID = getResources().getIdentifier(value, "drawable", getPackageName());
+                    v.setImageResource(resID);
+                }
+            };
+
             lvPackages.setAdapter(adapter);
         }
     }
@@ -187,6 +203,13 @@ public class MainActivity extends Activity {
             case R.id.miLogOut:
                 // ***** TO DO *****
                 // (How does logging out work?  Clear the customer object and return to login
+                // delete token
+
+                SharedPreferences preferences = getSharedPreferences("MY_APP", Context.MODE_PRIVATE);
+                preferences.edit().putString("token",null).apply(); //set token to empty string
+                preferences.edit().putString("custJson",null).apply();
+                Intent activityIntent = new Intent(this, LoginActivity.class);
+                startActivity(activityIntent);
                 // activity??)
                 return true;
             default:

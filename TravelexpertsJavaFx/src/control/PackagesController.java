@@ -494,6 +494,7 @@ public class PackagesController implements Initializable{
     
     private void readPackagesProductsSuppliers()
 	{
+    	ppsList.clear();
     	StringBuffer buffer = new StringBuffer();    	
     	try 
     	{
@@ -1072,6 +1073,9 @@ public class PackagesController implements Initializable{
 	private void displayProductsInPkg()
 	{
 		productsSuppliersInPkg.clear();
+		readPackagesProductsSuppliers();
+		readProductsSuppliers();
+		
 		List<Integer> productsSupplierIds = new ArrayList<>(); 
     	
 		// first using packagesProductsSupplier list, find productsSupplier ids that are associated with the package.
@@ -1101,7 +1105,7 @@ public class PackagesController implements Initializable{
     	dpPkgEndDate.setDisable(!myBool);
     	
     	lblProductsSuppliers.setVisible(myBool);
-    	//tvProductsSuppliers1.setVisible(myBool);
+    	tvProductsSuppliers1.setVisible(myBool);
     	
     	btnInsertProductIntoPkg.setVisible(myBool);
     	btnRemoveProductFromPkg.setVisible(myBool);
