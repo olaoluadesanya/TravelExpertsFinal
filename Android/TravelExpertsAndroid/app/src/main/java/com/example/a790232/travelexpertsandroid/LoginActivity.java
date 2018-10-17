@@ -43,7 +43,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
-<<<<<<< HEAD
 import com.google.gson.JsonObject;
 
 import okhttp3.Call;
@@ -59,7 +58,6 @@ import org.apache.http.impl.client.HttpClientBuilder;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-=======
 import com.google.gson.reflect.TypeToken;
 
 import java.io.BufferedReader;
@@ -67,7 +65,6 @@ import java.io.InputStreamReader;
 import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.URL;
->>>>>>> master
 import java.util.ArrayList;
 import java.util.List;
 
@@ -345,7 +342,6 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
         @Override
         protected Boolean doInBackground(Void... params) {
 
-<<<<<<< HEAD
 
 
             JsonObject json = new JsonObject();
