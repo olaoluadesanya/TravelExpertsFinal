@@ -364,8 +364,8 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
             Response response = null;
             try {
                 response = client.newCall(request).execute();
-                String resBody = response.body().toString();
-                if(response.body().string()=="true"){
+                String resBody = response.body().string();
+                if(resBody.equals("true")){
                     return true;
                 }
             } catch (IOException e) {
