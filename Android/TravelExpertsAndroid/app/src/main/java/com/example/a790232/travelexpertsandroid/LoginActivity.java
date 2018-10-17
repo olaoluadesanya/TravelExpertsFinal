@@ -50,9 +50,6 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-
-import org.apache.http.impl.client.HttpClientBuilder;
-
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import com.google.gson.reflect.TypeToken;
@@ -346,8 +343,6 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
 
         @Override
         protected Boolean doInBackground(Void... params) {
-
-
 
             JsonObject json = new JsonObject();
             json.addProperty("userid", mEmail);
