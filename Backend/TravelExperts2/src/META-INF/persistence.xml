@@ -10,7 +10,10 @@
 		<class>model.Agent</class>
 		<class>model.Product</class>
 		<class>model.ProductsSupplier</class>
+<<<<<<< HEAD
+=======
 		<class>model.Supplier</class>
+>>>>>>> 3c00e1b72c2c87520d331eb8d8dc87b3b06b9853
 		<class>model.Clas</class>
 		<class>model.Fee</class>
 		<class>model.Triptype</class>
