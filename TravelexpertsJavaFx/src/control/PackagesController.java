@@ -161,6 +161,9 @@ public class PackagesController implements Initializable{
 
     @FXML
     private TableColumn<ProductsSupplier, String> tcProductsInPkg;
+    
+    @FXML
+    private TableColumn<ProductsSupplier, String> tcSuppliersInPackage;
 
     @FXML
     private TableView<ProductsSupplier> tvProductsSuppliers1;
@@ -273,9 +276,9 @@ public class PackagesController implements Initializable{
     	tcPkgId.setCellValueFactory(new PropertyValueFactory<>("PackageId"));
 		tcPkgName.setCellValueFactory(new PropertyValueFactory<>("PkgName"));
 		tcProductsPkgTab.setCellValueFactory(new PropertyValueFactory<>("prodName"));
+		tcSuppliersInPackage.setCellValueFactory(new PropertyValueFactory<>("supName"));
 		tcSuppliersPkgTab.setCellValueFactory(new PropertyValueFactory<>("supName"));
-		tcProductsInPkg.setCellValueFactory(new PropertyValueFactory<>("prodName"));
-		
+		tcProductsInPkg.setCellValueFactory(new PropertyValueFactory<>("prodName"));		
     	
 		// read lists from web server and set them to tables
     	readPackages();
@@ -284,6 +287,12 @@ public class PackagesController implements Initializable{
     	readPackagesProductsSuppliers();
     	tvProductsSuppliers1.setItems(productsSuppliers);
     	tvProductsSuppliersInPackage.setItems(productsSuppliersInPkg);
+    	
+    	//datepicker styling to enable disabling editing while keeping it opaque
+    	dpPkgStartDate.setStyle("-fx-opacity: 1");
+    	dpPkgStartDate.getEditor().setStyle("-fx-opacity: 1");
+    	dpPkgEndDate.setStyle("-fx-opacity: 1");
+    	dpPkgEndDate.getEditor().setStyle("-fx-opacity: 1");
 
     	// initialize ability of controls
     	enableInputs(false);
@@ -293,6 +302,7 @@ public class PackagesController implements Initializable{
     	tcPkgId.setSortable(false);
     	tcPkgName.setSortable(false);
     	btnCancelPkg.setDisable(true);  
+    	
     	
     	//======================= Graeme ========================================    	    	
     	
@@ -1100,12 +1110,12 @@ public class PackagesController implements Initializable{
     	tfPkgName.setEditable(myBool);
     	tfPkgBasePrice.setEditable(myBool);
     	tfPkgAgencyCommission.setEditable(myBool);
-    	taPkgDesc.setEditable(myBool);
+    	taPkgDesc.setEditable(myBool);    	
     	dpPkgStartDate.setDisable(!myBool);
     	dpPkgEndDate.setDisable(!myBool);
     	
-    	lblProductsSuppliers.setVisible(myBool);
-    	tvProductsSuppliers1.setVisible(myBool);
+    	lblProductsSuppliers.setDisable(!myBool);
+    	tvProductsSuppliers1.setDisable(!myBool);
     	
     	btnInsertProductIntoPkg.setVisible(myBool);
     	btnRemoveProductFromPkg.setVisible(myBool);

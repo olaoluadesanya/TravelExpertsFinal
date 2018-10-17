@@ -1,5 +1,5 @@
 .pane {
-    -fx-background-color:  #b2cfff;
+    -fx-background-color:  white;
     -fx-border-color:  #d1dbff;
     -fx-font-weight: bold;
 }
@@ -15,7 +15,7 @@
 }
 
 .button-raised{
-    -fx-background-color: #f49542;
+    -fx-background-color: #494f4f;
     -jfx-button-type: RAISED;
     -fx-text-fill: WHITE;
     -fx-font-size: 13px;
@@ -27,5 +27,5 @@
 }
 
 .tab-header-background {
-    -fx-background-color: #f49542;
+    -fx-background-color: #0f0c3a;
 }
