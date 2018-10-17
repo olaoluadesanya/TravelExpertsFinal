@@ -17,6 +17,27 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.util.EntityUtils;
+
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Type;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
 public class DetailActivity extends Activity {
 
     // Declare the member variables for the GUI elements
@@ -25,14 +46,20 @@ public class DetailActivity extends Activity {
     Spinner spNumTravellers;
     Button btnBook;
 
+    Packag packag;
+    Customer customer;
+
+    String URLCONSTANT="http://localhost:8080";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
 
-        // Obtain the selected package from the intent
+        // Obtain the selected package and logged-in customer from the intent
         Intent intent = getIntent();
-        Packag packag = (Packag) intent.getSerializableExtra("packag");
+        packag = (Packag) intent.getSerializableExtra("packag");
+        customer = (Customer) intent.getSerializableExtra("customer");
 
         // Obtain references to all of the GUI elements
         tvPkgName = findViewById(R.id.tvPkgName);
@@ -65,6 +92,8 @@ public class DetailActivity extends Activity {
         // ***** TO DO *****: figure out how to display image
 
         // ***** TO DO *****:  implement booking functionality
+        // ==========================================================================
+        // ====================Sunghyun Lee =========================================
         // Create an event listener on the "Book" button
         btnBook.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -72,6 +101,39 @@ public class DetailActivity extends Activity {
                 // Check if the number of travellers has been set using the spinner.
                 // If not, generate an error message.
                 // If so, proceed with the booking.
+                Booking booking = new Booking(customer.getCustomerId(), "",packag.getPackageId(),
+                        "",Integer.parseInt(spNumTravellers.getSelectedItem().toString()),"",
+                        "","");
+
+
+                // send json to web server
+                Gson gson = new Gson();
+                Type type = new TypeToken<Booking>() {}.getType();
+                String json = gson.toJson(booking, type);
+
+
+
+                String       postUrl       = URLCONSTANT +"/TravelExperts2/rs/db/postbooking";
+                HttpClient httpClient    = HttpClientBuilder.create().build();
+                HttpPost post          = new HttpPost(postUrl);
+                StringEntity postingString;
+                HttpResponse response;
+
+                int success=0; // store status code from http response to see whether successful
+                try
+                {
+                    postingString = new StringEntity(json);
+                    post.setEntity(postingString);
+                    post.setHeader("Content-type", "application/json");
+                    response = httpClient.execute(post);
+                    success=response.getStatusLine().getStatusCode();
+
+                } catch ( IOException e)
+                {
+                    e.printStackTrace();
+                }
+
+
             }
         });
 
