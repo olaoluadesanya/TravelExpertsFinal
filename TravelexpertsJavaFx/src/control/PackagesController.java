@@ -31,6 +31,7 @@ import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXDatePicker;
 import com.jfoenix.controls.JFXListView;
+import com.jfoenix.controls.JFXTabPane;
 import com.jfoenix.controls.JFXTextArea;
 import com.jfoenix.controls.JFXTextField;
 import com.jfoenix.controls.JFXTreeTableView;
@@ -40,25 +41,32 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
-
+import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 
 import javafx.scene.control.Label;
+import javafx.scene.control.Tab;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.TreeTableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import model.Product;
@@ -104,7 +112,6 @@ public class PackagesController implements Initializable{
 	// controls and variables for package tab
 	@FXML
     private Label lblPackageId;
-	
 	
 
     @FXML
@@ -251,16 +258,7 @@ public class PackagesController implements Initializable{
 	public void initialize(URL location, ResourceBundle resources)
 	{
     	// ===================Sunghyun Lee =====================================================
-    	// initialize package tab
-    	
-		// initialize ability of controls
-    	enableInputs(false);
-    	btnAddPackage.setDisable(false);
-    	btnEdit1.setDisable(false);
-    	btnSave1.setDisable(true);
-    	tcPkgId.setSortable(false);
-    	tcPkgName.setSortable(false);
-    	btnCancelPkg.setDisable(true);
+    	// initialize package tab        	
     	
     	// instantiate lists
     	packages1 = FXCollections.observableArrayList();
@@ -287,20 +285,52 @@ public class PackagesController implements Initializable{
     	tvProductsSuppliers1.setItems(productsSuppliers);
     	tvProductsSuppliersInPackage.setItems(productsSuppliersInPkg);
 
+    	// initialize ability of controls
+    	enableInputs(false);
+    	btnAddPackage.setDisable(false);
+    	btnEdit1.setDisable(false);
+    	btnSave1.setDisable(true);
+    	tcPkgId.setSortable(false);
+    	tcPkgName.setSortable(false);
+    	btnCancelPkg.setDisable(true);  
     	
+    	//======================= Graeme ========================================    	    	
     	
-    	//======================= Bookings Tab ========================================
-    	//traveler count field input validation: only allows numbers
-    	tfBookingTravelerCount.textProperty().addListener(new ChangeListener<String>() {
-    	    @Override
-    	    public void changed(ObservableValue<? extends String> observable, String oldValue, 
-    	        String newValue) {
-    	        if (!newValue.matches("\\d*")) {
-    	            tfBookingTravelerCount.setText(newValue.replaceAll("[^\\d]", ""));
-    	        }
+    	//===========================Tab pane
+    	//add buttons to tab bar
+    	JFXButton btnClose = new JFXButton();
+    	Image closeIcon = new Image(getClass().getResourceAsStream("/images/close_icon.png"));
+    	btnClose.setGraphic(new ImageView(closeIcon));
+    	btnClose.getStyleClass().add("button-tab");
+    	btnClose.setOnAction(new EventHandler<ActionEvent>() {
+    	    @Override public void handle(ActionEvent e) {
+    	    	Stage stage = (Stage) btnClose.getScene().getWindow();
+    	    	stage.close();
+    	    }
+    	});
+    	JFXButton btnMin = new JFXButton();
+    	Image minIcon = new Image(getClass().getResourceAsStream("/images/minimize_icon.png"));
+    	btnMin.setGraphic(new ImageView(minIcon));
+    	btnMin.setOnAction(new EventHandler<ActionEvent>() {
+    	    @Override public void handle(ActionEvent e) {
+    	    	Stage stage = (Stage) btnMin.getScene().getWindow();
+    	    	stage.setIconified(true);
     	    }
     	});
     	
+    	AnchorPane.setTopAnchor(btnMin, 4.0);
+        AnchorPane.setRightAnchor(btnMin, 26.0);
+    	
+    	AnchorPane.setTopAnchor(btnClose, 5.0);
+        AnchorPane.setRightAnchor(btnClose, 1.0);
+        
+        apPackages.getChildren().add(btnClose);
+        apPackages.getChildren().add(btnMin);
+        
+        //========================================Packages
+       
+        
+        //==============================================Bookings
     	//instantiate and fill lists
     	customerIds = FXCollections.observableArrayList();    	
     	fillCustomerIdList(getBuffer(URLCONSTANT + "/TravelExperts2/rs/db/getallcustomers"));
@@ -454,10 +484,6 @@ public class PackagesController implements Initializable{
     	cboSuppliers.setItems(suppliers);
     	
     	// =====================================================================================
-
-    	//Window Drag
-    	
-    	
 
     	
 	}
@@ -1163,7 +1189,14 @@ public class PackagesController implements Initializable{
 	// =====================================================================================
 
 	// ==================================== Graeme =========================================
-	
+    //================Packages
+    //=============Bookings
+    @FXML
+    private AnchorPane apPackages;
+
+    @FXML
+    private JFXTabPane tpPackages;
+    
 	@FXML
     private JFXComboBox<Packag> cbBookingPackage;
 
@@ -1201,7 +1234,6 @@ public class PackagesController implements Initializable{
     private ObservableList<TripType> tripTypes;
     
     private ObservableList<FeeType> feeTypes;
-
 
  // get json from web server
     private StringBuffer getBuffer(String urlString)
@@ -1349,8 +1381,6 @@ public class PackagesController implements Initializable{
 			e.printStackTrace();
 		}
     }
-
-
 	
 	// =======================Corinne Mullan================================================
 	// Methods for the Products tab

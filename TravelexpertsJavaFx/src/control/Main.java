@@ -12,26 +12,31 @@ import javafx.fxml.FXMLLoader;
 public class Main extends Application {
 	
 	private static Stage guiStage;
+	private static Scene guiScene;
 
     public static Stage getStage() {
         return guiStage;
+    }
+    
+    public static Scene getScene() {
+        return guiScene;
     }
 	
 	@Override
 	public void start(Stage primaryStage) {
 		try {			
 			guiStage = primaryStage;
-			primaryStage.initStyle(StageStyle.UNDECORATED); //removes title bar
-			primaryStage.getIcons().add(new Image("/images/travel_icon.png")); //adds icon
+			guiStage.initStyle(StageStyle.UNDECORATED); //removes title bar
+			guiStage.getIcons().add(new Image("/images/travel_icon.png")); //adds icon
 			Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("view/Login.fxml"));
 			
 			//used for making window movable with mouse --> lack of title bar makes this necessary
-			Drag.makeWindowDraggable(root, primaryStage);
+			Drag.makeWindowDraggable(root, guiStage);
 			
-			Scene scene = new Scene(root);			
-			scene.getStylesheets().add(getClass().getClassLoader().getResource("view/login.css").toExternalForm());
-			primaryStage.setScene(scene);
-			primaryStage.show();
+			guiScene = new Scene(root);			
+			guiScene.getStylesheets().add(getClass().getClassLoader().getResource("view/login.css").toExternalForm());
+			guiStage.setScene(guiScene);
+			guiStage.show();
 		} catch(Exception e) {
 			e.printStackTrace();
 		}

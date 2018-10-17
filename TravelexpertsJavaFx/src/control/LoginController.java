@@ -25,6 +25,8 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Screen;
@@ -51,6 +53,13 @@ public class LoginController implements Initializable {
 
     @FXML
     private JFXButton btnLogin;
+    
+    @FXML
+    private JFXButton btnLoginClose;
+    
+    @FXML
+    private JFXButton btnLoginMin;    
+    
 
     @FXML
     private void login(Event event) {
@@ -99,7 +108,7 @@ public class LoginController implements Initializable {
 	                    //successful login
 	                    if (responseString.equals("true")) {
 	                    	//change from login to main page 
-							Parent mainPageParent = FXMLLoader.load(getClass().getClassLoader().getResource("view/Packages.fxml"));
+	                    	Parent mainPageParent = FXMLLoader.load(getClass().getClassLoader().getResource("view/Packages.fxml"));
 							Scene mainPageScene = new Scene(mainPageParent);
 							Stage mainStage = Main.getStage();
 							//center stage on screen
@@ -107,7 +116,7 @@ public class LoginController implements Initializable {
 		                    double height = 575;
 		                    Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
 		                    mainStage.setX((screenBounds.getWidth() - width) / 2); 
-		                    mainStage.setY((screenBounds.getHeight() - height) / 2);
+		                    mainStage.setY((screenBounds.getHeight() - height) / 2);		                    
 							mainStage.setScene(mainPageScene);
 	                    }
 	                    //failed login
@@ -141,14 +150,27 @@ public class LoginController implements Initializable {
         alert.setContentText(warning);
         alert.showAndWait();
     }
+    
+    @FXML
+    private void closeButtonAction(){
+        // get a handle to the stage
+        Stage stage = (Stage) btnLoginClose.getScene().getWindow();
+        stage.close();
+    }
+    
+    @FXML
+    private void minButtonAction(){
+        // get a handle to the stage
+        Stage stage = (Stage) btnLoginMin.getScene().getWindow();
+        stage.setIconified(true);
+    }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        tfPass.focusedProperty().addListener(new ChangeListener<Boolean>() {
-            @Override
-            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-
-            }
-        });
+    	Image closeIcon = new Image(getClass().getResourceAsStream("/images/close_icon.png"));
+    	btnLoginClose.setGraphic(new ImageView(closeIcon));
+    	
+    	Image minIcon = new Image(getClass().getResourceAsStream("/images/minimize_icon.png"));
+    	btnLoginMin.setGraphic(new ImageView(minIcon));
     }
 }
