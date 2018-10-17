@@ -1,0 +1,31 @@
+.pane {
+    -fx-background-color:  white;
+    -fx-border-color:  #d1dbff;
+    -fx-font-weight: bold;
+}
+
+.jfx-text-field {
+}
+
+.tab-button {
+    -fx-border-width: 0;
+    -fx-background-radius: 0;
+    -fx-background-color: transparent;
+    -fx-content-display: graphic-only;
+}
+
+.button-raised{
+    -fx-background-color: #494f4f;
+    -jfx-button-type: RAISED;
+    -fx-text-fill: WHITE;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+}
+
+.button-raised .jfx-rippler{
+    -jfx-rippler-fill: #ffd0af;
+}
+
+.tab-header-background {
+    -fx-background-color: #0f0c3a;
+}
