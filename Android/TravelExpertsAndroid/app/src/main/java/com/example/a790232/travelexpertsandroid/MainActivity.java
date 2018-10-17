@@ -197,20 +197,19 @@ public class MainActivity extends Activity {
                 // Pass the Customer object in the intent to start the activity
                 return true;
             case R.id.miMyAccount:
-                // ***** TO DO *****
-                // Pass the Customer object in the intent to start the activity
-                return true;
-            case R.id.miLogOut:
-                // ***** TO DO *****
-                // (How does logging out work?  Clear the customer object and return to login
-                // delete token
+                Intent acctIntent = new Intent(getApplicationContext(), AccountActivity.class);
+                acctIntent.putExtra("customer", customer);
+                startActivity(acctIntent);
 
+                return true;
+
+            case R.id.miLogOut:
                 SharedPreferences preferences = getSharedPreferences("MY_APP", Context.MODE_PRIVATE);
                 preferences.edit().putString("token",null).apply(); //set token to empty string
                 preferences.edit().putString("custJson",null).apply();
                 Intent activityIntent = new Intent(this, LoginActivity.class);
                 startActivity(activityIntent);
-                // activity??)
+
                 return true;
             default:
                 return false;
