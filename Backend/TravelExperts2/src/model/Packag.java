@@ -129,7 +129,7 @@ public class Packag implements Serializable {
 
 		return booking;
 	}
-
+	
 	public String getPkgImageFile() {
 		return pkgImageFile;
 	}
@@ -137,5 +137,6 @@ public class Packag implements Serializable {
 	public void setPkgImageFile(String pkgImageFile) {
 		this.pkgImageFile = pkgImageFile;
 	}
+	
 
 }
