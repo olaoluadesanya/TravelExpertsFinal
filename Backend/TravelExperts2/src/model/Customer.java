@@ -49,7 +49,7 @@ public class Customer implements Serializable {
 	//bi-directional many-to-one association to Agent
 	@ManyToOne
 	@JoinColumn(name="AgentId")
-	private Agent agent;
+	private transient Agent agent;
 
 	public Customer() {
 	}

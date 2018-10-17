@@ -22,7 +22,7 @@ public class Product implements Serializable {
 
 	//bi-directional many-to-one association to ProductsSupplier
 	@OneToMany(mappedBy="product")
-	private List<ProductsSupplier> productsSuppliers;
+	private transient List<ProductsSupplier> productsSuppliers;
 
 	public Product() {
 	}
