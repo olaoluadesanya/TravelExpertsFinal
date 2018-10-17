@@ -1,8 +1,9 @@
 /*
     DetailActivity.java
-    Corinne Mullan
-    October 9, 2018
-
+    This file has many Authors
+    Author: Corinne Mullan, Sunghyun Lee
+    Created: October 9, 2018
+    Last Modified: Octpber 17, 2018
     Initial version created.
  */
 
@@ -51,7 +52,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 public class DetailActivity extends Activity {
-
+//=========================Corinne=================================================================
     // Declare the member variables for the GUI elements
     TextView tvPkgName, tvPkgDesc, tvPkgDates, tvPkgPrice;
     ImageView ivPkgDetail;
@@ -62,7 +63,6 @@ public class DetailActivity extends Activity {
     Customer customer;
 
     private PostBookingTask pb =null;
-
     //String URLCONSTANT="http://localhost:8080";
     static final String URLCONSTANT = "http://10.0.2.2:8080";
 
@@ -108,9 +108,10 @@ public class DetailActivity extends Activity {
 
         // ***** TO DO *****: figure out how to display image
 
-        // ***** TO DO *****:  implement booking functionality
-        // ==========================================================================
-        // ====================Sunghyun Lee =========================================
+//===============================================================================================
+
+
+//===============================Sunghyun Lee =====================================================
         // Create an event listener on the "Book" button
         btnBook.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -118,18 +119,39 @@ public class DetailActivity extends Activity {
                 // Check if the number of travellers has been set using the spinner.
                 // If not, generate an error message.
                 // If so, proceed with the booking.
+                if (validateBooking())
+                {
 
-                Log.i("sung", customer.getCustomerId()+", "+packag.getPackageId()+", "+spNumTravellers.getSelectedItem().toString());
+                    //Log.i("sung", customer.getCustomerId() + ", " + packag.getPackageId());
 
-                pb = new PostBookingTask(117, "BSN",packag.getPackageId(),
-                        "B",4,"BK",
-                        "VANCOUVER","some description");
-                pb.execute((Void) null);
+                    pb = new PostBookingTask(customer.getCustomerId(), "BSN", packag.getPackageId(),
+                            "B", Integer.parseInt(spNumTravellers.getSelectedItem().toString()), "BK",
+                            "I DONT KNOW WHERE IM GOING BABY", tvPkgDesc.getText().toString());
+                    pb.execute((Void) null);
+                }
+
             }
         });
 
     }
+    // return true if all inputs are selected
+    public boolean validateBooking()
+    {
+        boolean myBool = true;
+        try
+        {
+            int numTI = Integer.parseInt(spNumTravellers.getSelectedItem().toString());
+        }
+        catch (Exception e)
+        {
+            Toast.makeText(DetailActivity.this, "Select the number of travellers",
+                    Toast.LENGTH_LONG).show();
+            myBool=false;
+        }
+        return myBool;
+    }
 
+    // Async task that handles booking process
     public class PostBookingTask extends AsyncTask<Void, Void, Boolean>
     {
 
@@ -161,7 +183,7 @@ public class DetailActivity extends Activity {
             description = desc;
         }
 
-
+        // send post request to web server
         @Override
         protected Boolean doInBackground(Void... params)
         {
@@ -207,7 +229,7 @@ public class DetailActivity extends Activity {
 
             return false;
         }
-
+        // display toast message based on whether post was successful
         @Override
         protected void onPostExecute(final Boolean success)
         {
@@ -225,4 +247,6 @@ public class DetailActivity extends Activity {
             }
         }
     }
+
+//==================================================================================================
 }
