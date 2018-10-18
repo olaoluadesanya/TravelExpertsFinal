@@ -765,7 +765,7 @@ public class PackagesController implements Initializable{
 	    	{
 	    		// create a new package               
                 //newPkg=new Packag(0, new BigDecimal( tfPkgAgencyCommission.getText()), new BigDecimal(tfPkgBasePrice.getText()), taPkgDesc.getText(), Date.from(dpPkgEndDate.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant()), tfPkgName.getText(), Date.from(dpPkgStartDate.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant()));                
-                newPkg=new Packag(0, Double.parseDouble( tfPkgAgencyCommission.getText()), Double.parseDouble(tfPkgBasePrice.getText()), taPkgDesc.getText(), dpPkgEndDate.getValue(), tfPkgName.getText(), dpPkgStartDate.getValue(),"no image");                
+                newPkg=new Packag(0, Double.parseDouble( tfPkgAgencyCommission.getText()), Double.parseDouble(tfPkgBasePrice.getText()), taPkgDesc.getText(), dpPkgEndDate.getValue(), tfPkgName.getText(), dpPkgStartDate.getValue(),"polynesian.png");                
 
                 // send json to web server
                 Gson gson = new Gson();
@@ -1019,6 +1019,15 @@ public class PackagesController implements Initializable{
 	    		alert.showAndWait();
 	    		myBool=false;
 			}
+			// agency commission > base price
+			if (Double.parseDouble( tfPkgAgencyCommission.getText())> Double.parseDouble( tfPkgBasePrice.getText()) )
+			{
+	    		alert.setTitle("Agency Commission and Base Price");
+	    		alert.setHeaderText(null);
+	    		alert.setContentText("Agency Commission must be smaller than Base Price");
+	    		alert.showAndWait();
+	    		myBool=false;
+			}
     	} catch (Exception e) 
     	{
     		
@@ -1043,6 +1052,25 @@ public class PackagesController implements Initializable{
     		alert.setTitle("Emtpy Input");
     		alert.setHeaderText(null);
     		alert.setContentText("Please type in description");
+    		alert.showAndWait();
+    		myBool=false;
+    	}
+    	
+    	// check date
+    	if (dpPkgStartDate.getValue().isBefore(LocalDate.now()))
+    	{
+    		alert.setTitle("Date Error");
+    		alert.setHeaderText(null);
+    		alert.setContentText("Start Date must be after today's date");
+    		alert.showAndWait();
+    		myBool=false;
+    	}
+    	
+    	if (dpPkgStartDate.getValue().isAfter(dpPkgEndDate.getValue()))
+    	{
+    		alert.setTitle("Date Error");
+    		alert.setHeaderText(null);
+    		alert.setContentText("End Date must be after Start Date");
     		alert.showAndWait();
     		myBool=false;
     	}
