@@ -648,8 +648,10 @@ public class PackagesController implements Initializable{
 				}
     			
     			// then delete the package from packages table
+    			int numPackagesBeforeDeleting=packages1.size();
 				try
 				{
+					
 					//URL url = new URL(URLCONSTANT +"/TravelExperts2/rs/db/deletepackage/"+tvPackages.getSelectionModel().getSelectedItem().getPackageId());
 					URL url = new URL(URLCONSTANT +"/TravelExperts2/rs/db/deletepackage/"+tvPackages.getSelectionModel().getSelectedItem().getPackageId());
 					HttpURLConnection httpCon = (HttpURLConnection) url.openConnection();
@@ -672,6 +674,15 @@ public class PackagesController implements Initializable{
 				{
 					// TODO Auto-generated catch block
 					e.printStackTrace();
+				}
+				int numPackagesAfterDeleting = packages1.size();
+				if (numPackagesBeforeDeleting==numPackagesAfterDeleting)
+				{
+					alert = new Alert(AlertType.INFORMATION);
+		    		alert.setTitle("Booking Conflict");
+		    		alert.setHeaderText(null);
+		    		alert.setContentText("Customers already booked this package");
+		    		alert.showAndWait();
 				}
 				
     		}
