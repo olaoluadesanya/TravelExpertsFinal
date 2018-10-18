@@ -51,8 +51,8 @@ public class MainActivity extends Activity {
     // Define a constant for the IP address of the web service
     // Use 10.0.2.2 when running an emulator, and the web service is running on the same machine
     // (this IP bridges from the emulated device to the machine it is running on)
-    static final String IP_ADDRESS = "10.0.2.2";
-    //static final String IP_ADDRESS = "10.187.212.89";
+    //static final String IP_ADDRESS = "10.0.2.2";
+    static final String IP_ADDRESS = "10.187.212.89";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -149,11 +149,14 @@ public class MainActivity extends Activity {
 
                 String imgFileName = up.getPkgImageFile();
                 String imgName = "";
-                if (imgFileName != null) {
+                if (!imgFileName.equals("")) {
                     int idx = imgFileName.indexOf('.');
                     imgName = imgFileName.substring(0, idx);
                 }
-                //imgName = "R.drawable." + imgName;
+                else {
+                    // Use a default image if no image file name is specified
+                    imgName = "airplane";
+                }
 
                 map.put("pkgimagefile", imgName);
                 pkgMaps.add(map);
@@ -187,30 +190,34 @@ public class MainActivity extends Activity {
     // Set up an event handler for when a menu item is selected
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Intent intent;
-        String option;
 
-        // **** TO DO *****
         switch(item.getItemId()) {
-            case R.id.miMyBookings:
-                // ***** TO DO *****
-                // Pass the Customer object in the intent to start the activity
+            case R.id.miHome:
+                Intent mainIntent = new Intent(getApplicationContext(), MainActivity.class);
+                mainIntent.putExtra("customer", customer);
+                startActivity(mainIntent);
                 return true;
+
+            case R.id.miMyBookings:
+                Intent bookingsIntent = new Intent(getApplicationContext(), BookingsActivity.class);
+                bookingsIntent.putExtra("customer", customer);
+                startActivity(bookingsIntent);
+                return true;
+
             case R.id.miMyAccount:
                 Intent acctIntent = new Intent(getApplicationContext(), AccountActivity.class);
                 acctIntent.putExtra("customer", customer);
                 startActivity(acctIntent);
-
                 return true;
 
-            case R.id.miLogOut:
+            case R.id.miLogOut: //logout flow Olaoluwa Adesanya
                 SharedPreferences preferences = getSharedPreferences("MY_APP", Context.MODE_PRIVATE);
                 preferences.edit().putString("token",null).apply(); //set token to empty string
                 preferences.edit().putString("custJson",null).apply();
-                Intent activityIntent = new Intent(this, LoginActivity.class);
+                Intent activityIntent = new Intent(getApplicationContext(), LoginActivity.class);
                 startActivity(activityIntent);
-
                 return true;
+
             default:
                 return false;
         }

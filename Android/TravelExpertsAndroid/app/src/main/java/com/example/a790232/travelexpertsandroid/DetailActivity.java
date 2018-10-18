@@ -3,8 +3,7 @@
     This file has many Authors
     Author: Corinne Mullan, Sunghyun Lee
     Created: October 9, 2018
-    Last Modified: Octpber 17, 2018
-    Initial version created.
+    Last Modified: October 17, 2018
  */
 
 package com.example.a790232.travelexpertsandroid;
@@ -16,6 +15,8 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -63,8 +64,10 @@ public class DetailActivity extends Activity {
     Customer customer;
 
     private PostBookingTask pb =null;
+
     //String URLCONSTANT="http://localhost:8080";
-    static final String URLCONSTANT = "http://10.0.2.2:8080";
+    //static final String URLCONSTANT = "http://10.0.2.2:8080";
+    static final String URLCONSTANT = "http://10.187.212.89:8080";
 
 
 
@@ -94,10 +97,15 @@ public class DetailActivity extends Activity {
 
         // Display the image for the package
         String imgFileName = packag.getPkgImageFile();
-        if (imgFileName != null) {
+        if (!imgFileName.equals("")) {
             int idx = imgFileName.indexOf('.');
             String imgName = imgFileName.substring(0, idx);
             int resID = getResources().getIdentifier(imgName, "drawable", getPackageName());
+            ivPkgDetail.setImageResource(resID);
+        }
+        else {
+            // Use a default image if none is specified
+            int resID = getResources().getIdentifier("airplane", "drawable", getPackageName());
             ivPkgDetail.setImageResource(resID);
         }
 
@@ -105,8 +113,6 @@ public class DetailActivity extends Activity {
         String strPrice = String.format ("$%8.2f", packag.getPkgBasePrice().doubleValue() +
                                                    packag.getPkgAgencyCommission().doubleValue());
         tvPkgPrice.setText(strPrice);
-
-        // ***** TO DO *****: figure out how to display image
 
 //===============================================================================================
 
@@ -249,4 +255,47 @@ public class DetailActivity extends Activity {
     }
 
 //==================================================================================================
+
+    // Create and inflate the menu
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    // Set up an event handler for when a menu item is selected
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch(item.getItemId()) {
+            case R.id.miHome:
+                Intent mainIntent = new Intent(getApplicationContext(), MainActivity.class);
+                mainIntent.putExtra("customer", customer);
+                startActivity(mainIntent);
+                return true;
+
+            case R.id.miMyBookings:
+                Intent bookingsIntent = new Intent(getApplicationContext(), BookingsActivity.class);
+                bookingsIntent.putExtra("customer", customer);
+                startActivity(bookingsIntent);
+                return true;
+
+            case R.id.miMyAccount:
+                Intent acctIntent = new Intent(getApplicationContext(), AccountActivity.class);
+                acctIntent.putExtra("customer", customer);
+                startActivity(acctIntent);
+                return true;
+
+            case R.id.miLogOut:
+                SharedPreferences preferences = getSharedPreferences("MY_APP", Context.MODE_PRIVATE);
+                preferences.edit().putString("token",null).apply(); //set token to empty string
+                preferences.edit().putString("custJson",null).apply();
+                Intent activityIntent = new Intent(getApplicationContext(), LoginActivity.class);
+                startActivity(activityIntent);
+                return true;
+
+            default:
+                return false;
+        }
+    }
 }

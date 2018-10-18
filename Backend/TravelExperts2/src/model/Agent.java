@@ -6,6 +6,7 @@ import javax.persistence.*;
 
 /**
  * The persistent class for the agents database table.
+ * Olaoluwa Adesanya SAIT 2018
  * 
  */
 @Entity

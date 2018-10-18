@@ -6,6 +6,7 @@
     October 11, 2018
     - Verify login using the TravelExpert's customers table, via the REST web service
     - On successful login, obtain the Customer object for the logged in user
+    final by Olaoluwa Adesanya
 
  */
 
@@ -82,8 +83,8 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
     // Define a constant for the IP address of the web service
     // Use 10.0.2.2 when running an emulator, and the web service is running on the same machine
     // (this IP bridges from the emulated device to the machine it is running on)
-    static final String IP_ADDRESS = "10.0.2.2";
-    //static final String IP_ADDRESS = "10.187.212.89";
+    //static final String IP_ADDRESS = "10.0.2.2";
+    static final String IP_ADDRESS = "10.187.212.89";
 
     /**
      * Id to identity READ_CONTACTS permission request.
@@ -234,12 +235,12 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
     }
 
     private boolean isEmailValid(String email) {
-        //TODO: Replace this with your own logic
+        //check that we have a string
         return email.contains("");
     }
 
     private boolean isPasswordValid(String password) {
-        //TODO: Replace this with your own logic
+        //check that password is above 4 characters
         return password.length() > 4;
     }
 
@@ -336,6 +337,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
     /**
      * Represents an asynchronous login/registration task used to authenticate
      * the user.
+     * Olaoluwa Adesanya
      */
     public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
 
@@ -343,6 +345,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
         private final String mPassword;
         private String custJSon;
 
+        //constructor
         UserLoginTask(String email, String password) {
             mEmail = email;
             mPassword = password;
@@ -354,19 +357,23 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
 
 
 
+            //put user and password into jsonobject
             JsonObject json = new JsonObject();
             json.addProperty("userid", mEmail);
             json.addProperty("passwd", mPassword);
 
 
             String postUrl = "http://" + IP_ADDRESS + ":8080/TravelExperts2/rs/db/customerlogin";// put in your url
+
+            //Okhttpclient was easier than apache for posting
             OkHttpClient client = new OkHttpClient();
             Gson gson = new Gson();
 
-            String jsonStr = gson.toJson(json);
+            String jsonStr = gson.toJson(json); //create jsonstring
 
             RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), jsonStr);
 
+            //build post request
             Request request = new Request.Builder()
                     .url(postUrl)
                     .post(body)
@@ -375,10 +382,10 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
 
             Response response = null;
             try {
-                response = client.newCall(request).execute();
+                response = client.newCall(request).execute(); //execute post
                 String resBody = response.body().string();
-                if(resBody.contains("customer")){
-                    custJSon = resBody;
+                if(resBody.contains("customer")){//if response string contains a customer
+                    custJSon = resBody; //then set the response string as custJson to be stored in shared preferences
                     return true;
                 }
             } catch (IOException e) {
@@ -407,10 +414,11 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
 
 
 
+                //preliminary string to confirm log in, the server should normally return an authentication token
                 String token = "loggedin";
                 SharedPreferences preferences = getSharedPreferences("MY_APP", Context.MODE_PRIVATE);
-                preferences.edit().putString("token",token).apply();
-                preferences.edit().putString("custJson",custJSon).apply();
+                preferences.edit().putString("token",token).apply(); //add token to shared prefernces
+                preferences.edit().putString("custJson",custJSon).apply(); //add custjson to shared prefernces
 
 
                 // Start the main activity using an intent.  Pass the Customer object using the

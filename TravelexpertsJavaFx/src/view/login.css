@@ -1,11 +1,11 @@
 .pane {
-    -fx-background-color:  #b2cfff;
+    -fx-background-color:  #fffefc;
     -fx-border-color:  #d1dbff;
 }
 
 .button-raised{
     -jfx-button-type: RAISED;
-    -fx-background-color: #f49542;
+    -fx-background-color: #0f0c3a;
     -fx-pref-width: 70;
     -fx-text-fill: WHITE;
     -fx-font-size: 13px;

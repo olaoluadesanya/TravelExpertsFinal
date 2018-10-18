@@ -6,7 +6,9 @@ import javax.persistence.*;
 
 /**
  * The persistent class for the clases database table.
+ * Olaoluwa Adesanya SAIT 2018
  * 
+ * had to change the name form class to clas as class is a reserved java keyword
  */
 @Entity
 @Table(name="clases")

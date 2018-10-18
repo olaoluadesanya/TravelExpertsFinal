@@ -5,7 +5,7 @@ import javax.persistence.*;
 
 /**
  * The primary key class for the packages_products_suppliers database table.
- * 
+ * Olaoluwa Adesanya SAIT 2018
  */
 @Embeddable
 public class PackagesProductsSupplierPK implements Serializable {

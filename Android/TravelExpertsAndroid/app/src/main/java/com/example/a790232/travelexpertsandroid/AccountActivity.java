@@ -9,15 +9,37 @@
 package com.example.a790232.travelexpertsandroid;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+
+import java.io.IOException;
+
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 public class AccountActivity extends Activity {
+
+    // URLs for testing, depending on where the web service is being run
+    //static final String URLCONSTANT = "http://10.0.2.2:8080";
+    static final String URLCONSTANT = "http://10.187.212.89:8080";
 
     // Class variables for the GUI elements
     EditText etFirstName;
@@ -38,6 +60,10 @@ public class AccountActivity extends Activity {
 
     // String for displaying error and status messages
     String statusMsg = "";
+
+    // Reference to the PostCustomerTask used for updating the customer information in the
+    // database via the web service
+    private PostCustomerTask pc = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -119,6 +145,9 @@ public class AccountActivity extends Activity {
                 etEmail.setEnabled(true);
                 spProvince.setEnabled(true);
 
+                // Set the focus to the first edit text
+                etFirstName.requestFocus();
+
                 // Disable the Edit button and enable the Save button
                 btnEdit.setEnabled(false);
                 btnSave.setEnabled(true);
@@ -130,9 +159,29 @@ public class AccountActivity extends Activity {
             public void onClick(View v) {
 
                 //First validate the user-entered data
-                if(validateCustomer()) {
+                if(validateCustomerData()) {
+
+                    // Create a new customer object containing the updated data
+                    Customer uCustomer = new Customer();
+                    uCustomer.setCustomerId(customer.getCustomerId());
+                    uCustomer.setCustFirstName(etFirstName.getText().toString());
+                    uCustomer.setCustLastName(etLastName.getText().toString());
+                    uCustomer.setCustAddress(etAddress.getText().toString());
+                    uCustomer.setCustCity(etCity.getText().toString());
+                    uCustomer.setCustProv(spProvince.getSelectedItem().toString());
+                    uCustomer.setCustPostal(etPostalCode.getText().toString());
+                    uCustomer.setCustCountry(etCountry.getText().toString());
+                    uCustomer.setCustHomePhone(etHomePhone.getText().toString());
+                    uCustomer.setCustBusPhone(etBusPhone.getText().toString());
+                    uCustomer.setCustEmail(etEmail.getText().toString());
+                    uCustomer.setUserid(customer.getUserid());
+                    uCustomer.setPasswd(customer.getPasswd());
 
                     // Update the database via the web service
+                    //Log.i("sung", customer.getCustomerId() + ", " + packag.getPackageId());
+
+                    pc = new PostCustomerTask(uCustomer);
+                    pc.execute((Void) null);
 
                     // Reset all the fields to disabled
                     etFirstName.setEnabled(false);
@@ -151,12 +200,11 @@ public class AccountActivity extends Activity {
                     btnSave.setEnabled(false);
                 }
 
-
             }
         });
     }
 
-    private boolean validateCustomer() {
+    private boolean validateCustomerData() {
 
         statusMsg = "";
 
@@ -215,5 +263,143 @@ public class AccountActivity extends Activity {
         statusMsg = "";
         tvStatusMsg.setText(statusMsg);
         return true;
+    }
+
+    // Async task that handles the customer updates
+    public class PostCustomerTask extends AsyncTask<Void, Void, Boolean>
+    {
+
+        private Customer updatedCustomer;
+        private String updatedJsonString;
+
+        PostCustomerTask(Customer updCust)
+        {
+            updatedCustomer = updCust;
+        }
+
+        // Send the post request to the web server
+        @Override
+        protected Boolean doInBackground(Void... params)
+        {
+
+            JsonObject json = new JsonObject();
+            json.addProperty("customerId", updatedCustomer.getCustomerId());
+            json.addProperty("custFirstName", updatedCustomer.getCustFirstName());
+            json.addProperty("custLastName", updatedCustomer.getCustLastName());
+            json.addProperty("custAddress", updatedCustomer.getCustAddress());
+            json.addProperty("custCity", updatedCustomer.getCustCity());
+            json.addProperty("custProv", updatedCustomer.getCustProv());
+            json.addProperty("custPostal", updatedCustomer.getCustPostal());
+            json.addProperty("custCountry", updatedCustomer.getCustCountry());
+            json.addProperty("custHomePhone", updatedCustomer.getCustHomePhone());
+            json.addProperty("custBusPhone", updatedCustomer.getCustBusPhone());
+            json.addProperty("custEmail", updatedCustomer.getCustEmail());
+            json.addProperty("userid", updatedCustomer.getUserid());
+            json.addProperty("passwd", updatedCustomer.getPasswd());
+
+            String postUrl = URLCONSTANT + "/TravelExperts2/rs/db/updatecustomer";
+            OkHttpClient client = new OkHttpClient();
+            Gson gson = new Gson();
+
+            updatedJsonString = gson.toJson(json);
+
+            RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), updatedJsonString);
+
+            Request request = new Request.Builder()
+                    .url(postUrl)
+                    .post(body)
+                    .build();
+
+
+            Response response = null;
+            try
+            {
+                response = client.newCall(request).execute();
+                String resBody = response.body().string();
+                Log.i("RESPONSE", resBody);
+                return true;
+            } catch (IOException e)
+            {
+                e.printStackTrace();
+            }
+
+            return false;
+        }
+        // Display toast message indicating whether the post was successful
+        @Override
+        protected void onPostExecute(final Boolean success)
+        {
+            if (success)
+            {
+                Toast.makeText(AccountActivity.this, "Account information updated successfully",
+                        Toast.LENGTH_LONG).show();
+
+                // Update the customer object and the json string in shared preferences
+                // Note that the customer Id, userid and password will be unchanged, so there is no
+                // need to update these
+                customer = updatedCustomer;
+                SharedPreferences preferences = getSharedPreferences("MY_APP", getApplicationContext().MODE_PRIVATE);
+                preferences.edit().putString("custJson",updatedJsonString).apply();
+
+
+            } else
+            {
+                Toast.makeText(AccountActivity.this, "Error updating account information. Please try again",
+                        Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+
+    // Override onBackPressed() so that when the back button is pressed, the updated customer object
+    // is passed back.  Take the user back to the main activity for simplicity, regardless of
+    // where they came from (adequate for a prototype application)
+    @Override
+    public void onBackPressed() {
+        Intent myIntent = new Intent(AccountActivity.this,MainActivity.class);
+        myIntent.putExtra("customer", customer);
+        AccountActivity.this.startActivity(myIntent);
+    }
+
+    // Display the menu
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    // Set up an event handler for when a menu item is selected
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch(item.getItemId()) {
+            case R.id.miHome:
+                Intent mainIntent = new Intent(getApplicationContext(), MainActivity.class);
+                mainIntent.putExtra("customer", customer);
+                startActivity(mainIntent);
+                return true;
+
+            case R.id.miMyBookings:
+                Intent bookingsIntent = new Intent(getApplicationContext(), BookingsActivity.class);
+                bookingsIntent.putExtra("customer", customer);
+                startActivity(bookingsIntent);
+                return true;
+
+            case R.id.miMyAccount:
+                Intent acctIntent = new Intent(getApplicationContext(), AccountActivity.class);
+                acctIntent.putExtra("customer", customer);
+                startActivity(acctIntent);
+                return true;
+
+            case R.id.miLogOut:
+                SharedPreferences preferences = getSharedPreferences("MY_APP", Context.MODE_PRIVATE);
+                preferences.edit().putString("token",null).apply(); //set token to empty string
+                preferences.edit().putString("custJson",null).apply();
+                Intent activityIntent = new Intent(getApplicationContext(), LoginActivity.class);
+                startActivity(activityIntent);
+                return true;
+
+            default:
+                return false;
+        }
     }
 }
