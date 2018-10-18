@@ -187,30 +187,34 @@ public class MainActivity extends Activity {
     // Set up an event handler for when a menu item is selected
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Intent intent;
-        String option;
 
-        // **** TO DO *****
         switch(item.getItemId()) {
-            case R.id.miMyBookings:
-                // ***** TO DO *****
-                // Pass the Customer object in the intent to start the activity
+            case R.id.miHome:
+                Intent mainIntent = new Intent(getApplicationContext(), MainActivity.class);
+                mainIntent.putExtra("customer", customer);
+                startActivity(mainIntent);
                 return true;
+
+            case R.id.miMyBookings:
+                Intent bookingsIntent = new Intent(getApplicationContext(), BookingsActivity.class);
+                bookingsIntent.putExtra("customer", customer);
+                startActivity(bookingsIntent);
+                return true;
+
             case R.id.miMyAccount:
                 Intent acctIntent = new Intent(getApplicationContext(), AccountActivity.class);
                 acctIntent.putExtra("customer", customer);
                 startActivity(acctIntent);
-
                 return true;
 
             case R.id.miLogOut:
                 SharedPreferences preferences = getSharedPreferences("MY_APP", Context.MODE_PRIVATE);
                 preferences.edit().putString("token",null).apply(); //set token to empty string
                 preferences.edit().putString("custJson",null).apply();
-                Intent activityIntent = new Intent(this, LoginActivity.class);
+                Intent activityIntent = new Intent(getApplicationContext(), LoginActivity.class);
                 startActivity(activityIntent);
-
                 return true;
+
             default:
                 return false;
         }

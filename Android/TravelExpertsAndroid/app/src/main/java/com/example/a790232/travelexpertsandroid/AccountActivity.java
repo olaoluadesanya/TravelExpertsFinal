@@ -9,10 +9,14 @@
 package com.example.a790232.travelexpertsandroid;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -60,8 +64,6 @@ public class AccountActivity extends Activity {
     // Reference to the PostCustomerTask used for updating the customer information in the
     // database via the web service
     private PostCustomerTask pc = null;
-
-    StringBuffer buffer = new StringBuffer();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -157,16 +159,28 @@ public class AccountActivity extends Activity {
             public void onClick(View v) {
 
                 //First validate the user-entered data
-                if(validateCustomer()) {
+                if(validateCustomerData()) {
+
+                    // Create a new customer object containing the updated data
+                    Customer uCustomer = new Customer();
+                    uCustomer.setCustomerId(customer.getCustomerId());
+                    uCustomer.setCustFirstName(etFirstName.getText().toString());
+                    uCustomer.setCustLastName(etLastName.getText().toString());
+                    uCustomer.setCustAddress(etAddress.getText().toString());
+                    uCustomer.setCustCity(etCity.getText().toString());
+                    uCustomer.setCustProv(spProvince.getSelectedItem().toString());
+                    uCustomer.setCustPostal(etPostalCode.getText().toString());
+                    uCustomer.setCustCountry(etCountry.getText().toString());
+                    uCustomer.setCustHomePhone(etHomePhone.getText().toString());
+                    uCustomer.setCustBusPhone(etBusPhone.getText().toString());
+                    uCustomer.setCustEmail(etEmail.getText().toString());
+                    uCustomer.setUserid(customer.getUserid());
+                    uCustomer.setPasswd(customer.getPasswd());
 
                     // Update the database via the web service
                     //Log.i("sung", customer.getCustomerId() + ", " + packag.getPackageId());
 
-                    pc = new PostCustomerTask(customer.getCustomerId(), etFirstName.getText().toString(),
-                            etLastName.getText().toString(), etAddress.getText().toString(), etCity.getText().toString(),
-                            spProvince.getSelectedItem().toString(), etPostalCode.getText().toString(), etCountry.getText().toString(),
-                            etHomePhone.getText().toString(), etBusPhone.getText().toString(), etEmail.getText().toString(),
-                            customer.getUserid().toString(), customer.getPasswd().toString());
+                    pc = new PostCustomerTask(uCustomer);
                     pc.execute((Void) null);
 
                     // Reset all the fields to disabled
@@ -190,7 +204,7 @@ public class AccountActivity extends Activity {
         });
     }
 
-    private boolean validateCustomer() {
+    private boolean validateCustomerData() {
 
         statusMsg = "";
 
@@ -255,68 +269,41 @@ public class AccountActivity extends Activity {
     public class PostCustomerTask extends AsyncTask<Void, Void, Boolean>
     {
 
-        private int cId;
-        private String cFirstName;
-        private String cLastName;
-        private String cAddress;
-        private String cCity;
-        private String cProv;
-        private String cPostal;
-        private String cCountry;
-        private String cHomePhone;
-        private String cBusPhone;
-        private String cEmail;
-        private String cUserId;
-        private String cPasswd;
+        private Customer updatedCustomer;
+        private String updatedJsonString;
 
-        PostCustomerTask(int id, String first, String last, String address, String city,
-                         String prov, String postal, String country, String hph, String bph, String email,
-                         String uid, String pwd)
+        PostCustomerTask(Customer updCust)
         {
-            cId = id;
-            cFirstName = first;
-            cLastName = last;
-            cAddress = address;
-            cCity = city;
-            cProv = prov;
-            cPostal = postal;
-            cCountry = country;
-            cHomePhone = hph;
-            cBusPhone = bph;
-            cEmail = email;
-            cUserId = uid;
-            cPasswd = pwd;
+            updatedCustomer = updCust;
         }
 
         // Send the post request to the web server
         @Override
         protected Boolean doInBackground(Void... params)
         {
-            // Create a json object containing the updated customer information
-            // The web service will give an error if the userid and password are not
-            // provided as these fields cannot be null.
+
             JsonObject json = new JsonObject();
-            json.addProperty("customerId", cId);
-            json.addProperty("custFirstName", cFirstName);
-            json.addProperty("custLastName", cLastName);
-            json.addProperty("custAddress", cAddress);
-            json.addProperty("custCity", cCity);
-            json.addProperty("custProv", cProv);
-            json.addProperty("custPostal", cPostal);
-            json.addProperty("custCountry", cCountry);
-            json.addProperty("custHomePhone", cHomePhone);
-            json.addProperty("custBusPhone", cBusPhone);
-            json.addProperty("custEmail", cEmail);
-            json.addProperty("userid", cUserId);
-            json.addProperty("passwd", cPasswd);
+            json.addProperty("customerId", updatedCustomer.getCustomerId());
+            json.addProperty("custFirstName", updatedCustomer.getCustFirstName());
+            json.addProperty("custLastName", updatedCustomer.getCustLastName());
+            json.addProperty("custAddress", updatedCustomer.getCustAddress());
+            json.addProperty("custCity", updatedCustomer.getCustCity());
+            json.addProperty("custProv", updatedCustomer.getCustProv());
+            json.addProperty("custPostal", updatedCustomer.getCustPostal());
+            json.addProperty("custCountry", updatedCustomer.getCustCountry());
+            json.addProperty("custHomePhone", updatedCustomer.getCustHomePhone());
+            json.addProperty("custBusPhone", updatedCustomer.getCustBusPhone());
+            json.addProperty("custEmail", updatedCustomer.getCustEmail());
+            json.addProperty("userid", updatedCustomer.getUserid());
+            json.addProperty("passwd", updatedCustomer.getPasswd());
 
             String postUrl = URLCONSTANT + "/TravelExperts2/rs/db/updatecustomer";
             OkHttpClient client = new OkHttpClient();
             Gson gson = new Gson();
 
-            String jsonStr = gson.toJson(json);
+            updatedJsonString = gson.toJson(json);
 
-            RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), jsonStr);
+            RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), updatedJsonString);
 
             Request request = new Request.Builder()
                     .url(postUrl)
@@ -347,11 +334,72 @@ public class AccountActivity extends Activity {
                 Toast.makeText(AccountActivity.this, "Account information updated successfully",
                         Toast.LENGTH_LONG).show();
 
+                // Update the customer object and the json string in shared preferences
+                // Note that the customer Id, userid and password will be unchanged, so there is no
+                // need to update these
+                customer = updatedCustomer;
+                SharedPreferences preferences = getSharedPreferences("MY_APP", getApplicationContext().MODE_PRIVATE);
+                preferences.edit().putString("custJson",updatedJsonString).apply();
+
+
             } else
             {
                 Toast.makeText(AccountActivity.this, "Error updating account information. Please try again",
                         Toast.LENGTH_LONG).show();
             }
+        }
+    }
+
+    // Override onBackPressed() so that when the back button is pressed, the updated customer object
+    // is passed back.  Take the user back to the main activity for simplicity, regardless of
+    // where they came from (adequate for a prototype application)
+    @Override
+    public void onBackPressed() {
+        Intent myIntent = new Intent(AccountActivity.this,MainActivity.class);
+        myIntent.putExtra("customer", customer);
+        AccountActivity.this.startActivity(myIntent);
+    }
+
+    // Display the menu
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    // Set up an event handler for when a menu item is selected
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch(item.getItemId()) {
+            case R.id.miHome:
+                Intent mainIntent = new Intent(getApplicationContext(), MainActivity.class);
+                mainIntent.putExtra("customer", customer);
+                startActivity(mainIntent);
+                return true;
+
+            case R.id.miMyBookings:
+                Intent bookingsIntent = new Intent(getApplicationContext(), BookingsActivity.class);
+                bookingsIntent.putExtra("customer", customer);
+                startActivity(bookingsIntent);
+                return true;
+
+            case R.id.miMyAccount:
+                Intent acctIntent = new Intent(getApplicationContext(), AccountActivity.class);
+                acctIntent.putExtra("customer", customer);
+                startActivity(acctIntent);
+                return true;
+
+            case R.id.miLogOut:
+                SharedPreferences preferences = getSharedPreferences("MY_APP", Context.MODE_PRIVATE);
+                preferences.edit().putString("token",null).apply(); //set token to empty string
+                preferences.edit().putString("custJson",null).apply();
+                Intent activityIntent = new Intent(getApplicationContext(), LoginActivity.class);
+                startActivity(activityIntent);
+                return true;
+
+            default:
+                return false;
         }
     }
 }
