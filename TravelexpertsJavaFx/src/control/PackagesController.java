@@ -660,13 +660,13 @@ public class PackagesController implements Initializable{
 	    		                "application/x-www-form-urlencoded");
 					httpCon.setRequestMethod("DELETE");
 					httpCon.connect();
-	    		    
+					System.out.println("10/18: "+httpCon.getResponseCode());
+
 					     			
 	    			readPackages();
 	    			readPackagesProductsSuppliers();
 	    			tvPackages.getSelectionModel().select(0);
 	    			displayPackageInfo();
-					System.out.println("10/18: "+httpCon.getResponseCode());
 
 				} catch (IOException e)
 				{
