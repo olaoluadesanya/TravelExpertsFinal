@@ -634,7 +634,7 @@ public class PackagesController implements Initializable{
 						postingString2 = new StringEntity(myJson2);
 						post2.setEntity(postingString2);
 						post2.setHeader("Content-type", "application/json");
-						response2 = httpClient2.execute(post2);							
+						response2 = httpClient2.execute(post2);		
 					}
 				}		
 				catch ( IOException e)
@@ -659,14 +659,15 @@ public class PackagesController implements Initializable{
 					httpCon.setRequestProperty("Content-Type",
 	    		                "application/x-www-form-urlencoded");
 					httpCon.setRequestMethod("DELETE");
-	    		    //System.out.println(httpCon.getResponseCode());
-	    		    //httpCon.disconnect();
-		    	    
-		    	    	    			
+					httpCon.connect();
+	    		    
+					     			
 	    			readPackages();
 	    			readPackagesProductsSuppliers();
 	    			tvPackages.getSelectionModel().select(0);
 	    			displayPackageInfo();
+					//System.out.println("10/18: "+response2.getStatusLine().toString());
+
 				} catch (IOException e)
 				{
 					// TODO Auto-generated catch block
@@ -722,8 +723,7 @@ public class PackagesController implements Initializable{
     	
     	// hide products-related controls
     	
-    	tvProductsSuppliersInPackage.setVisible(false);
-    	
+    	tvProductsSuppliersInPackage.setVisible(false);    	
     	lblProductsSuppliers.setVisible(false);
     	tvProductsSuppliers1.setVisible(false);	
     	btnInsertProductIntoPkg.setVisible(false);
@@ -995,7 +995,8 @@ public class PackagesController implements Initializable{
         				tvPackages.getSelectionModel().select(pkg);
         		}
         	}
-        	
+        	tvProductsSuppliers1.setVisible(true);
+
         	displayPackageInfo();
         	btnCancelPkg.setDisable(true);
 		}
@@ -1157,6 +1158,8 @@ public class PackagesController implements Initializable{
 			tvPackages.getSelectionModel().select(0);
 		
 		enableInputs(false);
+    	tvProductsSuppliers1.setVisible(true);
+
     	btnDelete1.setDisable(false);
     	btnAddPackage.setDisable(false);
     	btnEdit1.setDisable(false);
