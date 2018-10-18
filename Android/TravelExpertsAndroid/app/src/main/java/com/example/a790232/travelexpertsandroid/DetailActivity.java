@@ -66,8 +66,8 @@ public class DetailActivity extends Activity {
     private PostBookingTask pb =null;
 
     //String URLCONSTANT="http://localhost:8080";
-    //static final String URLCONSTANT = "http://10.0.2.2:8080";
-    static final String URLCONSTANT = "http://10.187.212.89:8080";
+    static final String URLCONSTANT = "http://10.0.2.2:8080";
+    //static final String URLCONSTANT = "http://10.187.212.89:8080";
 
 
 

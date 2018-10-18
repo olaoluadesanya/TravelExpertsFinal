@@ -6,6 +6,10 @@ Created: 2018-10-16
 
 package com.example.a790232.travelexpertsandroid;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Date;
 
 public class Booking
@@ -27,6 +31,7 @@ public class Booking
     private String description;
 
     private Date bookingDate;
+    private Packag packag;
 
     public Booking(int customerId, String classId,  String tripTypeId, int travelerCount,
                    String feeId, String destination, String description) {
@@ -51,6 +56,15 @@ public class Booking
         this.customerId = customerId;
     }
 
+    public Packag getPackag()
+    {
+        return packag;
+    }
+
+    public void setPackag(Packag packag)
+    {
+        this.packag = packag;
+    }
 
     public String getClassId() {
         return classId;
@@ -121,12 +135,12 @@ public class Booking
     @Override
     public String toString()
     {
-        return "Booking{" +
-                "packageId=" + packageId +
-                ", tripTypeId='" + tripTypeId + '\'' +
-                ", travelerCount=" + travelerCount +
-                ", feeId='" + feeId + '\'' +
-                ", bookingDate=" + bookingDate +
-                '}';
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        //to convert Date to String, use format method of SimpleDateFormat class.
+        String strDate = dateFormat.format(getBookingDate());
+
+
+        return getPackag().getPkgName() + " booked on "+strDate +" for "+travelerCount+" people.";
+
     }
 }

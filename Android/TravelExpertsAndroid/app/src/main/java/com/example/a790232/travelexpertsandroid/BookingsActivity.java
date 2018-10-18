@@ -29,10 +29,13 @@ import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 public class BookingsActivity extends Activity {
 
@@ -40,8 +43,8 @@ public class BookingsActivity extends Activity {
 
 
     private Customer customer;
-    //private String URLCONSTANT="http://localhost:8080";
-    private String URLCONSTANT="http://10.187.212.89:8080";
+    private String URLCONSTANT="http://10.0.2.2:8080";
+    //private String URLCONSTANT="http://10.187.212.89:8080";
     private ArrayList<Booking> bookingArrayList = new ArrayList<>();
     private ArrayList<Booking> customersBookingList = new ArrayList<>();
     private StringBuffer buffer = new StringBuffer();
@@ -53,13 +56,14 @@ public class BookingsActivity extends Activity {
 
         // Retrieve customer object from intent
         // Obtain the currently logged in customer from the intent
-        /*
+
         Intent intent = getIntent();
         customer = (Customer) intent.getSerializableExtra("customer");
-        */
+
+        /*
         customer=new Customer();
         customer.setCustomerId(117);
-
+*/
         lvBookings = findViewById(R.id.lvBookings);
 
         // Retrieve all bookings for that customer id from the web service
@@ -117,7 +121,15 @@ public class BookingsActivity extends Activity {
                     if (jo.has("packag") && !jo.isNull("packag"))
                     {
                         b.setPackageId(jo.getJSONObject("packag").getInt("packageId"));
-                        b.setBookingDate(new Date());
+
+                        DateFormat format = new SimpleDateFormat("MMM d, yyyy", Locale.ENGLISH);
+                        b.setBookingDate(format.parse(jo.getString("bookingDate")));
+                        Log.i("q", b.getBookingDate().toString());
+                        //b.setBookingDate(new Date());
+                        Packag tempPackage=new Packag();
+                        tempPackage.setPackageId(jo.getJSONObject("packag").getInt("packageId"));
+                        tempPackage.setPkgName(jo.getJSONObject("packag").getString("pkgName"));
+                        b.setPackag(tempPackage);
                         bookingArrayList.add(b);
                     }
 
@@ -130,7 +142,7 @@ public class BookingsActivity extends Activity {
                 }
                 ArrayAdapter<Customer> adapter = new ArrayAdapter(getApplicationContext(), android.R.layout.simple_list_item_1, customersBookingList);
                 lvBookings.setAdapter(adapter);
-            } catch (JSONException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
