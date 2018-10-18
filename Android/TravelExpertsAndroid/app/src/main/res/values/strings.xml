@@ -38,6 +38,7 @@
     <string name="canada">Canada</string>
     <string name="edit">Edit</string>
     <string name="save">Save</string>
+    <string name="home">Home</string>
     <string-array name="provinces">
         <item>Select Province...</item>
         <item>AB</item>
