@@ -685,6 +685,7 @@ public class PackagesController implements Initializable{
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+				readPackages();
 				int numPackagesAfterDeleting = packages1.size();
 				
 				// deleting package failed
