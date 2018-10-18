@@ -303,6 +303,7 @@ public class PackagesController implements Initializable{
     	tcPkgName.setSortable(false);
     	btnCancelPkg.setDisable(true);  
     	
+    	// sort
     	
     	//======================= Graeme ========================================    	    	
     	
@@ -597,6 +598,7 @@ public class PackagesController implements Initializable{
     void deletePackage(ActionEvent event) {
     	if (tvPackages.getSelectionModel().getSelectedItem()!=null)
     	{
+    		Packag pkgImUsing=tvPackages.getSelectionModel().getSelectedItem();
     		ButtonType ok = new ButtonType("Yes", ButtonBar.ButtonData.OK_DONE);
     		ButtonType cancel = new ButtonType("No", ButtonBar.ButtonData.CANCEL_CLOSE);
     		Alert alert = new Alert(AlertType.WARNING,
@@ -658,6 +660,7 @@ public class PackagesController implements Initializable{
     			
     			// then delete the package from packages table
     			int numPackagesBeforeDeleting=packages1.size();
+    			System.out.println("num before deleting: "+numPackagesBeforeDeleting);
 				try
 				{
 					
@@ -679,14 +682,16 @@ public class PackagesController implements Initializable{
 	    			tvPackages.getSelectionModel().select(0);
 	    			displayPackageInfo();
 	    			*/
+					
 
 				} catch (IOException e)
 				{
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+				readPackages();
 				int numPackagesAfterDeleting = packages1.size();
-				
+				System.out.println("num after deleting: " + numPackagesAfterDeleting);
 				// deleting package failed
 				if (numPackagesBeforeDeleting==numPackagesAfterDeleting)
 				{
@@ -695,7 +700,7 @@ public class PackagesController implements Initializable{
 					{
 						String myJson2= "{" 
 	                			+	"\"id\"" + ": {" 
-	                			+	"\"packageId\""+": "+ tvPackages.getSelectionModel().getSelectedItem().getPackageId() + ", "
+	                			+	"\"packageId\""+": "+ pkgImUsing.getPackageId()+ ", "
 	                        	+	"\"productSupplierId\"" +": "+ p.getProductSupplierId()
 	                        	+	"}"
 	                        	+	"}";
