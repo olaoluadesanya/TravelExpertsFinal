@@ -6,7 +6,7 @@ import javax.persistence.*;
 
 /**
  * The persistent class for the packages_products_suppliers database table.
- * 
+ * Olaoluwa Adesanya SAIT 2018
  */
 @Entity
 @Table(name="packages_products_suppliers")

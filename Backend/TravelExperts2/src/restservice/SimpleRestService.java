@@ -1,3 +1,7 @@
+/*
+ * Main rest service for crud operations 
+ * Olaoluwa Adesanya SAIT 2018
+ */
 package restservice;
 
 
@@ -890,7 +894,7 @@ public class SimpleRestService {
         }
         return response;	
 	}
-			
+				
 	
 	// Added /getallsuppliers -- Corinne Mullan
 	// http://localhost:8080/TravelExperts2/rs/db/getallsuppliers

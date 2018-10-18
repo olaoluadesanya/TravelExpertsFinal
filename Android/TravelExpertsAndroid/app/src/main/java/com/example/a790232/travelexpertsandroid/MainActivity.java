@@ -51,8 +51,8 @@ public class MainActivity extends Activity {
     // Define a constant for the IP address of the web service
     // Use 10.0.2.2 when running an emulator, and the web service is running on the same machine
     // (this IP bridges from the emulated device to the machine it is running on)
-    static final String IP_ADDRESS = "10.0.2.2";
-    //static final String IP_ADDRESS = "10.187.212.89";
+    //static final String IP_ADDRESS = "10.0.2.2";
+    static final String IP_ADDRESS = "10.187.212.89";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -207,7 +207,7 @@ public class MainActivity extends Activity {
                 startActivity(acctIntent);
                 return true;
 
-            case R.id.miLogOut:
+            case R.id.miLogOut: //logout flow Olaoluwa Adesanya
                 SharedPreferences preferences = getSharedPreferences("MY_APP", Context.MODE_PRIVATE);
                 preferences.edit().putString("token",null).apply(); //set token to empty string
                 preferences.edit().putString("custJson",null).apply();
