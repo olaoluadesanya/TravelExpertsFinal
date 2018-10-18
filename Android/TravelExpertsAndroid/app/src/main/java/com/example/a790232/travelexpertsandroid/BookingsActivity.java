@@ -51,8 +51,8 @@ public class BookingsActivity extends Activity {
 
 
     private Customer customer;
-    //private String URLCONSTANT="http://10.0.2.2:8080";
-    private String URLCONSTANT="http://10.187.212.89:8080";
+    private String URLCONSTANT="http://10.0.2.2:8080";
+    //private String URLCONSTANT="http://10.187.212.89:8080";
     private ArrayList<Booking> bookingArrayList = new ArrayList<>();
     private ArrayList<Booking> customersBookingList = new ArrayList<>();
     private StringBuffer buffer = new StringBuffer();
