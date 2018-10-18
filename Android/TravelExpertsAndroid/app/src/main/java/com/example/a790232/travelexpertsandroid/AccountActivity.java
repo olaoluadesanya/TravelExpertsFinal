@@ -10,14 +10,32 @@ package com.example.a790232.travelexpertsandroid;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+
+import java.io.IOException;
+
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 public class AccountActivity extends Activity {
+
+    // URLs for testing, depending on where the web service is being run
+    //static final String URLCONSTANT = "http://10.0.2.2:8080";
+    static final String URLCONSTANT = "http://10.187.212.89:8080";
 
     // Class variables for the GUI elements
     EditText etFirstName;
@@ -38,6 +56,12 @@ public class AccountActivity extends Activity {
 
     // String for displaying error and status messages
     String statusMsg = "";
+
+    // Reference to the PostCustomerTask used for updating the customer information in the
+    // database via the web service
+    private PostCustomerTask pc = null;
+
+    StringBuffer buffer = new StringBuffer();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -119,6 +143,9 @@ public class AccountActivity extends Activity {
                 etEmail.setEnabled(true);
                 spProvince.setEnabled(true);
 
+                // Set the focus to the first edit text
+                etFirstName.requestFocus();
+
                 // Disable the Edit button and enable the Save button
                 btnEdit.setEnabled(false);
                 btnSave.setEnabled(true);
@@ -133,6 +160,14 @@ public class AccountActivity extends Activity {
                 if(validateCustomer()) {
 
                     // Update the database via the web service
+                    //Log.i("sung", customer.getCustomerId() + ", " + packag.getPackageId());
+
+                    pc = new PostCustomerTask(customer.getCustomerId(), etFirstName.getText().toString(),
+                            etLastName.getText().toString(), etAddress.getText().toString(), etCity.getText().toString(),
+                            spProvince.getSelectedItem().toString(), etPostalCode.getText().toString(), etCountry.getText().toString(),
+                            etHomePhone.getText().toString(), etBusPhone.getText().toString(), etEmail.getText().toString(),
+                            customer.getUserid().toString(), customer.getPasswd().toString());
+                    pc.execute((Void) null);
 
                     // Reset all the fields to disabled
                     etFirstName.setEnabled(false);
@@ -150,7 +185,6 @@ public class AccountActivity extends Activity {
                     btnEdit.setEnabled(true);
                     btnSave.setEnabled(false);
                 }
-
 
             }
         });
@@ -215,5 +249,109 @@ public class AccountActivity extends Activity {
         statusMsg = "";
         tvStatusMsg.setText(statusMsg);
         return true;
+    }
+
+    // Async task that handles the customer updates
+    public class PostCustomerTask extends AsyncTask<Void, Void, Boolean>
+    {
+
+        private int cId;
+        private String cFirstName;
+        private String cLastName;
+        private String cAddress;
+        private String cCity;
+        private String cProv;
+        private String cPostal;
+        private String cCountry;
+        private String cHomePhone;
+        private String cBusPhone;
+        private String cEmail;
+        private String cUserId;
+        private String cPasswd;
+
+        PostCustomerTask(int id, String first, String last, String address, String city,
+                         String prov, String postal, String country, String hph, String bph, String email,
+                         String uid, String pwd)
+        {
+            cId = id;
+            cFirstName = first;
+            cLastName = last;
+            cAddress = address;
+            cCity = city;
+            cProv = prov;
+            cPostal = postal;
+            cCountry = country;
+            cHomePhone = hph;
+            cBusPhone = bph;
+            cEmail = email;
+            cUserId = uid;
+            cPasswd = pwd;
+        }
+
+        // Send the post request to the web server
+        @Override
+        protected Boolean doInBackground(Void... params)
+        {
+            // Create a json object containing the updated customer information
+            // The web service will give an error if the userid and password are not
+            // provided as these fields cannot be null.
+            JsonObject json = new JsonObject();
+            json.addProperty("customerId", cId);
+            json.addProperty("custFirstName", cFirstName);
+            json.addProperty("custLastName", cLastName);
+            json.addProperty("custAddress", cAddress);
+            json.addProperty("custCity", cCity);
+            json.addProperty("custProv", cProv);
+            json.addProperty("custPostal", cPostal);
+            json.addProperty("custCountry", cCountry);
+            json.addProperty("custHomePhone", cHomePhone);
+            json.addProperty("custBusPhone", cBusPhone);
+            json.addProperty("custEmail", cEmail);
+            json.addProperty("userid", cUserId);
+            json.addProperty("passwd", cPasswd);
+
+            String postUrl = URLCONSTANT + "/TravelExperts2/rs/db/updatecustomer";
+            OkHttpClient client = new OkHttpClient();
+            Gson gson = new Gson();
+
+            String jsonStr = gson.toJson(json);
+
+            RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), jsonStr);
+
+            Request request = new Request.Builder()
+                    .url(postUrl)
+                    .post(body)
+                    .build();
+
+
+            Response response = null;
+            try
+            {
+                response = client.newCall(request).execute();
+                String resBody = response.body().string();
+                Log.i("RESPONSE", resBody);
+                return true;
+            } catch (IOException e)
+            {
+                e.printStackTrace();
+            }
+
+            return false;
+        }
+        // Display toast message indicating whether the post was successful
+        @Override
+        protected void onPostExecute(final Boolean success)
+        {
+            if (success)
+            {
+                Toast.makeText(AccountActivity.this, "Account information updated successfully",
+                        Toast.LENGTH_LONG).show();
+
+            } else
+            {
+                Toast.makeText(AccountActivity.this, "Error updating account information. Please try again",
+                        Toast.LENGTH_LONG).show();
+            }
+        }
     }
 }

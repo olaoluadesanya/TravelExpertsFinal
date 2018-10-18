@@ -3,8 +3,7 @@
     This file has many Authors
     Author: Corinne Mullan, Sunghyun Lee
     Created: October 9, 2018
-    Last Modified: Octpber 17, 2018
-    Initial version created.
+    Last Modified: October 17, 2018
  */
 
 package com.example.a790232.travelexpertsandroid;
@@ -63,8 +62,10 @@ public class DetailActivity extends Activity {
     Customer customer;
 
     private PostBookingTask pb =null;
+
     //String URLCONSTANT="http://localhost:8080";
-    static final String URLCONSTANT = "http://10.0.2.2:8080";
+    //static final String URLCONSTANT = "http://10.0.2.2:8080";
+    static final String URLCONSTANT = "http://10.187.212.89:8080";
 
 
 
@@ -105,8 +106,6 @@ public class DetailActivity extends Activity {
         String strPrice = String.format ("$%8.2f", packag.getPkgBasePrice().doubleValue() +
                                                    packag.getPkgAgencyCommission().doubleValue());
         tvPkgPrice.setText(strPrice);
-
-        // ***** TO DO *****: figure out how to display image
 
 //===============================================================================================
 
