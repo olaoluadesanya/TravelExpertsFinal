@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 
 /**
  * The persistent class for the fees database table.
- * 
+ * Olaoluwa Adesanya SAIT 2018
  */
 @Entity
 @Table(name="fees")

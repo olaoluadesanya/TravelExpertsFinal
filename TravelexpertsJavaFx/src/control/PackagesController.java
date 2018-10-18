@@ -239,7 +239,7 @@ public class PackagesController implements Initializable{
      private JFXButton btnAddProdSupplier;
 
      @FXML
-     private ComboBox<Supplier> cboSuppliers;
+     private JFXComboBox<Supplier> cboSuppliers;
 
      @FXML
      private JFXButton btnRefreshProd;
@@ -309,7 +309,7 @@ public class PackagesController implements Initializable{
     	//===========================Tab pane
     	//add buttons to tab bar
     	JFXButton btnClose = new JFXButton();
-    	Image closeIcon = new Image(getClass().getResourceAsStream("/images/close_icon.png"));
+    	Image closeIcon = new Image(getClass().getResourceAsStream("/images/close_icon_white.png"));
     	btnClose.setGraphic(new ImageView(closeIcon));
     	btnClose.getStyleClass().add("button-tab");
     	btnClose.setOnAction(new EventHandler<ActionEvent>() {
@@ -319,7 +319,7 @@ public class PackagesController implements Initializable{
     	    }
     	});
     	JFXButton btnMin = new JFXButton();
-    	Image minIcon = new Image(getClass().getResourceAsStream("/images/minimize_icon.png"));
+    	Image minIcon = new Image(getClass().getResourceAsStream("/images/minimize_icon_white.png"));
     	btnMin.setGraphic(new ImageView(minIcon));
     	btnMin.setOnAction(new EventHandler<ActionEvent>() {
     	    @Override public void handle(ActionEvent e) {
@@ -1418,9 +1418,14 @@ public class PackagesController implements Initializable{
 			HttpEntity entity = response.getEntity();
     	    String responseString = null;
     	    responseString = EntityUtils.toString(entity, "UTF-8");
-    	    //System.out.println("Response: " + responseString);
-    	    
-			//System.out.println(response);
+
+    	    if (responseString.equals("Success")){
+    	    	Alert alert = new Alert(AlertType.INFORMATION);
+    			alert.setTitle("Booking Created");
+    			alert.setHeaderText(null);
+    			alert.setContentText("Booking successfully created");
+    			alert.show();  
+    	    }  
 		} catch ( IOException e)
 		{
 			e.printStackTrace();

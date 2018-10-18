@@ -7,7 +7,6 @@
 <?import com.jfoenix.controls.JFXTextArea?>
 <?import com.jfoenix.controls.JFXTextField?>
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TableColumn?>
@@ -24,27 +23,26 @@
                <content>
                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
-                        <VBox layoutX="394.0" layoutY="30.0" prefHeight="184.0" prefWidth="273.0">
+                        <VBox layoutX="392.0" layoutY="33.0" prefHeight="208.0" prefWidth="273.0">
                            <children>
-                              <Label fx:id="lblPackageId" prefHeight="28.0" prefWidth="87.0" />
-                              <JFXTextField fx:id="tfPkgName" prefHeight="30.0" prefWidth="273.0" />
-                              <JFXDatePicker fx:id="dpPkgStartDate" editable="false" />
-                              <JFXDatePicker fx:id="dpPkgEndDate" editable="false" />
-                              <JFXTextArea fx:id="taPkgDesc" prefHeight="42.0" prefWidth="273.0" />
-                              <JFXTextField fx:id="tfPkgBasePrice" />
-                              <JFXTextField fx:id="tfPkgAgencyCommission" />
-                              <Label fx:id="lblPackageId1" layoutX="10.0" layoutY="10.0" prefHeight="28.0" prefWidth="87.0" />
+                              <Label fx:id="lblPackageId" prefHeight="22.0" prefWidth="87.0" />
+                              <JFXTextField fx:id="tfPkgName" prefHeight="28.0" prefWidth="273.0" />
+                              <JFXDatePicker fx:id="dpPkgStartDate" editable="false" prefHeight="37.0" prefWidth="183.0" />
+                              <JFXDatePicker fx:id="dpPkgEndDate" editable="false" prefHeight="37.0" prefWidth="183.0" />
+                              <JFXTextArea fx:id="taPkgDesc" prefHeight="50.0" prefWidth="273.0" />
+                              <JFXTextField fx:id="tfPkgBasePrice" prefHeight="28.0" prefWidth="273.0" />
+                              <JFXTextField fx:id="tfPkgAgencyCommission" prefHeight="28.0" prefWidth="273.0" />
                            </children>
                         </VBox>
-                        <VBox layoutX="250.0" layoutY="31.0" prefHeight="250.0" prefWidth="121.0">
+                        <VBox layoutX="250.0" layoutY="31.0" prefHeight="228.0" prefWidth="121.0">
                            <children>
-                              <Label alignment="CENTER_RIGHT" prefHeight="22.0" prefWidth="132.0" text="ID:" />
-                              <Label alignment="CENTER_RIGHT" prefHeight="24.0" prefWidth="153.0" text="Name:" />
-                              <Label alignment="CENTER_RIGHT" prefHeight="30.0" prefWidth="154.0" text="Start Date:" />
-                              <Label alignment="CENTER_RIGHT" prefHeight="31.0" prefWidth="159.0" text="End Date:" />
-                              <Label alignment="CENTER_RIGHT" prefHeight="43.0" prefWidth="199.0" text="Description:" />
-                              <Label alignment="CENTER_RIGHT" prefHeight="25.0" prefWidth="232.0" text="Base Price:" />
-                              <Label alignment="CENTER_RIGHT" prefHeight="30.0" prefWidth="172.0" text="Agency Commission:" />
+                              <Label alignment="CENTER_RIGHT" prefHeight="22.0" prefWidth="121.0" text="ID:" />
+                              <Label alignment="CENTER_RIGHT" prefHeight="28.0" prefWidth="121.0" text="Name:" />
+                              <Label alignment="CENTER_RIGHT" prefHeight="33.0" prefWidth="121.0" text="Start Date:" />
+                              <Label alignment="CENTER_RIGHT" prefHeight="33.0" prefWidth="121.0" text="End Date:" />
+                              <Label alignment="CENTER_RIGHT" prefHeight="42.0" prefWidth="121.0" text="Description:" />
+                              <Label alignment="CENTER_RIGHT" prefHeight="34.0" prefWidth="121.0" text="Base Price:" />
+                              <Label alignment="CENTER_RIGHT" prefHeight="19.0" prefWidth="121.0" text="Agency Commission:" />
                            </children>
                         </VBox>
                         <HBox layoutX="76.0" layoutY="205.0" prefHeight="29.0" prefWidth="161.0">
@@ -57,18 +55,18 @@
                               </JFXButton>
                            </children>
                         </HBox>
-                        <HBox layoutX="46.0" layoutY="268.0" prefHeight="109.0" prefWidth="612.0">
+                        <HBox layoutX="36.0" layoutY="279.0" prefHeight="109.0" prefWidth="633.0">
                            <children>
-                              <TableView fx:id="tvProductsSuppliersInPackage" prefHeight="109.0" prefWidth="285.0">
+                              <TableView fx:id="tvProductsSuppliersInPackage" prefHeight="109.0" prefWidth="300.0">
                                  <columns>
-                                    <TableColumn fx:id="tcProductsInPkg" prefWidth="118.0" text="Products" />
-                                    <TableColumn fx:id="tcSuppliersInPackage" prefWidth="162.0" text="Suppliers" />
+                                    <TableColumn fx:id="tcProductsInPkg" prefWidth="99.0" text="Products" />
+                                    <TableColumn fx:id="tcSuppliersInPackage" prefWidth="192.0" text="Suppliers" />
                                  </columns>
                               </TableView>
-                              <TableView fx:id="tvProductsSuppliers1" prefHeight="109.0" prefWidth="285.0">
+                              <TableView fx:id="tvProductsSuppliers1" prefHeight="109.0" prefWidth="300.0">
                                  <columns>
-                                    <TableColumn fx:id="tcProductsPkgTab" prefWidth="135.0" sortable="false" text="Products" />
-                                    <TableColumn fx:id="tcSuppliersPkgTab" prefWidth="170.0" sortable="false" text="Suppliers" />
+                                    <TableColumn fx:id="tcProductsPkgTab" prefWidth="112.0" sortable="false" text="Products" />
+                                    <TableColumn fx:id="tcSuppliersPkgTab" prefWidth="202.0" sortable="false" text="Suppliers" />
                                  </columns>
                                  <HBox.margin>
                                     <Insets left="50.0" />
@@ -76,45 +74,19 @@
                               </TableView>
                            </children>
                         </HBox>
-                        <Label fx:id="lblProductsSuppliers" layoutX="423.0" layoutY="243.0" text="Choose a Product and a Supplier:" />
-                        <JFXButton fx:id="btnInsertProductIntoPkg" layoutX="377.0" layoutY="390.0" onAction="#insertProductIntoPkg" prefHeight="29.0" prefWidth="120.0" styleClass="button-raised" text="Insert Product" />
-                        <JFXButton fx:id="btnRemoveProductFromPkg" layoutX="538.0" layoutY="390.0" onAction="#removeProductFromPkg" prefHeight="29.0" prefWidth="120.0" style="-fx-background-color: #ff1e1e;" styleClass="button-raised" text="Remove Product" />
-                        <JFXButton fx:id="btnSave1" layoutX="352.0" layoutY="432.0" onAction="#savePackage" prefHeight="29.0" prefWidth="60.0" style="-fx-background-color: #2edb2e;" styleClass="button-raised" text="Save" />
-                        <JFXButton fx:id="btnCancelPkg" layoutX="281.0" layoutY="432.0" onAction="#refreshPkgTab" prefHeight="29.0" prefWidth="60.0" styleClass="button-raised" text="Cancel" />
+                        <Label fx:id="lblProductsSuppliers" layoutX="419.0" layoutY="255.0" style="-fx-font-size: 14;" text="Select a Product and a Supplier:" />
+                        <JFXButton fx:id="btnInsertProductIntoPkg" layoutX="378.0" layoutY="393.0" onAction="#insertProductIntoPkg" prefHeight="29.0" prefWidth="120.0" styleClass="button-raised" text="Insert Product" />
+                        <JFXButton fx:id="btnRemoveProductFromPkg" layoutX="549.0" layoutY="393.0" onAction="#removeProductFromPkg" prefHeight="29.0" prefWidth="120.0" style="-fx-background-color: #ff1e1e;" styleClass="button-raised" text="Remove Product" />
+                        <JFXButton fx:id="btnSave1" layoutX="362.0" layoutY="480.0" onAction="#savePackage" prefHeight="29.0" prefWidth="60.0" style="-fx-background-color: #2edb2e;" styleClass="button-raised" text="Save" />
+                        <JFXButton fx:id="btnCancelPkg" layoutX="281.0" layoutY="480.0" onAction="#refreshPkgTab" prefHeight="29.0" prefWidth="60.0" styleClass="button-raised" text="Cancel" />
                         <TableView fx:id="tvPackages" layoutX="37.0" layoutY="42.0" onMouseClicked="#selectPackage" prefHeight="151.0" prefWidth="239.0">
                            <columns>
                               <TableColumn fx:id="tcPkgId" prefWidth="36.0" sortable="false" text="ID" />
                               <TableColumn fx:id="tcPkgName" prefWidth="201.0" sortable="false" text="Name" />
                            </columns>
                         </TableView>
-                        <Label layoutX="108.0" layoutY="23.0" text="Select a Package:" />
-                        <JFXButton fx:id="btnAddPackage" layoutX="281.0" layoutY="470.0" onAction="#AddPackage" prefHeight="29.0" prefWidth="131.0" styleClass="button-raised" text="Add New Package" />
-                     </children>
-                  </AnchorPane>
-               </content>
-            </Tab>
-            <Tab fx:id="tabBookings" text="Bookings">
-               <content>
-                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                     <children>
-                        <JFXComboBox fx:id="cbBookingPackage" layoutX="140.0" layoutY="107.0" prefHeight="25.0" prefWidth="180.0" />
-                        <JFXComboBox fx:id="cbBookingTripType" layoutX="445.0" layoutY="107.0" prefHeight="25.0" prefWidth="180.0" />
-                        <JFXTextField fx:id="tfBookingTravelerCount" layoutX="140.0" layoutY="155.0" prefHeight="25.0" prefWidth="180.0" />
-                        <JFXComboBox fx:id="cbBookingCustomerId" layoutX="140.0" layoutY="61.0" prefHeight="25.0" prefWidth="180.0" />
-                        <JFXTextArea fx:id="taBookingDescription" layoutX="140.0" layoutY="251.0" prefHeight="124.0" prefWidth="485.0" />
-                        <JFXTextField fx:id="tfBookingDestination" layoutX="140.0" layoutY="207.0" prefHeight="25.0" prefWidth="485.0" />
-                        <JFXComboBox fx:id="cbBookingClass" layoutX="445.0" layoutY="61.0" prefHeight="25.0" prefWidth="180.0" />
-                        <JFXComboBox fx:id="cbBookingFeeType" layoutX="445.0" layoutY="155.0" prefHeight="25.0" prefWidth="180.0" />
-                        <Label layoutX="46.0" layoutY="65.0" text="*Customer Id:" />
-                        <Label layoutX="390.0" layoutY="65.0" text="*Class:" />
-                        <Label fx:id="lblBookingPackageId" layoutX="66.0" layoutY="111.0" text="*Package:" />
-                        <Label layoutX="367.0" layoutY="111.0" text="*Trip Type:" />
-                        <Label layoutX="30.0" layoutY="159.0" text="*Traveler Count:" />
-                        <Label layoutX="369.0" layoutY="159.0" text="*Fee Type:" />
-                        <Label layoutX="60.0" layoutY="211.0" text="Destination:" />
-                        <Label layoutX="60.0" layoutY="257.0" text="Description:" />
-                        <JFXButton fx:id="btnCreateBooking" buttonType="RAISED" layoutX="318.0" layoutY="419.0" onAction="#validateBooking" ripplerFill="#094ebc" style="-fx-background-color: #2edb2e;" styleClass="button-raised" text="Create Booking" />
-                        <Label layoutX="40.0" layoutY="22.0" text="* Indicates required field." />
+                        <Label layoutX="100.0" layoutY="21.0" style="-fx-font-size: 14;" text="Select a Package:" />
+                        <JFXButton fx:id="btnAddPackage" layoutX="281.0" layoutY="440.0" onAction="#AddPackage" prefHeight="29.0" prefWidth="141.0" styleClass="button-raised" text="Add New Package" />
                      </children>
                   </AnchorPane>
                </content>
@@ -123,54 +95,73 @@
                <content>
                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
-                        <TableView fx:id="tvProducts" layoutX="38.0" layoutY="51.0" onMouseClicked="#selectProduct" prefHeight="255.0" prefWidth="220.0">
+                        <TableView fx:id="tvProducts" layoutX="38.0" layoutY="51.0" onMouseClicked="#selectProduct" prefHeight="255.0" prefWidth="244.0">
                            <columns>
-                              <TableColumn fx:id="tcProductId" prefWidth="68.0" text="Product ID" />
-                              <TableColumn fx:id="tcProdName" prefWidth="151.0" text="Product Name" />
+                              <TableColumn fx:id="tcProductId" prefWidth="71.0" text="Product ID" />
+                              <TableColumn fx:id="tcProdName" prefWidth="172.0" text="Product Name" />
                            </columns>
                         </TableView>
-                        <VBox layoutX="307.0" layoutY="58.0" prefHeight="66.0" prefWidth="100.0">
+                        <VBox layoutX="100.0" layoutY="316.0" prefHeight="66.0" prefWidth="100.0">
                            <children>
                               <Label prefHeight="24.0" text="ID:" />
                               <Label prefHeight="32.0" text="Name:" />
                            </children>
                         </VBox>
-                        <VBox layoutX="351.0" layoutY="58.0" prefHeight="72.0" prefWidth="125.0">
+                        <VBox layoutX="143.0" layoutY="313.0" prefHeight="72.0" prefWidth="125.0">
                            <children>
-                              <Label fx:id="lblProductId" prefHeight="22.0" text="Label" />
-                              <JFXTextField fx:id="tfProdName" prefHeight="25.0" prefWidth="170.0" />
+                              <Label fx:id="lblProductId" prefHeight="32.0" prefWidth="30.0" text="Label" />
+                              <JFXTextField fx:id="tfProdName" prefHeight="0.0" prefWidth="125.0" />
                            </children>
                         </VBox>
-                        <HBox layoutX="313.0" layoutY="141.0" prefHeight="29.0" prefWidth="239.0">
-                           <children>
-                              <JFXButton fx:id="btnEditProd" onAction="#editProduct" styleClass="button-raised" text="Edit Product">
-                                 <HBox.margin>
-                                    <Insets right="30.0" />
-                                 </HBox.margin>
-                              </JFXButton>
-                              <JFXButton fx:id="btnAddProd" onAction="#addProduct" styleClass="button-raised" text="Add Product" />
-                           </children>
-                        </HBox>
-                        <Label layoutY="306.0" text="Product Suppliers:">
+                        <HBox layoutX="369.0" layoutY="246.0" prefHeight="29.0" prefWidth="129.0" />
+                        <Label layoutX="418.0" layoutY="11.0" style="-fx-font-size: 14;" text="Product Suppliers:">
                            <padding>
                               <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                            </padding>
                         </Label>
-                        <TableView fx:id="tvProductsSuppliers2" layoutY="343.0" prefHeight="139.0" prefWidth="336.0">
+                        <TableView fx:id="tvProductsSuppliers2" layoutX="335.0" layoutY="50.0" prefHeight="257.0" prefWidth="336.0">
                            <columns>
                               <TableColumn fx:id="tcProducts2" prefWidth="110.0" text="Product Name" />
                               <TableColumn fx:id="tcSuppliers2" prefWidth="225.0" text="Supplier Name" />
                            </columns>
                         </TableView>
-                        <JFXButton fx:id="btnAddProdSupplier" layoutX="385.0" layoutY="406.0" onAction="#addProductSupplier" prefHeight="29.0" prefWidth="184.0" styleClass="button-raised" text="Add Supplier to Product" />
-                        <ComboBox fx:id="cboSuppliers" layoutX="385.0" layoutY="360.0" onAction="#onSupplierSelected" prefHeight="25.0" prefWidth="150.0" />
-                        <Label layoutX="102.0" layoutY="14.0" text="Products:">
+                        <JFXButton fx:id="btnAddProdSupplier" layoutX="397.0" layoutY="381.0" onAction="#addProductSupplier" prefHeight="29.0" prefWidth="184.0" styleClass="button-raised" text="Add Supplier to Product" />
+                        <JFXComboBox fx:id="cboSuppliers" layoutX="402.0" layoutY="324.0" onAction="#onSupplierSelected" prefHeight="25.0" prefWidth="193.0" promptText="Suppliers" />
+                        <Label layoutX="110.0" layoutY="11.0" style="-fx-font-size: 14;" text="Products:">
                            <padding>
                               <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                            </padding>
                         </Label>
-                        <JFXButton fx:id="btnRefreshProd" layoutX="543.0" layoutY="470.0" onAction="#refreshProdTables" styleClass="button-raised" text="Refresh" />
-                        <JFXButton fx:id="btnSaveProd" layoutX="624.0" layoutY="470.0" onAction="#saveProduct" style="-fx-background-color: #2edb2e;" styleClass="button-raised" text="Save" />
+                        <JFXButton fx:id="btnRefreshProd" layoutX="255.0" layoutY="456.0" onAction="#refreshProdTables" prefHeight="29.0" prefWidth="70.0" styleClass="button-raised" text="Refresh" />
+                        <JFXButton fx:id="btnSaveProd" layoutX="347.0" layoutY="456.0" onAction="#saveProduct" prefHeight="29.0" prefWidth="70.0" style="-fx-background-color: #2edb2e;" styleClass="button-raised" text="Save" />
+                        <JFXButton fx:id="btnEditProd" layoutX="113.0" layoutY="383.0" onAction="#editProduct" styleClass="button-raised" text="Edit Product" />
+                        <JFXButton fx:id="btnAddProd" layoutX="97.0" layoutY="421.0" onAction="#addProduct" styleClass="button-raised" text="Add New Product" />
+                     </children>
+                  </AnchorPane>
+               </content>
+            </Tab>
+            <Tab fx:id="tabBookings" text="Bookings">
+               <content>
+                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <JFXComboBox fx:id="cbBookingCustomerId" layoutX="140.0" layoutY="61.0" prefHeight="25.0" prefWidth="180.0" />
+                        <JFXComboBox fx:id="cbBookingPackage" layoutX="140.0" layoutY="107.0" prefHeight="25.0" prefWidth="180.0" />
+                        <JFXTextField fx:id="tfBookingTravelerCount" layoutX="140.0" layoutY="155.0" prefHeight="25.0" prefWidth="180.0" />
+                        <JFXComboBox fx:id="cbBookingClass" layoutX="445.0" layoutY="61.0" prefHeight="25.0" prefWidth="180.0" />
+                        <JFXComboBox fx:id="cbBookingTripType" layoutX="445.0" layoutY="107.0" prefHeight="25.0" prefWidth="180.0" />
+                        <JFXComboBox fx:id="cbBookingFeeType" layoutX="445.0" layoutY="155.0" prefHeight="25.0" prefWidth="180.0" />
+                        <JFXTextField fx:id="tfBookingDestination" layoutX="140.0" layoutY="212.0" prefHeight="25.0" prefWidth="485.0" />
+                        <JFXTextArea fx:id="taBookingDescription" layoutX="140.0" layoutY="256.0" prefHeight="124.0" prefWidth="485.0" />
+                        <JFXButton fx:id="btnCreateBooking" buttonType="RAISED" layoutX="318.0" layoutY="424.0" onAction="#validateBooking" ripplerFill="#094ebc" style="-fx-background-color: #2edb2e;" styleClass="button-raised" text="Create Booking" />
+                        <Label layoutX="46.0" layoutY="65.0" text="*Customer Id:" />
+                        <Label layoutX="390.0" layoutY="65.0" text="*Class:" />
+                        <Label fx:id="lblBookingPackageId" layoutX="66.0" layoutY="111.0" text="*Package:" />
+                        <Label layoutX="367.0" layoutY="111.0" text="*Trip Type:" />
+                        <Label layoutX="30.0" layoutY="159.0" text="*Traveler Count:" />
+                        <Label layoutX="369.0" layoutY="159.0" text="*Fee Type:" />
+                        <Label layoutX="60.0" layoutY="216.0" text="Destination:" />
+                        <Label layoutX="60.0" layoutY="257.0" text="Description:" />
+                        <Label layoutX="40.0" layoutY="22.0" text="* Indicates required field." />
                      </children>
                   </AnchorPane>
                </content>
