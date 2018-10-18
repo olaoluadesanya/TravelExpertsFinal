@@ -66,10 +66,10 @@
                               <TableView fx:id="tvProductsSuppliers1" prefHeight="109.0" prefWidth="300.0">
                                  <columns>
                                     <TableColumn fx:id="tcProductsPkgTab" prefWidth="112.0" sortable="false" text="Products" />
-                                    <TableColumn fx:id="tcSuppliersPkgTab" prefWidth="202.0" sortable="false" text="Suppliers" />
+                                    <TableColumn fx:id="tcSuppliersPkgTab" prefWidth="184.0" sortable="false" text="Suppliers" />
                                  </columns>
                                  <HBox.margin>
-                                    <Insets left="50.0" />
+                                    <Insets left="30.0" />
                                  </HBox.margin>
                               </TableView>
                            </children>

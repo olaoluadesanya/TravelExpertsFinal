@@ -1212,7 +1212,7 @@ public class SimpleRestService {
                     em.persist(booking);                    
                     em.getTransaction().commit();                    
                     
-                    response = "Booking and Detail created";
+                    response = "Success";
 
                    break;
                default: throw new Exception("Unsupported version: " + version);
