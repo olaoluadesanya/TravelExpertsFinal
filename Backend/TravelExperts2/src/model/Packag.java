@@ -9,7 +9,8 @@ import java.util.List;
 
 /**
  * The persistent class for the packags database table.
- * 
+ * Olaoluwa Adesanya SAIT 2018
+ * had to change name from package to packag as package is ajava reserved keyword
  */
 @Entity
 @Table(name="packags")

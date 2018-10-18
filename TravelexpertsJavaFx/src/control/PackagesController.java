@@ -659,7 +659,7 @@ public class PackagesController implements Initializable{
 					httpCon.setRequestProperty("Content-Type",
 	    		                "application/x-www-form-urlencoded");
 					httpCon.setRequestMethod("DELETE");
-	    		    System.out.println(httpCon.getResponseCode());
+	    		    //System.out.println(httpCon.getResponseCode());
 	    		    //httpCon.disconnect();
 		    	    
 		    	    	    			
@@ -746,7 +746,7 @@ public class PackagesController implements Initializable{
 		taPkgDesc.setText("");
 		dpPkgEndDate.setValue(new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
 		dpPkgStartDate.setValue(new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
-		System.out.println("emptied stuff");
+		//System.out.println("emptied stuff");
 	}
 
 	@FXML
@@ -1368,7 +1368,7 @@ public class PackagesController implements Initializable{
         										//+"\"pkgName\":\""+newPkg.getPkgName()+"\","
         										//+"\"pkgStartDate\":\""+newPkg.getPkgStartDate()+"\""
         										//+"}";
-        
+        //System.out.println(json);
         String       postUrl       = URLCONSTANT +"/TravelExperts2/rs/db/postbooking";// put in your url
         HttpClient   httpClient    = HttpClientBuilder.create().build();
         HttpPost     post          = new HttpPost(postUrl);
@@ -1387,15 +1387,14 @@ public class PackagesController implements Initializable{
 			HttpEntity entity = response.getEntity();
     	    String responseString = null;
     	    responseString = EntityUtils.toString(entity, "UTF-8");
+
     	    if (responseString.equals("Success")){
     	    	Alert alert = new Alert(AlertType.INFORMATION);
     			alert.setTitle("Booking Created");
     			alert.setHeaderText(null);
     			alert.setContentText("Booking successfully created");
     			alert.show();  
-    	    }
-    	    
-			//System.out.println(response);
+    	    }  
 		} catch ( IOException e)
 		{
 			e.printStackTrace();
@@ -1659,7 +1658,7 @@ public class PackagesController implements Initializable{
 				HttpEntity entity = response.getEntity();
 	    	    String responseString = null;
 	    	    responseString = EntityUtils.toString(entity, "UTF-8");
-	    	    System.out.println("Response: " + responseString);
+	    	    //System.out.println("Response: " + responseString);
 	    	    
 			} catch ( IOException e)
 			{
@@ -1774,7 +1773,7 @@ public class PackagesController implements Initializable{
 				HttpEntity entity = response.getEntity();
 	    	    String responseString = null;
 	    	    responseString = EntityUtils.toString(entity, "UTF-8");
-	    	    System.out.println("Response: " + responseString);
+	    	    //System.out.println("Response: " + responseString);
 			} 
 			catch ( IOException e)
 			{

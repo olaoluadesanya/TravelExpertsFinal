@@ -8,7 +8,7 @@ import java.util.List;
 
 /**
  * The persistent class for the bookings database table.
- * 
+ * Olaoluwa Adesanya SAIT 2018
  */
 @Entity
 @Table(name="bookings")
@@ -30,6 +30,7 @@ public class Booking implements Serializable {
 	private String tripTypeId;
 
 	//bi-directional many-to-one association to Bookingdetail
+	//TRANSIENT PREVENTS PROCESSING OF BOOKING DETAIL IN GSON
 	@OneToMany(mappedBy="booking")
 	private transient List<Bookingdetail> bookingdetails;
 
