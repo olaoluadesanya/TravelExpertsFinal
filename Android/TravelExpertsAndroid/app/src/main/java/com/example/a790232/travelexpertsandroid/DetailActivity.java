@@ -66,8 +66,8 @@ public class DetailActivity extends Activity {
     private PostBookingTask pb =null;
 
     //String URLCONSTANT="http://localhost:8080";
-    static final String URLCONSTANT = "http://10.0.2.2:8080";
-    //static final String URLCONSTANT = "http://10.187.212.89:8080";
+    //static final String URLCONSTANT = "http://10.0.2.2:8080";
+    static final String URLCONSTANT = "http://10.187.212.89:8080";
 
 
 
@@ -97,10 +97,15 @@ public class DetailActivity extends Activity {
 
         // Display the image for the package
         String imgFileName = packag.getPkgImageFile();
-        if (imgFileName != null) {
+        if (!imgFileName.equals("")) {
             int idx = imgFileName.indexOf('.');
             String imgName = imgFileName.substring(0, idx);
             int resID = getResources().getIdentifier(imgName, "drawable", getPackageName());
+            ivPkgDetail.setImageResource(resID);
+        }
+        else {
+            // Use a default image if none is specified
+            int resID = getResources().getIdentifier("airplane", "drawable", getPackageName());
             ivPkgDetail.setImageResource(resID);
         }
 
