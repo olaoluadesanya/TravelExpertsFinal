@@ -470,7 +470,7 @@ public class PackagesController implements Initializable{
     	tcProductId.setSortable(false);
     	tcProdName.setSortable(false);
     	tfProdName.setDisable(true);
-    	tcProducts2.setSortable(false);
+    	tcProducts2.setSortable(true);
     	tcSuppliers2.setSortable(false);
     	
     	// Instantiate the lists
