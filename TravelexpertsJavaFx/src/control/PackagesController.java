@@ -609,6 +609,15 @@ public class PackagesController implements Initializable{
 
     		if (result.orElse(cancel) == ok) 
     		{	
+    			// store productsSuppliers that exist in the package before deleting package.
+    			// In case of package-deleting failure, we can restore the products.
+    			List<ProductsSupplier> tempProductsSuppliersInPkg = new ArrayList<>();
+    			for (ProductsSupplier p:tvProductsSuppliersInPackage.getItems())
+    			{
+    				tempProductsSuppliersInPkg.add(p);
+    				System.out.print(p.getProductSupplierId()+" ");
+    				System.out.println();
+    			}
     			// delete rows from PkgProductsSuppliers table first
     			try
 				{
@@ -662,13 +671,14 @@ public class PackagesController implements Initializable{
 	    		                "application/x-www-form-urlencoded");
 					httpCon.setRequestMethod("DELETE");
 					httpCon.connect();
-					System.out.println("10/18: "+httpCon.getResponseCode());
+					System.out.println("line 674: "+httpCon.getResponseCode());
 
-					     			
+					/*     			
 	    			readPackages();
 	    			readPackagesProductsSuppliers();
 	    			tvPackages.getSelectionModel().select(0);
 	    			displayPackageInfo();
+	    			*/
 
 				} catch (IOException e)
 				{
@@ -676,14 +686,51 @@ public class PackagesController implements Initializable{
 					e.printStackTrace();
 				}
 				int numPackagesAfterDeleting = packages1.size();
+				
+				// deleting package failed
 				if (numPackagesBeforeDeleting==numPackagesAfterDeleting)
 				{
+					// put productssuppliers back into the package
+					for (ProductsSupplier p :tempProductsSuppliersInPkg)
+					{
+						String myJson2= "{" 
+	                			+	"\"id\"" + ": {" 
+	                			+	"\"packageId\""+": "+ tvPackages.getSelectionModel().getSelectedItem().getPackageId() + ", "
+	                        	+	"\"productSupplierId\"" +": "+ p.getProductSupplierId()
+	                        	+	"}"
+	                        	+	"}";
+	                			
+		                String       postUrl2       = URLCONSTANT +"/TravelExperts2/rs/db/insertpackagesproductsupplier";
+		                HttpClient   httpClient2    = HttpClientBuilder.create().build();
+		                HttpPost     post2          = new HttpPost(postUrl2);
+		                StringEntity postingString2;
+		                HttpResponse  response2;
+		                System.out.println(myJson2);
+						try
+						{
+							postingString2 = new StringEntity(myJson2);
+							post2.setEntity(postingString2);
+							post2.setHeader("Content-type", "application/json");
+							response2 = httpClient2.execute(post2);
+							System.out.println("line715: " +response2.getStatusLine().toString());
+						}
+						catch (Exception e) {
+							// TODO: handle exception
+							System.out.println("dunno what im gonna do");
+						}
+					}
+					
 					alert = new Alert(AlertType.INFORMATION);
 		    		alert.setTitle("Booking Conflict");
 		    		alert.setHeaderText(null);
 		    		alert.setContentText("Customers already booked this package");
 		    		alert.showAndWait();
 				}
+				// refresh the page
+				readPackages();
+				readPackagesProductsSuppliers();
+				tvPackages.getSelectionModel().select(0);
+				displayPackageInfo();
 				
     		}
     	}
@@ -695,6 +742,7 @@ public class PackagesController implements Initializable{
     		alert.setContentText("Please select a package to delete");
     		alert.showAndWait();
     	}
+    	
     	
     }
 
