@@ -537,7 +537,7 @@ CREATE TABLE `customers` (
 
 INSERT INTO `customers` (`CustomerId`, `CustFirstName`, `CustLastName`, `CustAddress`, `CustCity`, `CustProv`, `CustPostal`, `CustCountry`, `CustHomePhone`, `CustBusPhone`, `CustEmail`, `AgentId`, `USERID`, `PASSWD`) VALUES
 (104, 'Laetia', 'Enison', '144-61 87th Ave, NE', 'Edmonton', 'AB', 'T2J 6B6', 'Canada', '4032791223', '4032557865', '                                                  ', 4, '', ''),
-(105, 'Angela', 'Moskowitz', '320 John St., NE', 'Calgary', 'AB', 'T2J 7E3', 'Canada', '4032794228', '4032794228', 'amoskowitz@home.com                               ', 3, 'angel', '$2a$10$SbbcbJlMljbPgO.uBvy43.yBxjy.TpxF2FAr54Z8Ug9GUC8haBc7y'),
+(105, 'Angel', 'Moskowitz', '320 John St., NE', 'Calgary', 'AB', 'T2J 7E3', 'Canada', '4032794228', '4032794228', 'amoskowitz@home.com                               ', 3, 'angel', '$2a$10$SbbcbJlMljbPgO.uBvy43.yBxjy.TpxF2FAr54Z8Ug9GUC8haBc7y'),
 (106, 'Judith', 'Olvsade', '29 Elmwood Ave.,', 'Calgary', 'AB', 'T2Z 3M9', 'Canada', '4032795652', '4036861598', 'jolvsade@aol.com                                  ', 1, '', ''),
 (107, 'Catherine', 'Mierzwa', '22-70 41st St.,NW', 'Calgary', 'AB', 'T2Z 2Z9', 'Canada', '4032796878', '4036404563', 'cmierzwa@msn.com                                  ', 4, '', ''),
 (108, 'Judy', 'Sethi', '63 Stratton Hall, SW', 'Calgary', 'AB', 'T1Y 6N4', 'Canada', '4032795111', '4036204789', 'judysehti@home.com                                ', 7, '', ''),

@@ -51,8 +51,8 @@ public class MainActivity extends Activity {
     // Define a constant for the IP address of the web service
     // Use 10.0.2.2 when running an emulator, and the web service is running on the same machine
     // (this IP bridges from the emulated device to the machine it is running on)
-    static final String IP_ADDRESS = "10.0.2.2";
-    //static final String IP_ADDRESS = "10.187.212.89";
+    //static final String IP_ADDRESS = "10.0.2.2";
+    static final String IP_ADDRESS = "10.187.212.89";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -149,11 +149,14 @@ public class MainActivity extends Activity {
 
                 String imgFileName = up.getPkgImageFile();
                 String imgName = "";
-                if (imgFileName != null) {
+                if (!imgFileName.equals("")) {
                     int idx = imgFileName.indexOf('.');
                     imgName = imgFileName.substring(0, idx);
                 }
-                //imgName = "R.drawable." + imgName;
+                else {
+                    // Use a default image if no image file name is specified
+                    imgName = "airplane";
+                }
 
                 map.put("pkgimagefile", imgName);
                 pkgMaps.add(map);
