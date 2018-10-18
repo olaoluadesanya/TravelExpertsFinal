@@ -6,6 +6,8 @@ Created: 2018-10-16
 
 package com.example.a790232.travelexpertsandroid;
 
+import java.util.Date;
+
 public class Booking
 {
     private int customerId;
@@ -24,17 +26,19 @@ public class Booking
 
     private String description;
 
-    public Booking(int customerId, String classId, int packageId, String tripTypeId, int travelerCount,
+    private Date bookingDate;
+
+    public Booking(int customerId, String classId,  String tripTypeId, int travelerCount,
                    String feeId, String destination, String description) {
         super();
         this.customerId = customerId;
         this.classId = classId;
-        this.packageId = packageId;
         this.tripTypeId = tripTypeId;
         this.travelerCount = travelerCount;
         this.feeId = feeId;
         this.destination = destination;
         this.description = description;
+
     }
 
 
@@ -102,5 +106,27 @@ public class Booking
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public Date getBookingDate()
+    {
+        return bookingDate;
+    }
+
+    public void setBookingDate(Date bookingDate)
+    {
+        this.bookingDate = bookingDate;
+    }
+
+    @Override
+    public String toString()
+    {
+        return "Booking{" +
+                "packageId=" + packageId +
+                ", tripTypeId='" + tripTypeId + '\'' +
+                ", travelerCount=" + travelerCount +
+                ", feeId='" + feeId + '\'' +
+                ", bookingDate=" + bookingDate +
+                '}';
     }
 }
