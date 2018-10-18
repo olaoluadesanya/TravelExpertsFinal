@@ -666,7 +666,7 @@ public class PackagesController implements Initializable{
 	    			readPackagesProductsSuppliers();
 	    			tvPackages.getSelectionModel().select(0);
 	    			displayPackageInfo();
-					//System.out.println("10/18: "+response2.getStatusLine().toString());
+					//System.out.println("10/18: "+httpCon.getResponseCode());
 
 				} catch (IOException e)
 				{
