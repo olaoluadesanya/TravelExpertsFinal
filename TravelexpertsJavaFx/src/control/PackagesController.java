@@ -634,7 +634,7 @@ public class PackagesController implements Initializable{
 						postingString2 = new StringEntity(myJson2);
 						post2.setEntity(postingString2);
 						post2.setHeader("Content-type", "application/json");
-						response2 = httpClient2.execute(post2);							
+						response2 = httpClient2.execute(post2);		
 					}
 				}		
 				catch ( IOException e)
@@ -659,14 +659,15 @@ public class PackagesController implements Initializable{
 					httpCon.setRequestProperty("Content-Type",
 	    		                "application/x-www-form-urlencoded");
 					httpCon.setRequestMethod("DELETE");
-	    		    //System.out.println(httpCon.getResponseCode());
-	    		    //httpCon.disconnect();
-		    	    
-		    	    	    			
+					httpCon.connect();
+					System.out.println("10/18: "+httpCon.getResponseCode());
+
+					     			
 	    			readPackages();
 	    			readPackagesProductsSuppliers();
 	    			tvPackages.getSelectionModel().select(0);
 	    			displayPackageInfo();
+
 				} catch (IOException e)
 				{
 					// TODO Auto-generated catch block
@@ -722,8 +723,7 @@ public class PackagesController implements Initializable{
     	
     	// hide products-related controls
     	
-    	tvProductsSuppliersInPackage.setVisible(false);
-    	
+    	tvProductsSuppliersInPackage.setVisible(false);    	
     	lblProductsSuppliers.setVisible(false);
     	tvProductsSuppliers1.setVisible(false);	
     	btnInsertProductIntoPkg.setVisible(false);
@@ -765,7 +765,7 @@ public class PackagesController implements Initializable{
 	    	{
 	    		// create a new package               
                 //newPkg=new Packag(0, new BigDecimal( tfPkgAgencyCommission.getText()), new BigDecimal(tfPkgBasePrice.getText()), taPkgDesc.getText(), Date.from(dpPkgEndDate.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant()), tfPkgName.getText(), Date.from(dpPkgStartDate.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant()));                
-                newPkg=new Packag(0, Double.parseDouble( tfPkgAgencyCommission.getText()), Double.parseDouble(tfPkgBasePrice.getText()), taPkgDesc.getText(), dpPkgEndDate.getValue(), tfPkgName.getText(), dpPkgStartDate.getValue(),"no image");                
+                newPkg=new Packag(0, Double.parseDouble( tfPkgAgencyCommission.getText()), Double.parseDouble(tfPkgBasePrice.getText()), taPkgDesc.getText(), dpPkgEndDate.getValue(), tfPkgName.getText(), dpPkgStartDate.getValue(),"polynesian.png");                
 
                 // send json to web server
                 Gson gson = new Gson();
@@ -995,7 +995,8 @@ public class PackagesController implements Initializable{
         				tvPackages.getSelectionModel().select(pkg);
         		}
         	}
-        	
+        	tvProductsSuppliers1.setVisible(true);
+
         	displayPackageInfo();
         	btnCancelPkg.setDisable(true);
 		}
@@ -1016,6 +1017,15 @@ public class PackagesController implements Initializable{
 	    		alert.setTitle("Negative Value");
 	    		alert.setHeaderText(null);
 	    		alert.setContentText("Agency Commission and Base Price must be greater than zero");
+	    		alert.showAndWait();
+	    		myBool=false;
+			}
+			// agency commission > base price
+			if (Double.parseDouble( tfPkgAgencyCommission.getText())> Double.parseDouble( tfPkgBasePrice.getText()) )
+			{
+	    		alert.setTitle("Agency Commission and Base Price");
+	    		alert.setHeaderText(null);
+	    		alert.setContentText("Agency Commission must be smaller than Base Price");
 	    		alert.showAndWait();
 	    		myBool=false;
 			}
@@ -1043,6 +1053,25 @@ public class PackagesController implements Initializable{
     		alert.setTitle("Emtpy Input");
     		alert.setHeaderText(null);
     		alert.setContentText("Please type in description");
+    		alert.showAndWait();
+    		myBool=false;
+    	}
+    	
+    	// check date
+    	if (dpPkgStartDate.getValue().isBefore(LocalDate.now()))
+    	{
+    		alert.setTitle("Date Error");
+    		alert.setHeaderText(null);
+    		alert.setContentText("Start Date must be after today's date");
+    		alert.showAndWait();
+    		myBool=false;
+    	}
+    	
+    	if (dpPkgStartDate.getValue().isAfter(dpPkgEndDate.getValue()))
+    	{
+    		alert.setTitle("Date Error");
+    		alert.setHeaderText(null);
+    		alert.setContentText("End Date must be after Start Date");
     		alert.showAndWait();
     		myBool=false;
     	}
@@ -1129,6 +1158,8 @@ public class PackagesController implements Initializable{
 			tvPackages.getSelectionModel().select(0);
 		
 		enableInputs(false);
+    	tvProductsSuppliers1.setVisible(true);
+
     	btnDelete1.setDisable(false);
     	btnAddPackage.setDisable(false);
     	btnEdit1.setDisable(false);
