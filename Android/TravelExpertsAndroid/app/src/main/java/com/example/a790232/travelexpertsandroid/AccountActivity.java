@@ -38,8 +38,8 @@ import okhttp3.Response;
 public class AccountActivity extends Activity {
 
     // URLs for testing, depending on where the web service is being run
-    //static final String URLCONSTANT = "http://10.0.2.2:8080";
-    static final String URLCONSTANT = "http://10.187.212.89:8080";
+    static final String URLCONSTANT = "http://10.0.2.2:8080";
+    //static final String URLCONSTANT = "http://10.187.212.89:8080";
 
     // Class variables for the GUI elements
     EditText etFirstName;

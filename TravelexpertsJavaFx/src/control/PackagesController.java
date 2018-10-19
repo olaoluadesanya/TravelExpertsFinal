@@ -735,6 +735,26 @@ public class PackagesController implements Initializable{
 				tvPackages.getSelectionModel().select(0);
 				displayPackageInfo();
 				
+				//set everything back to default
+                enableInputs(false);
+                tvProductsSuppliers1.setVisible(true);
+
+                btnDelete1.setDisable(false);
+                btnAddPackage.setDisable(false);
+                btnEdit1.setDisable(false);
+                tvPackages.setDisable(false);
+                btnCancelPkg.setDisable(true);
+                
+                newPkg=null;
+                
+                btnSave1.setDisable(true);
+                tvProductsSuppliersInPackage.setVisible(true);
+                
+                displayPackageInfo();
+                pkgStatus="null";
+                addedPsList.clear();
+                deletedPsList.clear();
+				
     		}
     	}
     	else
