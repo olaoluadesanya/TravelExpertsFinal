@@ -197,8 +197,51 @@ public class PackagesController implements Initializable{
     // productsSupplier that are to be added into or deleted from package
     private List<ProductsSupplier> addedPsList;
     private List<ProductsSupplier> deletedPsList;
+ // =======================Graeme================================================  
+  //=============Bookings
+    @FXML
+    private AnchorPane apPackages;
+
+    @FXML
+    private JFXTabPane tpPackages;
     
+	@FXML
+    private JFXComboBox<Packag> cbBookingPackage;
+
+    @FXML
+    private JFXComboBox<TripType> cbBookingTripType;
+
+    @FXML
+    private JFXTextField tfBookingTravelerCount;
+
+    @FXML
+    private JFXComboBox<Customer> cbBookingCustomerId;
+
+    @FXML
+    private JFXTextArea taBookingDescription;
+
+    @FXML
+    private JFXTextField tfBookingDestination;
+
+    @FXML
+    private JFXComboBox<Clas> cbBookingClass;
+
+    @FXML
+    private JFXComboBox<FeeType> cbBookingFeeType;
+
+    @FXML
+    private Label lblBookingPackageId;
+
+    @FXML
+    private JFXButton btnCreateBooking;
     
+    private ObservableList<Customer> customerIds;
+    
+    private ObservableList<Clas> classes;
+    
+    private ObservableList<TripType> tripTypes;
+    
+    private ObservableList<FeeType> feeTypes;
     
  // =====================================================================================
 	
@@ -1316,51 +1359,9 @@ public class PackagesController implements Initializable{
 	// =====================================================================================
 
 	// ==================================== Graeme =========================================
-    //================Packages
+    
     //=============Bookings
-    @FXML
-    private AnchorPane apPackages;
-
-    @FXML
-    private JFXTabPane tpPackages;
     
-	@FXML
-    private JFXComboBox<Packag> cbBookingPackage;
-
-    @FXML
-    private JFXComboBox<TripType> cbBookingTripType;
-
-    @FXML
-    private JFXTextField tfBookingTravelerCount;
-
-    @FXML
-    private JFXComboBox<Customer> cbBookingCustomerId;
-
-    @FXML
-    private JFXTextArea taBookingDescription;
-
-    @FXML
-    private JFXTextField tfBookingDestination;
-
-    @FXML
-    private JFXComboBox<Clas> cbBookingClass;
-
-    @FXML
-    private JFXComboBox<FeeType> cbBookingFeeType;
-
-    @FXML
-    private Label lblBookingPackageId;
-
-    @FXML
-    private JFXButton btnCreateBooking;
-    
-    private ObservableList<Customer> customerIds;
-    
-    private ObservableList<Clas> classes;
-    
-    private ObservableList<TripType> tripTypes;
-    
-    private ObservableList<FeeType> feeTypes;
 
  // get json from web server
     private StringBuffer getBuffer(String urlString)

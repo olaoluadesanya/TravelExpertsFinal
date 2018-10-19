@@ -1040,6 +1040,7 @@ public class SimpleRestService {
         return response;
 	}
 	
+	//Graeme
 	//http://localhost:8080/TravelExperts2/rs/db/agentlogin
 	@POST
 	@Path("/agentlogin")
@@ -1164,7 +1165,7 @@ public class SimpleRestService {
         }
         return response;	
 	}
-	
+	//Graeme
 	//http://localhost:8080/TravelExperts2/rs/db/postbooking
     @POST
     @Path("/postbooking")
@@ -1228,7 +1229,7 @@ public class SimpleRestService {
        }
        return response;    
     }
-    
+  //Graeme
     //http://localhost:8080/TravelExperts2/rs/db/getalltriptypes
     @GET
     @Path("/getalltriptypes")
@@ -1273,7 +1274,7 @@ public class SimpleRestService {
        }
        return response;    
     }
-
+  //Graeme
   //http://localhost:8080/TravelExperts2/rs/db/getallfees
     @GET
     @Path("/getallfees")
@@ -1319,7 +1320,7 @@ public class SimpleRestService {
        }
        return response;    
     }
-
+  //Graeme
   //http://localhost:8080/TravelExperts2/rs/db/getallclasses    
     @GET
     @Path("/getallclasses")
